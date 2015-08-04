@@ -28,3 +28,185 @@
   content: "";
   padding: 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+h2 {
+  padding-top: 0;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.animate-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0 15px;
+  width: 100%;
+}
+
+.animate-view.ng-enter,
+.animate-view.ng-leave-active {
+  -webkit-transition: .5s linear all;
+  transition: .5s linear all;
+  opacity: 0;
+}
+
+.animate-view.ng-enter-active,
+.animate-view.ng-leave {
+  opacity: 1;
+}
+
+#list .ng-leave {
+  display: none;
+}
+
+#list .ng-enter  {
+  opacity: 0;
+  -webkit-transition: all cubic-bezier(0.895, 0.03, 0.685, 0.22) .25s;
+  transition: all cubic-bezier(0.895, 0.03, 0.685, 0.22) .25s;
+}
+
+#list .ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+
+.animate-message.ng-hide-add.ng-hide-add-active,
+.animate-message.ng-hide-remove.ng-hide-remove-active {
+  -webkit-transition: all linear .33s;
+  transition: all linear .33s;
+}
+
+.animate-message.ng-hide {
+  line-height: 0;
+  padding: 0 15px;
+  overflow: hidden;
+  border: 0;
+  opacity:0;
+}
+
+
+.scrollable-list {
+  max-height: 337px;
+  overflow: auto;
+  min-height: 80px;
+  background-color: lightgrey;
+  padding: 6px;
+}
+.as-sortable-item, .as-sortable-placeholder {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.number {
+  max-width: 150px;
+}
+
+.spaced-bottom {
+  margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+/*Estilos de la página principal*/
+/**/
+/**/
+.descRow {
+  margin-bottom: 6px;
+}
+
+.descMultiRow {
+  margin-bottom: 0;
+}
+
+.itemsList {
+  list-style-type: none;
+}
+.right-space {
+  margin-right: 4px;
+}
+.bottom-space {
+  margin-bottom: 5px;
+}
+.left-float {
+  float: left;
+}
+.right-float {
+  float: right !important;
+}
+.small-input {
+  max-width: 90px;
+}
+.limit-size {
+  max-width: 300px;
+}
+.min-width-x {
+  min-width: 130px;
+}
+.up-space {
+  margin-top: 10px;
+}
+.accordion-toggle {
+  display: block;
+}
+.concepto, .conceptoC {
+  display: block;
+}
+.concepto:hover {
+  background-color: #eaeaea;
+  color: #454545;
+}
+.max-width-80 {
+  max-width: 80px;
+}
+.toggle-switch span {
+  height: auto;
+}
+.toggle-switch {
+  border-color: #bbbbbb;
+}
+/*.accordion-toggle:nth-child(2) {*/
+/*height: 32px;*/
+/*}*/
+/*a.accordion-toggle:nth-of-type(2) {*/
+/*height: 32px;*/
+/*}*/
+.panel-group > .panel-default:nth-child(2) a {
+height: 32px;
+}
+.text-muted {
+  color: #999;
+}
+.text-muted:hover {
+  text-decoration: none;
+}
+/**/
+/**/
+/*Termina estilos de la página principal*/
+
+

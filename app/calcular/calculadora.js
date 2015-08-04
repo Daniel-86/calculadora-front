@@ -80,7 +80,7 @@ function mainCtrl($scope, $http, baseRemoteURL) {
     /**
      * Para el acordeon
      */
-    $scope.oneAtATime = false;
+    $scope.oneAtATime = true;
 }
 
 //calculadoraControllers.config(['$routeProvider', function($routeProvider) {
@@ -99,6 +99,4 @@ calculadoraControllers.config(['$routeProvider', function($routeProvider) {
 }]);
 
 calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-calculadoraControllers.controller('CalculadoraMainCtrl', [function() {
-
-}]);
+calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL) {mainCtrl($scope, $http, baseRemoteURL)});

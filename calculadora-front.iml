@@ -3,6 +3,10 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="angular-toggle-switch.js" level="project" />
+    <orderEntry type="library" name="ui-bootstrap-tpls-0.13.1-SNAPSHOT.js" level="project" />
+    <orderEntry type="library" name="angular.min.js" level="project" />
   </component>
 </module>

@@ -86,8 +86,8 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL) {
                 ' requested'}];
             }
             else {
-                //creaForma.generalErrors = ["Se recibió un error "+status];
-                $scope.alerts = [{type: 'danger', msg: 'Se recibió un error '+status}];
+                //creaForma.generalErrors = ["Se recibiï¿½ un error "+status];
+                $scope.alerts = [{type: 'danger', msg: 'Se recibiï¿½ un error '+status}];
             }
         }
 
@@ -191,7 +191,7 @@ factorModule.config(['$routeProvider', function($routeProvider) {
     });
 }]);
 
-calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
+factorModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 factorModule.controller('FactorCtrl', [function() {console.log('ASDFASDFASFDASF');}]);
 factorModule.directive('dependsOn', function() {
     return {
