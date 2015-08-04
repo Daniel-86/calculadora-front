@@ -1,0 +1,89 @@
+<div class="container-fluid row" ng-controller="CalculadoraMainCtrl">
+    <div class="col-md-6">
+        <div accordion close-others="oneAtATime">
+            <div accordion-group ng-repeat="category in categories"
+                 is-open="true"
+                 is-disabled="true">
+                <div accordion-heading ng-class="category.customId === 'ingenieria_en_sitio'? 'alto': ''">
+                    {{category.descripcion}}
+                    <div toggle-switch
+                         class="pull-right"
+                         on-label="Sí"
+                         off-label="No"
+                         ng-click="toggleSelected(category, isSelected)"
+                         ng-model="isSelected"
+                         ng-if="category.customId === 'ingenieria_en_sitio'"></div>
+                </div>
+
+
+                <ul ng-if="category.customId === 'tipo_de_cliente'" class="itemsList">
+                    <li ng-repeat="item in category.conceptos">
+                        <label class="concepto">
+                            <input ng-if="category.multiple"
+                                   type="checkbox"
+                                   name="{{category.id}}-concepto"
+                                   checklist-model="category.selected"
+                                   checklist-value="item"/>
+                            <input ng-if="!category.multiple"
+                                   type="radio"
+                                   name="{{category.id}}-concepto"
+                                   ng-model="category.selected"
+                                   ng-value="item"/>
+                            {{item.descripcion}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div >
+                    <h3>Resumen general</h3>
+                </div>
+
+                <button type="button" class="btn btn-primary" ng-click="calcular()" ng-disabled="isReady()">Calcular
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div ng-show="resultados">
+            <h4>Número de tickets</h4>
+            <p>
+                Acontinuación se muestran los resultados de manera desglosada.
+            </p>
+            <p>
+                La primera fila tiene la información 'base' de número de tickets. El registro (en BD) seleccionado
+                coincide con todas o el mayor numero de 'dependencias' seleccionadas por el usuario.
+            </p>
+            <p>
+                Las filas restantes mustran el resultado parcial obtenido al aplicar los factores coincidentes, de
+                acuerdo a lo seleccionado por el usuario.
+            </p>
+            <p>
+                La última fila es el resultado total.
+            </p>
+            <table class="table table-striped">
+                <thead>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>CC</th>
+                <th>ES</th>
+                <th>RQ</th>
+                <th>AS</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div ng-show="noMatches()">
+            Ninguna regla coincide para lo seleccionado
+        </div>
+    </div>
+
+</div>

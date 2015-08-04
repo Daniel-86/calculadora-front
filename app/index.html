@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="myApp" class="no-js" xmlns:g="http://www.w3.org/1999/xhtml"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>My AngularJS App</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
+  <link rel="stylesheet" href="stylesheets/footer.css">
+  <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" target="_blank" href="https://www.scitum.com.mx">
+          <!--<asset:image src="logoScitum_MR_300x120px.png" style="display:inline" height="40" alt="Scitum"/>-->
+          <img alt="Scitum" style="display:inline" height="40" src="images/logoScitum_MR_300x120px.png">
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="/app" class="center-block">
+              <!--<g:link uri="/" class="center-block">-->
+                <span class="lead ">Calculadora de Servicios Administrados
+                </span>
+              <!--</g:link></li>-->
+            </a>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <!--<sec:ifAllGranted roles="ROLE_ADMIN">-->
+          <li class="dropdown">
+            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administración <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <!--<sec:ifAllGranted roles="ROLE_GOD">-->
+              <li>
+                <!--<g:link controller="user">-->
+                <a href="#/usuarios">
+                  Usuarios
+                </a>
+                <!--</g:link>-->
+              </li>
+              <!--</sec:ifAllGranted>-->
+              <li>
+                <a href="#/factores">Factores</a>
+                <!--<g:link uri="/factores">Factores</g:link>-->
+              </li>
+              <li>
+                <a href="#/tickets">Tickets</a>
+                <!--<g:link uri="/tickets"-->
+                <!--params="[section: 'ticket']">Tabla de tickets</g:link>-->
+              </li>
+              <li>
+                <a href="#/servicios">Servicios</a>
+                <!--<g:link controller="calculadora" action="cms">Servicios</g:link>-->
+              </li>
+              <li><a href="#/view1">view1</a> </li>
+              <li><a href="#/view2">view2</a> </li>
+              <li><a href="#/view3">view3</a> </li>
+            </ul>
+          </li>
+          <!--</sec:ifAllGranted>-->
+          <!--<sec:ifLoggedIn>-->
+          <li>
+            <a href="#/logout">Logout</a>
+            <!--<g:link controller="logout" action="index">Logout</g:link> -->
+          </li>
+          <!--</sec:ifLoggedIn>-->
+          <!--<sec:ifNotLoggedIn>-->
+          <li>
+            <a href="#/login">Login</a>
+            <!--<g:link controller="login" action="index">Login</g:link> -->
+          </li>
+          <!--</sec:ifNotLoggedIn>-->
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div>
+  </nav>
+
+
+  <div ng-view></div>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="text-muted">© 2015 - Scitum, S.A. de C.V. Todos los derechos reservados </p>
+    </div>
+  </footer>
+
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+  -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="bower_components/ui-bootstrap-tpls-0.13.1-SNAPSHOT/ui-bootstrap-tpls-0.13.1-SNAPSHOT.js"></script>
+  <script src="bower_components/checklist-model/checklist-model.js"></script>
+  <script src="bower_components/angular-toggle-switch/angular-toggle-switch.js"></script>
+  <script src="bower_components/ng-sortable/dist/ng-sortable.js"></script>
+  <script src="app.js"></script>
+  <script src="view1/view1.js"></script>
+  <script src="view2/view2.js"></script>
+  <script src="view3/view3.js"></script>
+  <script src="calcular/calculadora.js"></script>
+  <script src="factor/factor.js"></script>
+  <script src="bower_components/version/version.js"></script>
+  <script src="bower_components/version/version-directive.js"></script>
+  <script src="bower_components/version/interpolate-filter.js"></script>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+</body>
+</html>
