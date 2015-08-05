@@ -3,7 +3,7 @@
         <div accordion close-others="oneAtATime">
             <div accordion-group ng-repeat="category in categories"
                  is-open="$first"
-                 is-disabled="false">
+                 is-disabled="meetsShowReq(category)">
                 <div accordion-heading ng-class="category.customId === 'ingenieria_en_sitio'? 'alto': ''">
                     {{category.descripcion}}
                     <div toggle-switch
@@ -21,18 +21,98 @@
                         <label class="concepto">
                             <input ng-if="category.multiple"
                                    type="checkbox"
-                                   name="{{category.id}}-concepto"
-                                   checklist-model="category.selected"
+                                   name="{{category.customId}}-concepto"
+                                   checklist-model="item.rValue"
                                    checklist-value="item"/>
                             <input ng-if="!category.multiple"
                                    type="radio"
                                    name="{{category.id}}-concepto"
-                                   ng-model="category.selected"
+                                   ng-model="$parent.item.rValue"
                                    ng-value="item"/>
-                            {{item.descripcion}}
+                            {{item.customId}}
                         </label>
                     </li>
                 </ul>
+
+                <div ng-show="category.customId === 'ingenieria_en_sitio'">
+                    <div class="form-group col-md-6">
+                        <select ng-options="component as component.descripcion for component in category.componentes"
+                                ng-model="dummyVal"
+                                ng-change="showImmediateChild(dummyVal, category)"
+                                title="Elige una tecnología"
+                                class="form-control input-sm">
+                            <option>Elige una tecnología</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-3" ng-repeat="property in tempSelected.propiedades">
+                            <input type="number"
+                                   ng-show="isStringNumber(property.tipo)"
+                                   class="form-control input-sm small-input"
+                                   placeholder="{{ property.customId }}"
+                                   ng-model="property.rValue"
+                                   ng-change="updateResultModel(property, dummyVal, category)"/>
+                            <select class="form-control input-sm limit-size"
+                                    title="{{ property.descripcion }}"
+                                    ng-model="property.rValue"
+                                    ng-show="isContained(property.customId, ['volumetria'])">
+                                <option>Small Bussiness hasta 500 usuarios</option>
+                                <option>Medium Bussiness hasta 5,000 usuarios</option>
+                                <option>Datacenters & Large Enterprise más de 5,000 usuarios</option>
+                            </select>
+                            <label ng-show="isStringBoolean(property.tipo)">
+                                <input type="checkbox"
+                                       ng-model="property.rValue">
+                                {{ property.customId }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-show="category.customId === 'tecnologia'">
+                    <div class="form-group col-md-4">
+                        <select ng-options="component as component.customId for component in category.componentes"
+                                ng-model="component.rValue"
+                                ng-change="showImmediateChild(component.rValue, category)"
+                                title="Elige una tecnología"
+                                class="form-control input-sm">
+                            <option>Elige una tecnología</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-4" ng-repeat="property in tempSelected.propiedades">
+                            <input type="number"
+                                   ng-show="isStringNumber(property.tipo)"
+                                   class="form-control input-sm small-input"
+                                   placeholder="{{ property.customId }}"
+                                   ng-model="property.rValue"
+                                   ng-change="updateResultModel(property, dummyVal, category)"/>
+                            <select class="form-control input-sm limit-size"
+                                    title="{{ property.descripcion }}"
+                                    data-ng-model="property.rValue"
+                                    ng-show="isContained(property.customId, ['volumetria'])">
+                                <option>Small Bussiness hasta 500 usuarios</option>
+                                <option>Medium Bussiness hasta 5,000 usuarios</option>
+                                <option>Datacenters & Large Enterprise más de 5,000 usuarios</option>
+                            </select>
+                            <label ng-show="isStringBoolean(property.tipo)">
+                                <input type="checkbox"
+                                       ng-model="property.rValue">
+                                {{ property.customId }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-4" ng-repeat="concepto in tempSelected.conceptos">
+                            <label>
+                                <input type="checkbox"
+                                       ng-model="concepto.rValue">
+                                {{ concepto.customId.replace(tempSelected.customId, '').replace('_', '') }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -41,10 +121,28 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div >
+                <div>
                     <h3>Resumen general</h3>
                 </div>
-
+                {{ categories }}
+                <div class="col-md-12" ng-repeat="category in categories">
+                    Catego     {{ category.customId }} - {{ category.rValue }}
+                    <div class="col-md-12" ng-repeat="property in category.propiedades">
+                        Prop    {{ property.customId }} - {{ property.rValue }}
+                    </div>
+                    <div class="col-md-12" ng-repeat="concepto in category.conceptos">
+                        Concep    {{ concepto.customId }} - {{ concepto.rValue }}
+                    </div>
+                    <div class="col-md-12" ng-repeat="componente in category.componente">
+                        Compo    {{ componente.customId }} - {{ componente.rValue }}
+                        <div class="col-md-12" ng-repeat="property in componente.propiedades">
+                            Prop      {{ property.customId }} - {{ property.rValue }}
+                        </div>
+                        <div class="col-md-12" ng-repeat="concepto in componente.conceptos">
+                            Concep      {{ concepto.customId }} - {{ concepto.rValue }}
+                        </div>
+                    </div>
+                </div>
                 <button type="button" class="btn btn-primary" ng-click="calcular()" ng-disabled="isReady()">Calcular
                 </button>
             </div>

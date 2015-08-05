@@ -34,7 +34,8 @@ function mainCtrl($scope, $http, baseRemoteURL) {
     var model = {
         chosen: [],
         resultados: null,
-        openedCategory: {}
+        openedCategory: {},
+        chosenObj: {}
     };
     function getCategoryList() {
         var muted = false; if(!muted) console.log('\n');
@@ -45,6 +46,7 @@ function mainCtrl($scope, $http, baseRemoteURL) {
             $scope.chosen = model.chosen;
             $scope.resultados = model.resultados;
             $scope.openedCategory = model.openedCategory;
+            $scope.chosenObj = model.chosenObj;
         });
     }
     getCategoryList();
@@ -66,14 +68,69 @@ function mainCtrl($scope, $http, baseRemoteURL) {
     };
 
     $scope.toggleSelected = function(item, state) {
+        var muted = false;
+        if(!muted) console.log('\n');
         var key = getIdentifier(item);
-        var chosenItem = $scope.chosen[key];
-        if(!state) chosenItem = undefined;
-        else if(state && !angular.isArray(chosenItem)) chosenItem = [];
+        var chosenItem = $scope.$parent.chosen[key];
+        if(!state) {
+            $scope.$parent.chosen[key] = undefined;
+            $scope.$parent.chosenObj[key] = undefined;
+        }
+        else if(state && !angular.isArray($scope.$parent.chosen[key])){
+            $scope.$parent.chosen[key] = [];
+            $scope.$parent.chosenObj[key] = {};
+            $scope.$parent.chosenObj[key]['present'] = true;
+            if(!muted) console.log('toggleSelected chosenIem', $scope.$parent.chosen[key]);
+        }
+        if(!muted) console.log('toggleSelected isSelected', $scope.isSelected);
+        if(!muted) console.log('toggleSelected state', state);
+        if(!muted) console.log('toggleSelected scope.chosen', $scope.$parent.chosen);
+    };
+
+    $scope.meetsShowReq = function(item) {
+        var muted = true;
+        if(!muted) console.log('\n');
+        if(!muted) console.log('meetsShowReq scope.chosen', $scope.$parent.chosen);
+        var key = getIdentifier(item);
+        return item.customId === 'ingenieria_en_sitio' && !$scope.$parent.chosen[key];
     };
 
     $scope.noMatches = function() {
         return true;
+    };
+
+    $scope.showImmediateChild = function(item, parent) {
+        $scope.tempSelected = item;
+    };
+
+    $scope.updateResultModel = function(valor, item, parent, root) {
+        if(!parent && !root) {
+            $scope.chosen[item.customId] = valor;
+            return;
+        }
+        if(parent === root) {
+
+        }
+    };
+
+    $scope.isStringNumber = function(item, possibilities) {
+        if(!possibilities) possibilities = ['int', 'integer', 'number', 'float', 'double', 'decimal'];
+        return isAny(item, possibilities);
+    };
+
+    $scope.isStringBoolean = function(item, possibilities) {
+        if(!possibilities) possibilities = ['check', 'checkbox', 'boolean'];
+        return isAny(item, possibilities);
+    };
+
+    $scope.currentProperties = function() {
+        var muted = false;
+        if(!muted) console.log('\n');
+        if($scope.tempSelected && angular.isArray($scope.tempSelected.propiedades)) {
+            if (!muted) console.log('currentPoperties tempSelected', $scope.tempSelected);
+            return $scope.tempSelected.propiedades;
+        }
+        return [];
     };
 
 
@@ -100,3 +157,4 @@ calculadoraControllers.config(['$routeProvider', function($routeProvider) {
 
 calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL) {mainCtrl($scope, $http, baseRemoteURL)});
+//calculadoraControllers.filter('trim');
