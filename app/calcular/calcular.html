@@ -22,13 +22,14 @@
                             <input ng-if="category.multiple"
                                    type="checkbox"
                                    name="{{category.customId}}-concepto"
+                                   ng-change="monitor(item)"
                                    checklist-model="item.rValue"
                                    checklist-value="item"/>
                             <input ng-if="!category.multiple"
                                    type="radio"
-                                   name="{{category.id}}-concepto"
-                                   ng-model="$parent.item.rValue"
-                                   ng-value="item"/>
+                                   name="{{category.customId}}-concepto"
+                                   ng-model="item.rValue"
+                                   ng-value="true"/>
                             {{item.customId}}
                         </label>
                     </li>
@@ -124,14 +125,14 @@
                 <div>
                     <h3>Resumen general</h3>
                 </div>
-                {{ categories }}
+                <!--{{ categories }}-->
                 <div class="col-md-12" ng-repeat="category in categories">
                     Catego     {{ category.customId }} - {{ category.rValue }}
                     <div class="col-md-12" ng-repeat="property in category.propiedades">
                         Prop    {{ property.customId }} - {{ property.rValue }}
                     </div>
                     <div class="col-md-12" ng-repeat="concepto in category.conceptos">
-                        Concep    {{ concepto.customId }} - {{ concepto.rValue }}
+                        Concep    {{ concepto.customId }} - {{ concepto.rValue }}<br/>{{ monitor2(concepto) }}
                     </div>
                     <div class="col-md-12" ng-repeat="componente in category.componente">
                         Compo    {{ componente.customId }} - {{ componente.rValue }}

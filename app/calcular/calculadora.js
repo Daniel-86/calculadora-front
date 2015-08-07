@@ -133,6 +133,14 @@ function mainCtrl($scope, $http, baseRemoteURL) {
         return [];
     };
 
+    $scope.monitor = function(item) {
+        var muted = true;
+    };
+
+    $scope.monitor2 = function(item) {
+        var muted = true;
+    };
+
 
     /**
      * Para el acordeon
