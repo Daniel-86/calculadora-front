@@ -29,6 +29,55 @@ function getIdentifier(item, propertyName) {
 }
 
 
+function getConditional(item) {
+    if(!item) return false;
+    if(item.domainClass.toLowerCase() !== 'conceptoespecial') return false;
+
+    var possibilities = ['firewall', 'ips', 'filtrado_web', 'antispam'];
+    var propertiesName;
+    if(angular.isArray(item.propiedades)) {
+        propertiesName = item.propiedades.map(function(property) {
+            return property.customId;
+        });
+    }
+    else {
+        return false;
+    }
+
+    if(isIn(item.customId, possibilities)) {
+        var foundProperty = false;
+        var constraint = {};
+        for(var i=0; i<propertiesName.length; i++) {
+            if(isContained(propertiesName[i], ['cantidad'])) {
+                foundProperty = true;
+                constraint.propName = propertiesName[i];
+            }
+        }
+        if(!foundProperty) return false;
+        return constraint;
+    }
+}
+
+
+function evalConstraint(item, constraint) {
+    if(!item || !constraint) return false;
+    var propName = constraint.propName;
+    var propIdx = findWithAttr(item.propiedades, 'customId', propName);
+    if(!propName || !(propIdx>0)) return false;
+    var biggerThan = constraint.biggerThan? constraint.biggerThan: 0;
+    var value = item.propiedades[propIdx-1].rValue;
+    item.deviceCount = value;
+    return value > biggerThan;
+}
+
+
+function isQuantitySpecified(item) {
+    if(!item) return false;
+    if(item.deviceScope === 'all') return true;
+    return item.currentScope && item.currentScope > 0;
+}
+
+
 function mainCtrl($scope, $http, baseRemoteURL) {
 
     var model = {
@@ -115,12 +164,81 @@ function mainCtrl($scope, $http, baseRemoteURL) {
 
     $scope.isStringNumber = function(item, possibilities) {
         if(!possibilities) possibilities = ['int', 'integer', 'number', 'float', 'double', 'decimal'];
-        return isAny(item, possibilities);
+        return isAny(item.toLowerCase(), possibilities);
     };
 
     $scope.isStringBoolean = function(item, possibilities) {
         if(!possibilities) possibilities = ['check', 'checkbox', 'boolean'];
-        return isAny(item, possibilities);
+        return isAny(item.toLowerCase(), possibilities);
+    };
+
+    $scope.isStringVolumetria = function(item, possibilities) {
+        if(!possibilities) possibilities = ['volumetria'];
+        return isContained(removeDiacritics(item.toLowerCase()), possibilities);
+    };
+
+    $scope.showChildren = function(item) {
+        if(!item) return false;
+        var constraint = getConditional(item);
+        if(!constraint) return true;
+        var show = evalConstraint(item, constraint, item.deviceCount);
+        if(show) item.deviceCountArray = generateRangeArray(item.deviceCount);
+        if(show && !angular.isDefined(item.isPartialSelected)) {
+            item.deviceScope = 'all';
+            item.deviceRange = {min:0, max:item.deviceCount};
+        }
+        item.isPartialSelected = show;
+        if(item.deviceScope === 'all') item.isFullSelected = show;
+        //item.isFullSelected = item.deviceScope === 'all'? show: isQuantitySpecified(item);
+        return show;
+    };
+
+    $scope.applyToChanged = function(item) {
+        item.isFullSelected = isQuantitySpecified(item);
+    };
+
+    $scope.deviceScopeChanged = function(item) {
+        if(item.deviceScope === 'all') {
+            item.deviceRange = {min:0, max:item.deviceCount};
+        }
+        else if(item.deviceScope === 'single') {
+            item.deviceRange = {min:item.currentScope-1, max:item.currentScope};
+        }
+        else if(item.deviceScope === 'range') {
+            item.deviceRarnge = {min:0, max:item.currentScope};
+        }
+        item.currentSelection = item.rValue[item.deviceRange.min];
+    };
+
+    $scope.updateSelections = function(item) {
+        if(!angular.isDefined(item.rValue) || !angular.isArray(item.rValue)) item.rValue = [];
+        for(var i=item.deviceRange.min; i<item.deviceRange.max; i++) {
+            //item.rValue[i] = item.currentSelection;
+            item.rValue[i] = angular.copy(item.currentSelection);
+            var alguna = 'asdf';
+        }
+    };
+
+    $scope.selectAll = function(item) {
+        item.currentSelection = angular.copy(item.conceptos);
+        $scope.updateSelections(item);
+    };
+
+    $scope.selectNone = function(item) {
+        item.currentSelection = undefined;
+        $scope.updateSelections(item);
+    };
+
+    $scope.copySelection = function(item) {
+        item.clipboard = angular.copy(item.currentSelection);
+    };
+
+    $scope.pasteSelection = function(item) {
+        if(item.clipboard) {
+            item.currentSelection = angular.copy(item.clipboard);
+            $scope.updateSelections(item);
+            item.clipboard = undefined;
+        }
     };
 
     $scope.currentProperties = function() {
@@ -133,13 +251,6 @@ function mainCtrl($scope, $http, baseRemoteURL) {
         return [];
     };
 
-    $scope.monitor = function(item) {
-        var muted = true;
-    };
-
-    $scope.monitor2 = function(item) {
-        var muted = true;
-    };
 
 
     /**
