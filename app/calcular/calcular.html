@@ -55,9 +55,9 @@
                                     title="{{ property.descripcion }}"
                                     data-ng-model="property.rValue"
                                     ng-show="isStringVolumetria(property.customId)">
-                                <option>Small Bussiness hasta 500 usuarios</option>
-                                <option>Medium Bussiness hasta 5,000 usuarios</option>
-                                <option>Datacenters & Large Enterprise más de 5,000 usuarios</option>
+                                <option value="1">Small Bussiness hasta 500 usuarios</option>
+                                <option value="2">Medium Bussiness hasta 5,000 usuarios</option>
+                                <option value="3">Datacenters & Large Enterprise más de 5,000 usuarios</option>
                             </select>
                             <label ng-show="isStringBoolean(property.tipo)">
                                 <input type="checkbox"
@@ -89,6 +89,7 @@
                                     title="{{ property.descripcion }}"
                                     data-ng-model="property.rValue"
                                     ng-show="isStringVolumetria(property.customId)">
+                                <option value="">Elige una</option>
                                 <option>Small Bussiness hasta 500 usuarios</option>
                                 <option>Medium Bussiness hasta 5,000 usuarios</option>
                                 <option>Datacenters & Large Enterprise más de 5,000 usuarios</option>
@@ -102,27 +103,26 @@
                     </div>
                     <div class="col-md-12 form-group" ng-show="category.tempSelected.isPartialSelected">
                         <div class="col-sm-5">
-                            <label>
-                                <input type="radio"
-                                       name="applyTo"
-                                       value="all"
-                                       ng-change="applyToChanged(category.tempSelected)"
-                                       ng-model="category.tempSelected.deviceScope"/>Todos
-                            </label>
-                            <label>
-                                <input type="radio"
-                                       name="applyTo"
-                                       value="single"
-                                       ng-change="applyToChanged(category.tempSelected)"
-                                       ng-model="category.tempSelected.deviceScope"/>Uno
-                            </label>
-                            <label>
-                                <input type="radio"
-                                       name="applyTo"
-                                       value="range"
-                                       ng-change="applyToChanged(category.tempSelected)"
-                                       ng-model="category.tempSelected.deviceScope"/>Varios
-                            </label>
+                            <div class="btn-group">
+                                <label class="btn btn-default"
+                                       data-ng-model="category.tempSelected.deviceScope"
+                                       data-ng-change="applyToChanged(category.tempSelected)"
+                                       btn-radio="'all'">
+                                    Todos
+                                </label>
+                                <label class="btn btn-default"
+                                       data-ng-model="category.tempSelected.deviceScope"
+                                       data-ng-change="applyToChanged(category.tempSelected)"
+                                       btn-radio="'single'">
+                                    Uno
+                                </label>
+                                <label class="btn btn-default"
+                                       data-ng-model="category.tempSelected.deviceScope"
+                                       data-ng-change="applyToChanged(category.tempSelected)"
+                                       btn-radio="'range'">
+                                    Varios
+                                </label>
+                            </div>
                         </div>
                         <div class="col-sm-7">
                             <select ng-show="category.tempSelected.deviceScope === 'single'"
@@ -130,7 +130,9 @@
                                     data-ng-model="category.tempSelected.currentScope"
                                     data-ng-change="deviceScopeChanged(category.tempSelected)"
                                     class="form-control input-sm min-width-x"
-                                    title="elige uno para modificar sus opciones"></select>
+                                    title="elige uno para modificar sus opciones">
+                                <option value="">Elige uno para modificar sus opciones</option>
+                            </select>
                             <input type="number"
                                    placeholder="#"
                                    class="form-control input-sm"
@@ -194,26 +196,54 @@
                 <div>
                     <h3>Resumen general</h3>
                 </div>
-                <!--{{ categories }}-->
                 <div class="col-md-12" ng-repeat="category in categories">
-                    Catego     {{ category.customId }} - {{ category.rValue }}
-                    <div class="col-md-12" ng-repeat="property in category.propiedades">
-                        Prop    {{ property.customId }} - {{ property.rValue }}
+                    <div ng-show="anyValuedChild(category) && category.customId === 'tipo_de_cliente'"
+                         class="col-md-12 descRow">
+                        <div class="col-sm-3">{{ category.customId }}</div>
+                        <div class="col-sm-9"><strong>{{ category.rValue.customId }}</strong></div>
                     </div>
-                    <div class="col-md-12" ng-repeat="concepto in category.conceptos">
-                        Concep    {{ concepto.customId }} - {{ concepto.rValue }}<br/>{{ monitor2(concepto) }}
-                    </div>
-                    <div class="col-md-12" ng-repeat="componente in category.componente">
-                        Compo    {{ componente.customId }} - {{ componente.rValue }}
-                        <div class="col-md-12" ng-repeat="property in componente.propiedades">
-                            Prop      {{ property.customId }} - {{ property.rValue }}
+
+                    <div ng-show="anyValuedChild(category) && category.customId === 'ingenieria_en_sitio'"
+                         class="col-md-12 descRow">
+                        <div class="col-sm-3">{{ category.customId }}</div>
+                        <div class="col-sm-9">
+                            <div ng-repeat="componente in category.componentes" ng-show="anyValuedChild(componente)">
+                                {{ componente.customId }} <span ng-repeat="propiedad in componente.propiedades">
+                                {{ propiedad.rValue }}</span>
+                            </div>
                         </div>
-                        <div class="col-md-12" ng-repeat="concepto in componente.conceptos">
-                            Concep      {{ concepto.customId }} - {{ concepto.rValue }}
+                    </div>
+
+                    <div ng-show="anyValuedChild(category) && category.customId == 'tecnologia'"
+                         class="col-md-12 descRow">
+                        <div class="col-sm-3">{{ category.customId }}</div>
+                        <div class="col-sm-9"></div>
+                        <div class="col-sm-12" ng-repeat="componente in category.componentes"
+                             ng-show="anyValuedChild(componente)">
+                            <div class="col-sm-3">{{ componente.customId }}</div>
+                            <div class="col-sm-9">
+                                <div ng-show="componente.propiedades[1].rValue">
+                                    <span>volumetría <strong>{{ componente.propiedades[1].rValue }}</strong></span>
+                                </div>
+                                <!--<div ng-repeat="deviceCount in getDeviceCounts(componente.rValue)">-->
+                                    <!--{{ deviceCount }}-->
+                                    <!--&lt;!&ndash;{{ match.count }} {{ componente.customId }}(s): {{ match.selection.join(', ') }}&ndash;&gt;-->
+                                <!--</div>-->
+                                <!--<span style="white-space: pre;">{{ basura(componente) }}</span>-->
+                                <!--<div ng-repeat="row in basura(componente)">-->
+                                    <!--{{ row }}-->
+                                <!--</div>-->
+                                <span ng-bind-html="basura(componente)"></span>
+                            </div>
+                            <br/>
+                            <br/>
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary" ng-click="calcular()"
+                <!--<button type="button" class="btn btn-primary" ng-click="calcular()"-->
+                        <!--data-ng-disabled="isReady()">Calcular-->
+                <!--</button>-->
+                <button type="button" class="btn btn-primary" ng-click="getResults()"
                         data-ng-disabled="isReady()">Calcular
                 </button>
             </div>
@@ -252,33 +282,6 @@
         </div>
         <div ng-show="noMatches()">
             Ninguna regla coincide para lo seleccionado
-        </div>
-    </div>
-
-    <div class="col-md-12">
-        <div class="col-md-12" ng-repeat="catego in categories">
-            <em>{{ catego.customId }}</em>
-            <br/>
-            <strong> rValue </strong>{{ catego.rValue }}
-            <br/>
-            <strong> tempSelected </strong>{{ catego.tempSelected }}
-            <div class="col-md-12" ng-repeat="prop in catego.propiedades">
-                <em>{{ prop.customId }}</em>
-                <br/>
-                <strong> rValue </strong>{{ prop.rValue }}
-            </div>
-            <div class="col-md-12" ng-repeat="compo in catego.componentes">
-                <em>{{ compo.customId }}</em>
-                <br/>
-                <strong> rValue </strong>{{ compo.rValue }}
-                <div class="col-md-12" ng-repeat="propi in compo.propiedades">
-                    <em>{{ propi.customId }}</em>
-                    <br/>
-                    <strong> rValue </strong>{{ propi.rValue }}
-                </div>
-            </div>
-            <br/>
-            <br/>
         </div>
     </div>
 

@@ -78,7 +78,7 @@ function isQuantitySpecified(item) {
 }
 
 
-function mainCtrl($scope, $http, baseRemoteURL) {
+function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
 
     var model = {
         chosen: [],
@@ -87,7 +87,7 @@ function mainCtrl($scope, $http, baseRemoteURL) {
         chosenObj: {}
     };
     function getCategoryList() {
-        var muted = false; if(!muted) console.log('\n');
+        var muted = true; if(!muted) console.log('\n');
         $http.get(baseRemoteURL+'calculadora/list').success(function(data) { if(!muted) console.log('getCategoryList' +
             ' data', data);
             model.categories = data.categories; if(!muted) console.log('getCategoryList model', model);
@@ -101,7 +101,7 @@ function mainCtrl($scope, $http, baseRemoteURL) {
     getCategoryList();
 
 
-    var muted = false; if(!muted) console.log('\n');
+    var muted = true; if(!muted) console.log('\n');
 
     //$scope.categories = model.categories;
     //$scope.chosen = model.chosen;
@@ -117,7 +117,7 @@ function mainCtrl($scope, $http, baseRemoteURL) {
     };
 
     $scope.toggleSelected = function(item, state) {
-        var muted = false;
+        var muted = true;
         if(!muted) console.log('\n');
         var key = getIdentifier(item);
         var chosenItem = $scope.$parent.chosen[key];
@@ -205,9 +205,11 @@ function mainCtrl($scope, $http, baseRemoteURL) {
             item.deviceRange = {min:item.currentScope-1, max:item.currentScope};
         }
         else if(item.deviceScope === 'range') {
-            item.deviceRarnge = {min:0, max:item.currentScope};
+            item.deviceRange = {min:0, max:item.currentScope};
         }
+        if(!item.rValue) item.rValue = [];
         item.currentSelection = item.rValue[item.deviceRange.min];
+        $scope.applyToChanged(item);
     };
 
     $scope.updateSelections = function(item) {
@@ -242,7 +244,7 @@ function mainCtrl($scope, $http, baseRemoteURL) {
     };
 
     $scope.currentProperties = function() {
-        var muted = false;
+        var muted = true;
         if(!muted) console.log('\n');
         if($scope.tempSelected && angular.isArray($scope.tempSelected.propiedades)) {
             if (!muted) console.log('currentPoperties tempSelected', $scope.tempSelected);
@@ -251,6 +253,106 @@ function mainCtrl($scope, $http, baseRemoteURL) {
         return [];
     };
 
+    $scope.anyValuedChild = function(item) {
+        if(!item) return false;
+        if(item.domainClass.toLowerCase() === 'categoria') {
+            if(item.rValue) return item.rValue;
+            return item.componentes.some(function(e) {
+                if(e.rValue) return true;
+                return e.propiedades.some(function(p) {
+                    return p.rValue;
+                });
+            });
+        }
+        else if(item.domainClass.toLowerCase() === 'conceptoespecial') {
+            return item.propiedades.some(function(p) {
+                return p.rValue;
+            });
+        }
+        else if(item.domainClass.toLowerCase() === 'propiedad') {
+            return item.rValue;
+        }
+    };
+
+    $scope.getDeviceCounts = function(item) {
+        var data = formatData(item);
+        return data;
+    };
+
+
+    $scope.basura = function(item) {
+        var data =  $scope.getDeviceCounts(item.rValue);
+        var stringResult = '';
+        var prefix = item.customId;
+        for(var i=0; i<data.length; i++) {
+            var arrSels = data[i].selection.map(function(s) {
+                return s.replace(prefix, '').replace(/_/g, ' ');
+            });
+            //stringResult += data[i].count +' '+prefix+'(s): '+arrSels.join(', ')+'\n';
+            stringResult += '<strong>' +data[i].count +' '+prefix+'(s)</strong>: '+arrSels.join(', ')+'<br/>';
+        }
+        return $sce.trustAsHtml(stringResult);
+        //return data;
+    };
+
+    $scope.getResults = function() {
+        var postData = {};
+        for(var i=0; i<$scope.categories.length; i++) {
+            var category = $scope.categories[i];
+            if(category.customId === 'tipo_de_cliente') {
+                postData[category.customId] = category.rValue;
+            }
+            else if(category.customId == 'ingenieria_en_sitio') {
+                var tempArr = [];
+                var categoContent = {};
+                for(var j=0; j<category.componentes.length; j++) {
+                    var hasvalue = false;
+                    var tempObj = {};
+                    var componente = category.componentes[j];
+                    if($scope.anyValuedChild(componente)) {
+                        for(var k=0; k<componente.propiedades.length; k++) {
+                            var prop = componente.propiedades[k];
+                            if(prop.rValue) {
+                                hasvalue = true;
+                                tempObj[prop.customId] = prop.rValue;
+                            }
+                        }
+                        tempObj[componente.customId] = true;
+                        categoContent[componente.customId] = tempObj;
+                    }
+                }
+                postData[category.customId] = categoContent;
+            }
+            else if(category.customId === 'tecnologia') {
+                var tempArrT = [];
+                var categoContentT = {};
+                for(var jT=0; jT<category.componentes.length; jT++) {
+                    var hasvalueT = false;
+                    var tempObjT = {};
+                    var componenteT = category.componentes[jT];
+                    if($scope.anyValuedChild(componenteT)) {
+
+                        var data =  $scope.getDeviceCounts(componenteT.rValue);
+                        categoContentT[componenteT.customId] = {devices: data, volumetria: componenteT.propiedades[1].rValue};
+
+
+
+                    }
+                }
+                postData[category.customId] = categoContentT;
+            }
+        }
+        //return postData;
+
+
+        $http.post(baseRemoteURL+'calculadora/calcular', {"postData": postData})
+            .success(function(data) {
+
+            })
+            .error(function(data) {
+
+            });
+    };
 
 
     /**
@@ -259,12 +361,48 @@ function mainCtrl($scope, $http, baseRemoteURL) {
     $scope.oneAtATime = true;
 }
 
-//calculadoraControllers.config(['$routeProvider', function($routeProvider) {
-//    $routeProvider.when('/calcular', {
-//        templateUrl: 'calcular/calcular.html',
-//        controller: 'CalculadoraMainCtrl'
-//    });
-//}]);
+
+function formatServices() {
+    return function(item) {
+        if(!item) return [];
+        if(!angular.isArray(item)) return [];
+        var objects = [];
+        for(var i=0; i<item.length; i++) {
+            var selections = item[i].map(function(e) {return e.customId;});
+            //var selections = ['firewall_firewall_ha'];
+            var idx = findWithAttr(objects, 'selection', selections);
+            //var exists = objects.some(function(e) {
+            //    e.selection.compare(selections);
+            //});
+            if(idx > 0) {
+                objects[idx-1].count++;
+            }
+            else {
+                objects.push({selection: selections, count: 1});
+            }
+        }
+        return objects;
+    }
+}
+
+function formatData(item) {
+    if(!item) return [];
+    if(!angular.isArray(item)) return [];
+    var objects = [];
+    //return [{count: 1, selection: ['firewall_firewall_ha']}];
+    for(var i=0; i<item.length; i++) {
+        var selections = item[i].map(function(e) {return e.customId;});
+        //var selections = ['firewall_firewall_ha'];
+        var idx = findWithAttr(objects, 'selection', selections);
+        if(idx > 0) {
+            objects[idx-1].count++;
+        }
+        else {
+            objects.push({selection: selections, count: 1});
+        }
+    }
+    return objects;
+}
 
 
 calculadoraControllers.config(['$routeProvider', function($routeProvider) {
@@ -275,5 +413,6 @@ calculadoraControllers.config(['$routeProvider', function($routeProvider) {
 }]);
 
 calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL) {mainCtrl($scope, $http, baseRemoteURL)});
+calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce)});
+calculadoraControllers.filter('prettyPrint', formatServices);
 //calculadoraControllers.filter('trim');

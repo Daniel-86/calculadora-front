@@ -9,6 +9,11 @@ function findWithAttr(array, attr, value, deep) {
             if (angular.isObject(array[i]) && array[i][attr] === value) {
                 return i+1;
             }
+            else if(angular.isObject(array[i]) && angular.isArray(array[i][attr])) {
+                if(array[i][attr].compare(value)) {
+                    return i+1;
+                }
+            }
         }
     }
 }
@@ -24,7 +29,7 @@ function indexOfAll(array, value) {
 }
 
 function isAny(item, possibilities) {
-    var muted = false;
+    var muted = true;
     if(!possibilities) return false;
     if(!muted) console.log('\n');
     if(!muted) console.log('isAny item', item);
@@ -69,6 +74,19 @@ function generateRangeArray(count) {
     }
     return rangeArray;
 }
+
+
+
+Array.prototype.compare = function(testArr) {
+    if(this.length != testArr.length) return false;
+    for(var i=0; i<testArr.length; i++) {
+        if(this[i].compare) {
+            if(!this[i].compare(testArr[i])) return false;
+        }
+        if(this[i] !== testArr[i]) return false;
+    }
+    return true;
+};
 
 
 
