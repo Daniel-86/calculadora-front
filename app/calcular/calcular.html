@@ -276,7 +276,26 @@
                 <th>RQ</th>
                 <th>AS</th>
                 </thead>
-                <tbody>
+                <tbody ng-repeat="row in resultados">
+                <tr title="">
+                    <td>{{row.ticket.nombre}}</td>
+                    <td>{{row.ticket.descripcion}}</td>
+                    <td>{{row.ticket.cc}}</td>
+                    <td>{{row.ticket.es}}</td>
+                    <td>{{row.ticket.rq}}</td>
+                    <td>{{row.ticket.acs}}</td>
+                </tr>
+                <tr ng-repeat="res in row.factores"
+                    ng-class="$last? 'success': ''"
+                    title="{{res.factor}}">
+                    <td>{{res.nombre}}</td>
+                    <td>{{res.descripcion}}</td>
+                    <td>{{res.cc}}</td>
+                    <td>{{res.es}}</td>
+                    <td>{{res.rq}}</td>
+                    <td>{{res.acs}}</td>
+                </tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                 </tbody>
             </table>
         </div>

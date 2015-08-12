@@ -145,7 +145,7 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
     };
 
     $scope.noMatches = function() {
-        return true;
+        return $scope.resutlados;
     };
 
     $scope.showImmediateChild = function(item, parent) {
@@ -276,6 +276,15 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
 
     $scope.getDeviceCounts = function(item) {
         var data = formatData(item);
+        var cantidades = {};
+        angular.forEach(data, function(item) {
+           if(item.count > 0)  {
+
+           }
+            for(var i=0; i<item.selection.length; i++) {
+                cantidades[item.selection[i]] = item.count;
+            }
+        });
         return data;
     };
 
@@ -345,9 +354,39 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
         //return postData;
 
 
+        var cantidades = {};
         $http.post(baseRemoteURL+'calculadora/calcular', {"postData": postData})
             .success(function(data) {
+                $scope.resultados = data.results;
+                //cantidades = data.counts;
 
+                angular.forEach($scope.resultados, function(row) {
+                    var baseData = angular.copy(row.ticket);
+                    var partialResults = angular.copy(baseData);
+                    cantidades = row.counts;
+                    angular.forEach(row.factores, function(mod) {
+                        var cardinality = 1;
+                        if(mod.lowerLimit > 0) {
+                            var nitem = cantidades[mod.customId];
+                            if(!muted) console.log('calcularAjax nitem', nitem);
+                            cardinality = (nitem - mod.lowerLimit)*mod.step;
+                        }
+                        if(!muted) console.log('calcularAjax cardinality', cardinality);
+                        partialResults.cc = Math.round(partialResults.cc + cardinality*mod.factor*partialResults.cc);
+                        partialResults.acs = Math.round(partialResults.acs + cardinality*mod.factor*partialResults.acs);
+                        partialResults.es = Math.round(partialResults.es + cardinality*mod.factor*partialResults.es);
+                        partialResults.rq = Math.round(partialResults.rq + cardinality*mod.factor*partialResults.rq);
+
+                        mod.cc = partialResults.cc;
+                        mod.es = partialResults.es;
+                        mod.rq = partialResults.rq;
+                        mod.acs = partialResults.acs;
+
+                        if(!muted) console.log('calcularAjax mod', mod);
+                        if(!muted) console.log('calcularAjax baseData', $scope.baseData);
+                        if(!muted) console.log('calcularAjax cal', $scope.baseData.cc  + mod.factor*$scope.baseData.cc);
+                    });
+                });
             })
             .error(function(data) {
 
