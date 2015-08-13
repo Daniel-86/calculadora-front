@@ -444,13 +444,6 @@ function formatData(item) {
 }
 
 
-calculadoraControllers.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/calcular', {
-        templateUrl: 'factor/dummy.html',
-        controller: 'FactorCtrl'
-    });
-}]);
-
 calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce)});
 calculadoraControllers.filter('prettyPrint', formatServices);

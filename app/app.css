@@ -208,6 +208,11 @@ height: 32px;
 .text-muted:hover {
   text-decoration: none;
 }
+
+
+tr.addRow {
+  background-color: #2A2A2A !important;
+}
 /**/
 /**/
 /*Termina estilos de la página principal*/

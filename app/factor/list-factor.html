@@ -1,7 +1,10 @@
 <div ng-controller="FactorCtrl">
-    <div class="row col-md-12 form-group">
-        <div class="col-md-1"><span class="control-label">Filtrar por</span> </div>
-        <div class="col-md-3">
+    <div class="page-header">
+        <h1>Factores <small class="label label-default">{{ factorList.length }}</small></h1>
+    </div>
+    <div class="col-md-12 form-group">
+        <div class="col-md-1"><labael class="control-label">Filtrar por</labael> </div>
+        <div class="col-sm-9 col-md-3">
             <input type="text"
                    id="searchbox"
                    ng-model="search"
@@ -9,20 +12,33 @@
                    placeholder="Palabra/Frase clave"
                    class="form-control">
         </div>
+        <div class="col-sm-2 col-md-2 pull-right">
+            <a href="#/factor/" class="btn btn-link" aria-label="Agregar factor">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo</a>
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12" ng-show="filteredItems > 0">
-            <table class="table table-striped table-bordered">
+    <div class="">
+        <div class="col-md-12 form-group" ng-show="filteredItems > 0">
+            <table class="table table-striped ">
                 <thead>
                 <th>Nombre<a ng-click="sort_by('nombre');"><i class="glyphicon glyphicon-sort"></i> </a> </th>
                 <th>Descripción<a ng-click="sort_by('descripcion');"><i class="glyphicon glyphicon-sort"></i> </a> </th>
+                <th></th>
                 </thead>
                 <tbody>
                 <tr
                         ng-repeat="data in filtered = (factorList | filter:search | orderBy :predicate :reverse) | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
-                    <td><a href="factor/{{data.id}}"> {{data.nombre}}</a></td>
+                    <td><a href="#/factor/{{data.id}}"> {{data.nombre}}</a></td>
                     <td>{{data.descripcion}}</td>
+                    <td class="text-center">
+                        <a href=""
+                           ng-click="deleteFactor($index)"
+                           class="btn btn-link"
+                           title="Eliminar">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

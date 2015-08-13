@@ -18,5 +18,17 @@ config(['$routeProvider', function($routeProvider) {
         templateUrl: 'factor/list-factor.html',
         controller: 'FactorCtrl'
       });
+        $routeProvider.when('/factor/:factorId?', {
+            templateUrl: 'factor/create-factor.html',
+            controller: 'FactorCtrl'
+        });
+        $routeProvider.when('/tickets', {
+            templateUrl: 'ticket/list-ticket.html',
+            controller: 'TicketCtrl'
+        });
+        $routeProvider.when('ticket/:ticketId?', {
+            templateUrl: 'ticket/create-ticket.html',
+            controller: 'TicketCtrl'
+        });
   $routeProvider.otherwise({redirectTo: '/calcular'});
 }]);

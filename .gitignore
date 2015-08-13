@@ -4,7 +4,6 @@ node_modules/
 bower_components/
 tmp
 .DS_Store
-.idea
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion

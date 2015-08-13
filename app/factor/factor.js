@@ -2,15 +2,15 @@
 
 var factorModule = angular.module('factor', ['as.sortable', 'ui.bootstrap', 'ngRoute']);
 
-function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL) {
+function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {
     var muted = false;
     if(!muted) console.log('\n');
     $scope.factor = {};
-    $scope.factor.id = angular.isDefined(ticketId)? ticketId: null;
-    if(!muted) console.log('factorCtrl ticketId', ticketId);
+    $scope.factor.id = angular.isDefined($routeParams.factorId)? $routeParams.factorId: null;
+    if(!muted) console.log('factorCtrl factorId', $routeParams.factorId);
 
     function getAvailableDependencies() {
-        var url = baseRemoteURL+'factor/dependenciesData' + (ticketId > 0? '/'+ticketId: '');
+        var url = baseRemoteURL+'factor/dependenciesData' + ($scope.factor.id > 0? '/'+$scope.factor.id: '');
         if(!muted) console.log('factorCtrl url', url);
         $http.get(url).success(function (data) {
             if(!muted) console.log('factorCtrl data', data);
@@ -60,6 +60,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL) {
             if(status === 201 || status === 200) {
                 //creaForma.generalInfo = ['El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')];
                 $scope.alerts = [{type: 'success', msg: 'El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')}];
+                $location.path('/factor/'+data.id);
             }
         }
         function errorAjax(data, status, headers, config)  {
@@ -92,14 +93,29 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL) {
         }
 
         if($scope.factor.id > 0) {
-            $http.put(baseRemoteURL+url, factorData)
+            $http.put(url, factorData)
                 .success(successAjax)
                 .error(errorAjax);
         }
         else {
-            $http.post(baseRemoteURL+url, factorData)
+            $http.post(url, factorData)
                 .success(successAjax)
                 .error(errorAjax);
+        }
+    };
+
+    $scope.deleteFactor = function(idx) {
+        if(angular.isArray($scope.factorList)) {
+            var delData = {item: $scope.factorList[idx]};
+            if(!delData) {
+                return;
+            }
+            $http.delete(baseRemoteURL+'factor/delete/'+delData.item.id)
+                .success(function(data) {})
+                .error(function(data) {});
+            //$http.delete(baseRemoteURL+'factor/delete', {data: delData, params: delData.id})
+            //    .success(function(data) {})
+            //    .error(function(data) {});
         }
     };
 
@@ -176,23 +192,8 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL) {
 }
 
 
-
-//factorModule.config(['$routeProvider', function($routeProvider) {
-//    $routeProvider.when('/factores', {
-//        templateURL: 'factor/list-factor.html',
-//        controller: 'FactorCtrl'
-//    })
-//}]);
-
-factorModule.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/factores', {
-        templateURL: 'calcular/dummy.html',
-        controller: 'CalculadoraMainCtrl'
-    });
-}]);
-
 factorModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-factorModule.controller('FactorCtrl', [function() {console.log('ASDFASDFASFDASF');}]);
+factorModule.controller('FactorCtrl', function($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {factorCtrl($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location)});
 factorModule.directive('dependsOn', function() {
     return {
         restrict: 'A',
