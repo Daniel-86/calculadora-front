@@ -1,4 +1,5 @@
 //= require_self
+'use strict';
 
 var calculadoraControllers = angular.module('calculadora', ['checklist-model', 'toggle-switch', 'ui.bootstrap', 'ngRoute']);
 
@@ -445,6 +446,6 @@ function formatData(item) {
 
 
 calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce)});
+calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce);});
 calculadoraControllers.filter('prettyPrint', formatServices);
 //calculadoraControllers.filter('trim');

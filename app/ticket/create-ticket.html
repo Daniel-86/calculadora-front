@@ -1,18 +1,18 @@
 <div>
     <div class="col-md-12" id="dependencies-container">
         <div class="page-header">
-            <h1>{{factor.id > 0? 'Editar': 'Crear'}} <small>Factor {{ factor.id > 0? factor.id: '' }}</small></h1>
+            <h1>{{ticket.id > 0? 'Editar': 'Crear'}} <small>Ticket {{ ticket.id > 0? ticket.id: '' }}</small></h1>
         </div>
 
         <div alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</div>
 
-        <form novalidate class="" name="createForm" ng-submit="createFactorAjax()">
+        <form novalidate class="" name="createForm" ng-submit="createTicketAjax()">
             <div class="form-horizontal col-md-12">
                 <div class="form-group col-md-5">
                     <label for="nombre" class="control-label col-md-4">Nombre</label>
                     <div class="col-md-8">
                         <input type="text" name="nombre" id="nombre" class="form-control" required
-                               ng-model="factor.nombre">
+                               ng-model="ticket.nombre">
                         <span style="color: #ff0000;" ng-show="createForm.nombre.$dirty && createForm.nombre.$invalid">
                             <span ng-show="createForm.nombre.$error.required">
                                 Requerido</span>
@@ -24,18 +24,18 @@
                 </div>
 
                 <div class="form-group col-md-5">
-                    <label for="factor" class="control-label col-md-4">Factor</label>
+                    <label for="ticket" class="control-label col-md-4">Ticket</label>
 
                     <div class="col-md-8">
-                        <input type="number" name="factor" id="factor" class="form-control" step="0.25" required
-                               ng-model="factor.factor">
-                        <span style="color: #ff0000;" ng-show="createForm.factor.$dirty && createForm.factor.$invalid">
-                            <span ng-show="!createForm.factor.$error.number && createForm.factor.$error.required">
+                        <input type="number" name="ticket" id="ticket" class="form-control" step="0.25" required
+                               ng-model="ticket.ticket">
+                        <span style="color: #ff0000;" ng-show="createForm.ticket.$dirty && createForm.ticket.$invalid">
+                            <span ng-show="!createForm.ticket.$error.number && createForm.ticket.$error.required">
                                 Requerido</span>
-                            <span ng-show="createForm.factor.$error.number">Solo números</span>
+                            <span ng-show="createForm.ticket.$error.number">Solo números</span>
                         </span>
-                        <span style="color: #ff0000;" ng-show="createForm.factor.serverErrors">
-                            <span ng-repeat="errorMessage in createForm.factor.serverErrors">{{errorMessage}}</span>
+                        <span style="color: #ff0000;" ng-show="createForm.ticket.serverErrors">
+                            <span ng-repeat="errorMessage in createForm.ticket.serverErrors">{{errorMessage}}</span>
                         </span>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                                   rows="5" style="resize: none;"
                                   name="descripcion"
                                   class="form-control"
-                                  data-ng-model="factor.descripcion"></textarea>
+                                  data-ng-model="ticket.descripcion"></textarea>
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
             <!--<div class="form-group col-md-12">-->
                 <!--<label for="descripcion" class="control-label">Descripción</label>-->
                 <!--<textarea id="descripcion" name="descripcion" class="form-control"-->
-                          <!--ng-model="factor.descripcion"></textarea>-->
+                          <!--ng-model="ticket.descripcion"></textarea>-->
             <!--</div>-->
 
             <div class="col-md-12">
@@ -72,7 +72,7 @@
                         <th></th>
                         </thead>
                         <tbody>
-                        <tr  ng-form="tempForm" ng-repeat="dependency in factor.dependencies"
+                        <tr  ng-form="tempForm" ng-repeat="dependency in ticket.dependencies"
                              title="{{dependency.item.descripcion}}">
                             <td>{{dependency.item.customId}}</td>
                             <td>
@@ -162,8 +162,8 @@
                 <button type="submit"
                         class="btn btn-primary"
                         ng-disabled="createForm.$invalid || !createForm.$dirty">
-                    {{factor.id > 0? 'Editar': 'Crear'}}</button>
-                <a href="#/factores" class="btn btn-default">
+                    {{ticket.id > 0? 'Editar': 'Crear'}}</button>
+                <a href="#/tickets" class="btn btn-default">
                     Cancelar
                 </a>
             </div>

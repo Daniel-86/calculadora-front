@@ -1,67 +1,67 @@
 
 'use strict';
 
-var factorModule = angular.module('factor', ['as.sortable', 'ui.bootstrap', 'ngRoute']);
+var ticketModule = angular.module('ticket', ['as.sortable', 'ui.bootstrap', 'ngRoute']);
 
-function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {
+function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {
     var muted = false;
     if(!muted) console.log('\n');
-    $scope.factor = {};
-    $scope.factor.id = angular.isDefined($routeParams.factorId)? $routeParams.factorId: null;
-    if(!muted) console.log('factorCtrl factorId', $routeParams.factorId);
+    $scope.ticket = {};
+    $scope.ticket.id = angular.isDefined($routeParams.ticketId)? $routeParams.ticketId: null;
+    if(!muted) console.log('ticketCtrl ticketId', $routeParams.ticketId);
 
     function getAvailableDependencies() {
-        var url = baseRemoteURL+'factor/dependenciesData' + ($scope.factor.id > 0? '/'+$scope.factor.id: '');
-        if(!muted) console.log('factorCtrl url', url);
+        var url = baseRemoteURL+'ticket/dependenciesData' + ($scope.ticket.id > 0? '/'+$scope.ticket.id: '');
+        if(!muted) console.log('ticketCtrl url', url);
         $http.get(url).success(function (data) {
-            if(!muted) console.log('factorCtrl data', data);
+            if(!muted) console.log('ticketCtrl data', data);
             $scope.available = data.available;
-            $scope.factor = data.factor;
-            if($scope.factor && $scope.factor.id > 0) $scope.selected = data.factor.dependencies;
+            $scope.ticket = data.ticket;
+            if($scope.ticket && $scope.ticket.id > 0) $scope.selected = data.ticket.dependencies;
         });
     }
 
     getAvailableDependencies();
 
     function getList() {
-        $http.get(baseRemoteURL+'factor/list').success(function(data) {
-            $scope.factorList = data;
-            $scope.filteredItems = $scope.factorList.length;
+        $http.get(baseRemoteURL+'ticket/list').success(function(data) {
+            $scope.ticketList = data;
+            $scope.filteredItems = $scope.ticketList.length;
             $scope.currentPage = 1;
             $scope.entryLimit = 20;
-            $scope.totalItems = $scope.factorList.length;
+            $scope.totalItems = $scope.ticketList.length;
         });
     }
     getList();
 
 
-    $scope.createFactorAjax = function () {
+    $scope.createTicketAjax = function () {
         var muted = true;
         if(!muted) console.log('\n');
-        var factorData = {};
-        //var factorDependencies = $scope.selected.map(function (obj) {
+        var ticketData = {};
+        //var ticketDependencies = $scope.selected.map(function (obj) {
         //    return obj.customId;
         //});
-        if(!muted) console.log('createAjax - dependencies', factorDependencies);
-        factorData['dependencias'] = $scope.factor.dependencies;
-        factorData['factor'] = $scope.factor.factor;
-        //factorData['lowerLimit'] = $scope.factor.lowerLimit;
-        //factorData['upperLimit'] = $scope.factor.upperLimit;
-        factorData['descripcion'] = $scope.factor.descripcion;
-        factorData['nombre'] = $scope.factor.nombre;
-        factorData['id'] = $scope.factor.id;
+        if(!muted) console.log('createAjax - dependencies', ticketDependencies);
+        ticketData['dependencias'] = $scope.ticket.dependencies;
+        ticketData['ticket'] = $scope.ticket.ticket;
+        //ticketData['lowerLimit'] = $scope.ticket.lowerLimit;
+        //ticketData['upperLimit'] = $scope.ticket.upperLimit;
+        ticketData['descripcion'] = $scope.ticket.descripcion;
+        ticketData['nombre'] = $scope.ticket.nombre;
+        ticketData['id'] = $scope.ticket.id;
 
 
-        var url = baseRemoteURL + ($scope.factor.id > 0? 'factor/update/'+$scope.factor.id: 'factor/save');
+        var url = baseRemoteURL + ($scope.ticket.id > 0? 'ticket/update/'+$scope.ticket.id: 'ticket/save');
         if(!muted) console.log('url '+url);
-        if(!muted) console.log('factorData', factorData);
+        if(!muted) console.log('ticketData', ticketData);
         function successAjax(data, status) {
-            if(!muted) console.log('nuevo factor creado', data);
+            if(!muted) console.log('nuevo ticket creado', data);
             var creaForma = $scope.createForm;
             if(status === 201 || status === 200) {
                 //creaForma.generalInfo = ['El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')];
                 $scope.alerts = [{type: 'success', msg: 'El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')}];
-                $location.path('/factor/'+data.id);
+                $location.path('/ticket/'+data.id);
             }
         }
         function errorAjax(data, status, headers, config)  {
@@ -81,7 +81,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
                     creaForma[field].serverErrors.push(message);
                 });
             }
-            if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
+            if(status === 405) {if(!muted) console.log('createTicketAjax es 405');
                 //creaForma.generalErrors = ['The specified HTTP method is not allowed for the requested' +
                 //' resource.'];
                 $scope.alerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +
@@ -93,31 +93,31 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
             }
         }
 
-        if($scope.factor.id > 0) {
-            $http.put(url, factorData)
+        if($scope.ticket.id > 0) {
+            $http.put(url, ticketData)
                 .success(successAjax)
                 .error(errorAjax);
         }
         else {
-            $http.post(url, factorData)
+            $http.post(url, ticketData)
                 .success(successAjax)
                 .error(errorAjax);
         }
     };
 
-    $scope.deleteFactor = function(idx) {
-        if(angular.isArray($scope.factorList)) {
-            var delData = {item: $scope.factorList[idx]};
+    $scope.deleteTicket = function(idx) {
+        if(angular.isArray($scope.ticketList)) {
+            var delData = {item: $scope.ticketList[idx]};
             if(!delData) {
                 return;
             }
-            $http.delete(baseRemoteURL+'factor/delete/'+delData.item.id)
+            $http.delete(baseRemoteURL+'ticket/delete/'+delData.item.id)
                 .success(function(data) {
-                    console.log('deleteFactor elemento '+delData.item.id+' ha sido eliminado');
-                    $scope.factorList.splice(idx, 1);
+                    console.log('deleteTicket elemento '+delData.item.id+' ha sido eliminado');
+                    $scope.ticketList.splice(idx, 1);
                 })
                 .error(function(data) {});
-            //$http.delete(baseRemoteURL+'factor/delete', {data: delData, params: delData.id})
+            //$http.delete(baseRemoteURL+'ticket/delete', {data: delData, params: delData.id})
             //    .success(function(data) {})
             //    .error(function(data) {});
         }
@@ -130,9 +130,9 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
         if(!muted) console.log('addDepRow lastAdded', $scope.lastAdded);
         var newDep = {item: $scope.lastAdded, lowerLimit: '', upperLimit: '', step: 1};
         if(!muted) console.log('addDepRow newDep', newDep);
-        if(!$scope.factor) $scope.factor = {dependencies: []};
-        if(!angular.isArray($scope.factor.dependencies)) $scope.factor.dependencies = [];
-        $scope.factor.dependencies.push(newDep);
+        if(!$scope.ticket) $scope.ticket = {dependencies: []};
+        if(!angular.isArray($scope.ticket.dependencies)) $scope.ticket.dependencies = [];
+        $scope.ticket.dependencies.push(newDep);
 
         var idx = findWithAttr($scope.available, 'customId', $scope.lastAdded.customId);
         if(!muted) console.log('addDepRow idx', idx);
@@ -143,17 +143,17 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
     };
 
     $scope.dropDep = function(idx) {
-        var dropped = $scope.factor.dependencies[idx];
+        var dropped = $scope.ticket.dependencies[idx];
         if(!$scope.available) $scope.available = [];
         $scope.available.push(dropped.item);
 
-        $scope.factor.dependencies.splice(idx, 1);
+        $scope.ticket.dependencies.splice(idx, 1);
     };
 
 
     //$scope.$watch('createForm.lowerLimit.$valid', function(isValid, lastValue) {
     //    if(!isValid) {console.log('isValid', isValid, lastValue);
-    //        $scope.factor.upperLimit = '';
+    //        $scope.ticket.upperLimit = '';
     //        $scope.createForm.upperLimit.$dirty = true;
     //    }
     //});
@@ -196,9 +196,9 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
 }
 
 
-factorModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-factorModule.controller('FactorCtrl', function($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {factorCtrl($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location)});
-factorModule.directive('dependsOn', function() {
+ticketModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
+ticketModule.controller('TicketCtrl', function($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {ticketCtrl($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location)});
+ticketModule.directive('dependsOn', function() {
     return {
         restrict: 'A',
         require: 'ngModel',

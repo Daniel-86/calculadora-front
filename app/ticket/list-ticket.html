@@ -1,6 +1,6 @@
 <div>
     <div class="page-header">
-        <h1>Factores <small class="label label-default">{{ factorList.length }}</small></h1>
+        <h1>Tickets <small class="label label-default">{{ ticketList.length }}</small></h1>
     </div>
     <div class="col-md-12 form-group">
         <div class="col-md-1"><labael class="control-label">Filtrar por</labael> </div>
@@ -13,7 +13,7 @@
                    class="form-control">
         </div>
         <div class="col-xs-2 col-md-2 pull-right">
-            <a href="#/factor/" class="btn btn-link" aria-label="Agregar factor">
+            <a href="#/ticket/" class="btn btn-link" aria-label="Agregar ticket">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo</a>
         </div>
     </div>
@@ -28,12 +28,12 @@
                 </thead>
                 <tbody>
                 <tr
-                        ng-repeat="data in filtered = (factorList | filter:search | orderBy :predicate :reverse) | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
-                    <td><a href="#/factor/{{data.id}}"> {{data.nombre}}</a></td>
+                        ng-repeat="data in filtered = (ticketList | filter:search | orderBy :predicate :reverse) | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
+                    <td><a href="#/ticket/{{data.id}}"> {{data.nombre}}</a></td>
                     <td>{{data.descripcion}}</td>
                     <td class="text-center">
                         <a href=""
-                           ng-click="deleteFactor($index)"
+                           ng-click="deleteTicket($index)"
                            class="btn btn-link"
                            title="Eliminar">
                             <span class="glyphicon glyphicon-trash"></span>

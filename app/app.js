@@ -2,12 +2,11 @@
 
 // Declare app level module which depends on views, and components
 angular.module('myApp', [
-  'ngRoute',
-  'myApp.view1',
-  'myApp.view2',
-    'view3',
+    'ngRoute',
     'calculadora',
-    'factor'
+    'factor',
+    'ticket',
+    'servicios'
 ]).
 config(['$routeProvider', function($routeProvider) {
       $routeProvider.when('/calcular', {
@@ -26,9 +25,13 @@ config(['$routeProvider', function($routeProvider) {
             templateUrl: 'ticket/list-ticket.html',
             controller: 'TicketCtrl'
         });
-        $routeProvider.when('ticket/:ticketId?', {
+        $routeProvider.when('/ticket/:ticketId?', {
             templateUrl: 'ticket/create-ticket.html',
             controller: 'TicketCtrl'
+        });
+        $routeProvider.when('/servicios/:selectedId?', {
+            templateUrl: 'servicios/servicios.html',
+            controller: 'ServiciosCtrl'
         });
   $routeProvider.otherwise({redirectTo: '/calcular'});
 }]);
