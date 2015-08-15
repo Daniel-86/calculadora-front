@@ -449,3 +449,62 @@ calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculad
 calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce);});
 calculadoraControllers.filter('prettyPrint', formatServices);
 //calculadoraControllers.filter('trim');
+
+
+
+//calculadoraControllers.directive('showLogin', function() {
+//    return {
+//        restrict: 'C',
+//        link: function(scope, element, attrs) {
+//            var login = element.find('#login-holder');
+//            var loginError = element.find('#login-error');
+//            var main = element.find('#content');
+//            var username = element.find('#username');
+//            var password = element.find('#password');
+//
+//            login.hide();
+//            loginError.hide();
+//
+//            scope.$on('event:auth-loginRequired', function() {
+//                console.log('showing login form');
+//                main.hide();
+//                username.val('');
+//                password.val('');
+//                login.show();
+//            });
+//            scope.$on('event:auth-loginFailed', function() {
+//                console.log('showing login error message');
+//                username.val('');
+//                password.val('');
+//                loginError.show();
+//            });
+//            scope.$on('event:auth-loginConfirmed', function() {
+//                console.log('hiding login form');
+//                main.show();
+//                login.hide();
+//                username.val('');
+//                password.val('');
+//            });
+//        }
+//    };
+//});
+//
+//
+//
+//function getLocalToken() {
+//    return localStorage["authToken"];
+//}
+//
+//function getHttpConfig() {
+//    return {
+//        headers: {
+//            'X-Auth-Token': getLocalToken()
+//        }
+//    };
+//}
+//
+//function getAuthenticateHttpConfig() {
+//    return {
+//        ignoreAuthModule: true
+//    };
+//}

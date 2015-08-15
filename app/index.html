@@ -86,8 +86,8 @@
           </li>
           <!--</sec:ifAllGranted>-->
           <!--<sec:ifLoggedIn>-->
-          <li>
-            <a href="#/logout">Logout</a>
+          <li ng-controller="LogoutCtrl">
+            <a href="" ng-click="logOut()">Logout</a>
             <!--<g:link controller="logout" action="index">Logout</g:link> -->
           </li>
           <!--</sec:ifLoggedIn>-->
@@ -103,7 +103,34 @@
   </nav>
 
 
-  <div ng-view></div>
+
+  <!--<div id="login-holder" class="container" style="width: 300px;">-->
+    <!--<div id="login-error" class="alert alert-error">-->
+      <!--<button type="button" class="close" onclick="$('#login-error').hide();">&times;</button>-->
+      <!--Username and/or password incorrect.-->
+    <!--</div>-->
+    <!--<div id="loginbox">-->
+      <!--<div id="login-inner" ng-controller="LoginCtrl">-->
+        <!--<form name="loginForm" role="form" ng-submit="logIn()" autocomplete="off">-->
+          <!--<div class="form-group">-->
+            <!--<label for="username">Username</label>-->
+            <!--<input id="username" class="form-control" type="text" ng-model="authData.username"/>-->
+          <!--</div>-->
+          <!--<div class="form-group">-->
+            <!--<label for="password">Password</label>-->
+            <!--<input id="password" class="form-control" type="password" ng-model="authData.password"/>-->
+          <!--</div>-->
+          <!--<input type="submit" class="btn btn-primary" value="Login"/>-->
+        <!--</form>-->
+      <!--</div>-->
+      <!--<div class="clear"></div>-->
+    <!--</div>-->
+  <!--</div>-->
+
+
+  <div id="content">
+    <div ng-view></div>
+  </div>
 
   <footer class="footer">
     <div class="container">
@@ -114,12 +141,15 @@
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
   -->
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
   <script src="bower_components/ui-bootstrap-tpls-0.13.1-SNAPSHOT/ui-bootstrap-tpls-0.13.1-SNAPSHOT.js"></script>
   <script src="bower_components/checklist-model/checklist-model.js"></script>
   <script src="bower_components/angular-toggle-switch/angular-toggle-switch.js"></script>
   <script src="bower_components/ng-sortable/dist/ng-sortable.js"></script>
+  <script src="bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
   <script src="app.js"></script>
   <!--<script src="view1/view1.js"></script>-->
   <!--<script src="view2/view2.js"></script>-->
@@ -128,11 +158,10 @@
   <script src="factor/factor.js"></script>
   <script src="ticket/ticket.js"></script>
   <script src="servicios/servicios.js"></script>
+  <script src="login/login.js"></script>
   <script src="helpers/array-helpers.js"></script>
   <!--<script src="bower_components/version/version.js"></script>-->
   <!--<script src="bower_components/version/version-directive.js"></script>-->
   <!--<script src="bower_components/version/interpolate-filter.js"></script>-->
-  <script src="bower_components/jquery/dist/jquery.js"></script>
-  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 </body>
 </html>
