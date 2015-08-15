@@ -10,6 +10,7 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
     var keepGoing = true;
     var idx;
     var childrenToLookUp = ['propiedades', 'conceptos', 'componentes'];
+    var parents = [];
     if(angular.isObject(tree) && !angular.isArray(tree)) {
         if(tree[propertyName] === propertyValue) {
             return tree;
@@ -24,8 +25,10 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
             if(keepGoing) {
                 if(angular.isObject(value) && !angular.isArray(value)) {
                     var partialResult = findObjectByProperty(value, propertyName, propertyValue);
-                    if(partialResult) {
-                        result = partialResult;
+                    if(partialResult.result) {
+                        result = partialResult.result;
+                        parents.push(value.customId);
+                        parents = parents.concat(partialResult.parents);
                         keepGoing = false;
                     }
                 }
@@ -33,14 +36,17 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
                     idx = findWithAttr(value, propertyName, propertyValue);
                     if(idx > 0) {
                         result = value[idx-1];
+                        //parents.push(key);
                         keepGoing = false;
                     }
                     else {
                         angular.forEach(value, function(item) {
                             if(keepGoing) {
                                 var partialResult = findObjectByProperty(item, propertyName, propertyValue);
-                                if(partialResult) {
-                                    result = partialResult;
+                                if(partialResult.result) {
+                                    result = partialResult.result;
+                                    parents.push(item.customId);
+                                    parents = parents.concat(partialResult.parents);
                                     keepGoing = false;
                                 }
                             }
@@ -64,8 +70,10 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
             angular.forEach(tree, function(item) {
                 if(keepGoing) {
                     var partialResult = findObjectByProperty(item, propertyName, propertyValue);
-                    if(partialResult) {
-                        result = partialResult;
+                    if(partialResult.result) {
+                        result = partialResult.result;
+                        parents.push(item.customId);
+                        parents = parents.concat(partialResult.parents);
                         keepGoing = false;
                     }
                 }
@@ -75,12 +83,12 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
     else {
         var debugg = 'debug';
     }
-    return result;
+    return {result: result, parents: parents};
 }
 
 
-function serviciosController($scope, $http, baseRemoteURL, $routeParams) {
-    var muted = false;
+function serviciosController($scope, $http, baseRemoteURL, $routeParams, $location) {
+    var muted = true;
     if(!muted) console.log('\n');
 
     $scope.editableProperties = ['descripcion'];
@@ -88,27 +96,55 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams) {
 
 
     var getAllData = function() {
-        var muted = false;
+        var muted = true;
         if(!muted) console.log('\n');
-        $http.get(baseRemoteURL+'calculadora/list').success(function(data){
-            if(!muted) console.log('getAllData data', data);
-            $scope.children = data.categories;
-            $scope.allItems = data.categories;
-            if(selectedItemId) {
-                $scope.currentSelection = findObjectByProperty($scope.allItems, 'customId', selectedItemId)
-            }
-            else {
-                $scope.currentSelection = $scope.allItems;
-            }
-            $scope.categories = data.categories;
+        $http.get(baseRemoteURL+'calculadora/list')
+            .success(function(data){
+                if(!muted) console.log('getAllData data', data);
+                $scope.children = data.categories;
+                $scope.allItems = data.categories;
+                if(selectedItemId) {
+                    var pointer = findObjectByProperty($scope.allItems, 'customId', selectedItemId);
+                    $scope.currentSelection = pointer.result;
+                    $scope.currentParents = pointer.parents;
+                }
+                else {
+                    $scope.currentSelection = $scope.allItems;
+                    $scope.currentParents = [];
+                }
+                $scope.categories = data.categories;
+                if(!$scope.currentSelection) {
+                    $location.path('/servicios');
+                }
         });
     };
     getAllData();
 
+    $scope.getChildren = function(item) {
+        if(!item) return [];
+        var children = [];
+        if(angular.isArray(item)) {
+            children = item;
+        }
+        else {
+            if (angular.isArray(item.componentes)) {
+                children = children.concat(item.componentes);
+            }
+            if (angular.isArray(item.conceptos)) {
+                children = children.concat(item.conceptos);
+            }
+        }
+        return children;
+    };
+
+    $scope.isRoot = function() {
+        return angular.equals($scope.currentSelection, $scope.allItems);
+    };
+
     if(!muted) console.log('cms.controllers - children', $scope.categories);
 
     $scope.showChildren = function(item, property) {
-        var muted = false;
+        var muted = true;
         if(!muted) console.log('\n');
         if(!muted) console.log('showChildren item', item);
         if(!property)
@@ -121,19 +157,19 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams) {
         if(!muted) console.log('showChildren children', children);
         //return children;
         $scope.children = children;
-        if(!angular.isArray($scope.tree))
-            $scope.tree = [];
-        var brdcrmbIndx = $scope.tree.indexOf(item);
+        if(!angular.isArray($scope.currentSelection))
+            $scope.currentSelection = [];
+        var brdcrmbIndx = $scope.currentSelection.indexOf(item);
         if(brdcrmbIndx > -1)
-            $scope.tree.splice(brdcrmbIndx+1, $scope.tree.length - brdcrmbIndx);
+            $scope.currentSelection.splice(brdcrmbIndx+1, $scope.currentSelection.length - brdcrmbIndx);
         else
-            $scope.tree.push(item);
+            $scope.currentSelection.push(item);
         $scope.selected = item;
         if(!muted) console.log('showChildren scope.selected', $scope.selected);
     };
 
     $scope.resetView = function() {
-        $scope.tree = [];
+        $scope.currentSelection = [];
         $scope.children = $scope.categories;
         $scope.selected = undefined;
     };
@@ -143,24 +179,28 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams) {
     };
 
     $scope.showPropForm = function() {
-        $scope.newProperty = true;
+        $scope.addingProperty = true;
     };
 
     $scope.cancelProp = function() {
-        $scope.newProperty = false;
+        $scope.addingProperty = false;
         $scope.newProp = null;
     };
 
     $scope.addProp = function(item) {
-        var muted = false;
+        var muted = true;
         if(!muted) console.log('\n');
-        var newProp = {customId: $scope.newPropNombre, descripcion: $scope.newPropDescripcion, tipo: $scope.newPropTipo, parent: $scope.selected};
+        var newProp = $scope.newProperty;
+        if(!newProp) return;
+        newProp.parent = $scope.currentSelection;
         if(!muted) console.log('newProp '+ newProp);
 
         $http.post(baseRemoteURL+"propiedad/save", newProp)
             .success(function(data) {
                 item.propiedades.push(data);
                 $scope.newProp = null;
+                $scope.newProperty = undefined;
+                $scope.addingProperty = false;
             })
             .error(function(data) {
 
@@ -168,89 +208,114 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams) {
     };
 
     $scope.dropProperty = function(item, parent) {
-        var muted = false;
+        var muted = true;
         if(!muted) console.log('\n');
         $http.delete(baseRemoteURL+"propiedad/delete", {data: item})
             .success(function(data) {
                 if(!muted) console.log('dropProperty data', data);
+                var idx = findWithAttr($scope.currentSelection.propiedades, 'customId', item.customId);
+                if(idx > 0) {
+                    $scope.currentSelection.propiedades.splice(idx-1, 1);
+                }
             })
             .error(function(data, status) {
                 if(!muted) console.log('dropProperty (ERROR) status ' + status + '  data ', data);
             });
     };
 
-    $scope.addItem = function() {
-        var muted = false;
+    $scope.addItem = function(newItem) {
+        if(!newItem) {
+            console.log("********* No hay datos en el nuevo elemento a agregar");
+            return;
+        }
+        var muted = true;
         if(!muted) console.log('\n');
-        var newData = {item: $scope.selected, descripcion: $scope.descripcion, customId: $scope.customId, domainType: $scope.domainType};
-        $http.post(baseRemoteURL+"calculadora/addItem", newData).success(function(data) {
-            if(!muted) console.log('addItem data', data);
-            $scope.categories = data.categories;
-
-            //$scope.showChildren($scope.selected);
-
-            if(angular.isDefined($scope.selected)) {
-                $scope.selected = data.newItem;
-                var childrens = [];
-                angular.forEach(['componentes', 'conceptos'], function(prop) {
-                    if(angular.isDefined($scope.selected) && angular.isArray($scope.selected[prop])) children.push.apply(children, $scope.selected[prop]);
-                });
-                if(!muted) console.log('addItem children', children);
-                $scope.children = children;
-                var idxTree = findWithAttr($scope.tree, 'id', $scope.selected.id);
-                $scope.tree[idxTree-1] = $scope.selected;
-            }
-            else {
+        $scope.newItem.parent = $scope.isRoot() ? undefined : $scope.currentSelection;
+        var newData = $scope.newItem;
+        $http.post(baseRemoteURL+"calculadora/addItem", newData)
+            .success(function(data) {
+                if(!muted) console.log('addItem data', data);
+                $scope.categories = data.categories;
+                $scope.allItems = data.categories;
                 $scope.children = data.children;
-            }
-            if(!muted) console.log('adDItem - children', $scope.children);
-            $scope.descripcion = '';
-            $scope.customId = '';
-            if(!muted) console.log('addItem scope', $scope);
-            if(!muted) console.log('addItem newItemForm', $scope.newItemForm);
-            if(angular.isDefined($scope.$$childHead.newItemForm)) $scope.$$childHead.newItemForm.$setPristine();
-            else if(angular.isDefined($scope.newItemForm)) $scope.newItemForm.$setPristine();
-            else {if(!muted) console.log('addItem NO PUEDE RESETAR FORM');}
+                if(data.newItem) {
+                    $scope.newItem = undefined;
+                    if(data.newItem.domainClass.toLowerCase() === 'categoria') {
+                        $scope.currentSelection.push(data.newItem);
+                    }
+                    else if(data.newItem.domainClass.toLowerCase() === 'concepto') {
+                        $scope.currentSelection.conceptos.push(data.newItem);
+                    }
+                    else if(data.newItem.domainClass.toLowerCase() === 'conceptoespecial') {
+                        $scope.currentSelection.componentes.push(data.newItem);
+                    }
+                    else if(data.newItem.domainClass.toLowerCase() === 'propiedad') {
+                        $scope.currentSelection.propiedades.push(data.newItem);
+                    }
+                }
+                if(angular.isDefined($scope.$$childHead.newItemForm)) $scope.$$childHead.newItemForm.$setPristine();
+                else if(angular.isDefined($scope.newItemForm)) $scope.newItemForm.$setPristine();
+                else {if(!muted) console.log('addItem NO PUEDE RESETEAR FORM');}
+
         });
     };
 
-    $scope.removeChild = function(idxChild) {
-        var muted = false;
+    $scope.removeChild = function(item) {
+        var muted = true;
         if(!muted) console.log('\n');
-        var item = $scope.children[idxChild];
         if(!muted) console.log('removeChild item', item);
-        var delData = {item: item, parent: $scope.selected};
+        var delData = {item: item, parent: $scope.isRoot()? undefined: $scope.currentSelection};
         if(!muted) console.log('removeChild delData', delData);
 
         $http.delete(baseRemoteURL+"calculadora/deleteItem", {data: delData})
             .success(function(data) {
                 if(!muted) console.log('removeChild data', data);
                 if(item) {
-                    if($scope.selected) {
-                        if (!muted) console.log('removeChild selected', $scope.selected);
-                        var isA = 'unknown';
-                        var parentIdx = findWithAttr($scope.tree, 'id', $scope.selected.id);
-                        if (!muted) console.log('removeChild tree', $scope.tree);
-                        if (!muted) console.log('removeChild parentIdx', parentIdx - 1);
-                        var parent = $scope.tree[parentIdx - 1];
-                        if (!muted) console.log('removeChild parent', parent);
-                    }
-                    var realIdx;
-                    if(parent) {
-                        if ((realIdx = findWithAttr(parent.componentes, 'customId', item.customId)) >= 0) {
-                            isA = 'componentes';
+                    var idx;
+                    if(!$scope.isRoot()) {
+                        if (!muted) console.log('removeChild selected', $scope.currentSelection);
+                        var foundObject = findObjectByProperty($scope.allItems, 'customId', $scope.currentSelection.customId);
+                        var parent = foundObject? foundObject.result: undefined;
+                        if(!parent) {
+                            console.log('*********** Padre no encontrado');
+                            return;
                         }
-                        else if ((realIdx = findWithAttr(parent.conceptos, 'customId', item.customId)) >= 0) {
-                            isA = 'conceptos';
+                        if(parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'concepto') {
+                            idx = findWithAttr(parent.conceptos, 'customId', item.customId);
+                            if(idx > 0) {
+                                parent.conceptos.splice(idx-1, 1);
+                                $scope.currentSelection.conceptos.splice(idx-1, 1);
+                            }
                         }
-                        if (!muted) console.log('removeChild idxChild ' + idxChild + '  isA ' + isA + '  parentIdx ' + parentIdx - 1 + '   realIdx ' + realIdx - 1);
-                        if (!muted) console.log('removeChild selected', $scope.selected[isA][realIdx - 1]);
-                        $scope.selected[isA].splice(realIdx - 1, 1);
-                        if (!muted) console.log('removeChild tree', $scope.tree[parentIdx - 1][isA][realIdx - 1]);
-                        $scope.tree[parentIdx - 1][isA].splice(realIdx - 1, 1);
+                        else if(parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'conceptoespecial') {
+                            idx = findWithAttr(parent.componentes, 'customId', item.customId);
+                            if(idx > 0) {
+                                parent.componentes.splice(idx-1, 1);
+                                $scope.currentSelection.componentes.splice(idx-1, 1);
+                            }
+                        }
+                        else if(parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'concepto') {
+                            idx = findWithAttr(parent.conceptos, 'customId', item.customId);
+                            if(idx > 0) {
+                                parent.conceptos.splice(idx-1, 1);
+                                $scope.currentSelection.conceptos.splice(idx-1, 1);
+                            }
+                        }
+                        else if(parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'propiedad') {
+                            idx = findWithAttr(parent.propiedades, 'customId', item.customId);
+                            if(idx > 0) {
+                                parent.propiedades.splice(idx-1, 1);
+                                $scope.currentSelection.propiedades.splice(idx-1, 1);
+                            }
+                        }
                     }
-                    if(!muted) console.log('removeChild children', $scope.children[idxChild]);
-                    $scope.children.splice(idxChild, 1);
+                    else {
+                        idx = findWithAttr($scope.allItems, 'customId', item.customId);
+                        if(idx > 0) {
+                            //$scope.allItems.splice(idx-1, 1);
+                            $scope.currentSelection.splice(idx-1, 1);
+                        }
+                    }
                 }
             });
     };
@@ -258,4 +323,4 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams) {
 
 
 serviciosModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams) {serviciosController($scope, $http, baseRemoteURL, $routeParams);});
+serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location);});

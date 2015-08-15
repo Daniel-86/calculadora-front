@@ -2,71 +2,107 @@
     <div class="col-md-12">
         <ol class="breadcrumb">
             <li>
-                <a href="" ng-if="tree.length > 0" ng-click="resetView()">Todos</a>
-                <span ng-if="!(tree.length > 0)">Todos</span> </li>
-            <li ng-repeat="item in tree" ng-class="{'active':$last}">
-                <a href="" ng-click="showChildren(item)" ng-if="!$last">{{item.customId}}</a>
-                <span ng-if="$last">{{item.customId}}</span> </li>
+                <a href="#/servicios" ng-if="!isRoot()">Todos</a>
+                <span ng-if="isRoot()">Todos</span> </li>
+            <li ng-repeat="item in currentParents" ng-class="{'active':$last}">
+                <a href="#/servicios/{{ item }}">{{item}}</a>
+            </li>
+            <li ng-if="!isRoot()">
+                <span>{{ currentSelection.customId }}</span>
+            </li>
         </ol>
     </div>
 
 
 
 
-    <div ng-class="selected.nodeType == 'LEAF'? 'col-md-12': 'col-md-8'" ng-show="tree.length > 0">
+    <div ng-class="currentSelection.nodeType == 'LEAF'? 'col-md-12': 'col-md-8'" ng-show="!isRoot()">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4>Datos de {{selected.customId}}
-                    <small class="pull-right">{{selected.domainClass}} ({{selected.nodeType}})</small></h4></div>
+                <h4>Datos de {{currentSelection.customId}}
+                    <small class="pull-right">{{currentSelection.domainClass}} ({{currentSelection.nodeType}})</small>
+                </h4></div>
             <div class="panel-body">
                 <!--<div ng-repeat="objProp in editableProperties" class="form-group">-->
-                    <!--{{ selected }}-->
+                    <!--{{ currentSelection }}-->
                 <!--</div>-->
-                <div ng-if="selected.nodeType == 'ROOT'">
+                <div ng-if="currentSelection.nodeType == 'ROOT'">
                     <div class="form-group">
                         <label for="descInpt" class="control-label">Descripción</label>
-                        <input type="text" class="form-control" id="descInpt" ng-model="selected.descripcion"/>
+                        <input type="text"
+                               class="form-control"
+                               id="descInpt"
+                               ng-model="currentSelection.descripcion"/>
                     </div>
                 </div>
-                <div ng-if="selected.nodeType == 'LEAF'">
+                <div ng-if="currentSelection.nodeType == 'LEAF'">
                     <div class="form-group">
                         <label for="descInpt2" class="control-label">Descripción</label>
-                        <input type="text" class="form-control" id="descInpt2" ng-model="selected.descripcion"/>
+                        <input type="text"
+                               class="form-control"
+                               id="descInpt2"
+                               ng-model="currentSelection.descripcion"/>
                     </div>
                     <!--<div class="form-group">-->
                         <!--<label for="costoInpt" class="control-label">Costo</label>-->
-                        <!--<input type="number" class="form-control" id="costoInpt" ng-model="selected.costo"/>-->
+                        <!--<input type="number" class="form-control" id="costoInpt" ng-model="currentSelection.costo"/>-->
                     <!--</div>-->
                 </div>
-                <div ng-if="selected.nodeType == 'BRANCH'">
-                    <div class="form-group" ng-repeat="prop in selected.propiedades">
+                <div ng-if="currentSelection.nodeType == 'BRANCH'">
+                    <div class="form-group" ng-repeat="prop in currentSelection.propiedades">
                         Propiedad <strong>{{prop.customId}}</strong> es de tipo <em>{{prop.tipo}}</em>
                         <a href=""
-                           ng-click="dropProperty(prop, selected)"
+                           ng-click="dropProperty(prop, currentSelection)"
                            class="btn btn-link pull-right">
                             <i class="glyphicon glyphicon-trash"></i> </a>
                     </div>
                 </div>
 
-                <div class="col-md-12" ng-if="selected.nodeType == 'BRANCH'">
-                    <button class="btn btn-default btn-sm btn-add-prop" ng-click="showPropForm()" ng-hide="newProperty">Nueva propiedad</button>
+                <div class="col-md-12" ng-if="currentSelection.nodeType == 'BRANCH'">
+                    <button class="btn btn-default btn-sm btn-add-prop"
+                            ng-click="showPropForm()"
+                            ng-hide="addingProperty">
+                        Nueva propiedad</button>
                 </div>
-                <div ng-show="newProperty">
+                <div ng-show="addingProperty">
                     <div class="form-group">
                         <label for="propName" class="control-label">Nombre</label>
-                        <input type="text" class="form-control" id="propName" ng-model="newPropNombre"/>
+                        <input type="text"
+                               class="form-control"
+                               id="propName"
+                               ng-model="newProperty.customId"/>
                     </div>
                     <div class="form-group">
                         <label for="propDesc" class="control-label">Descripción</label>
-                        <input type="text" class="form-control" id="propDesc" ng-model="newPropDescripcion"/>
+                        <input type="text"
+                               class="form-control"
+                               id="propDesc"
+                               ng-model="newProperty.descripcion"/>
                     </div>
                     <div class="form-group">
                         <label for="propType" class="control-label">Tipo</label>
-                        <input type="text" class="form-control" id="propType" ng-model="newPropTipo"/>
+                        <select data-ng-model="newProperty.tipo"
+                                class="form-control"
+                                id="propType">
+                            <option value=""> -- Elige -- </option>
+                            <option value="int">Entero</option>
+                            <option value="string">String</option>
+                            <option value="boolean">Boolean</option>
+                            <option value="list">Lista</option>
+                            <option value="multiple">Multiple</option>
+                        </select>
+                        <!--<input type="text"-->
+                               <!--class="form-control"-->
+                               <!--id="propType"-->
+                               <!--ng-model="newProperty.tipo"/>-->
                     </div>
                     <div class="btn-group new-prop-btns">
-                        <button class="btn btn-default btn-sm btn-add-prop" ng-click="addProp(selected)">Agregar</button>
-                        <button class="btn btn-default btn-sm btn-add-prop" ng-click="cancelProp()">Cancelar</button>
+                        <button class="btn btn-default btn-sm btn-add-prop"
+                                ng-click="addProp(currentSelection)">
+                            Agregar</button>
+                        <button class="btn btn-default btn-sm btn-add-prop"
+                                ng-click="cancelProp()">
+                            Cancelar</button>
                     </div>
                 </div>
             </div>
@@ -77,56 +113,55 @@
 
 
 
-
-    <div class="col-md-4" ng-if="selected.nodeType != 'LEAF'">
+    <div class="col-md-4" ng-show="currentSelection.nodeType != 'LEAF'">
         <div class="list-group">
             <div class="list-group-item">
                 <div class="list-group-item-heading">
                     <h4 class="text-center">
-                        {{selected? 'Hijos de '+selected.customId: 'Todas las categorías'}}
+                        {{currentSelection.length !== categories.length? 'Hijos de '+currentSelection.customId: 'Todas las categorías'}}
                     </h4>
                 </div>
             </div>
-            <div ng-repeat="child in children" class="col-sm-12 list-group-item"
+            <div ng-repeat="child in getChildren(currentSelection)"
+                 class="col-sm-12 list-group-item"
                  ng-class="$last? 'spaced-bottom': ''">
-                <a href="" class="col-sm-10"
-                   ng-click="showChildren(child)">
+                <a href="#/servicios/{{ child.customId }}"
+                   class="col-sm-10">
                     {{child.customId}}
                     <span class="pull-right">
                         <small class="">
                             &lt{{child.domainClass}}&gt
-                            </small>
+                        </small>
                         <a href=""
-                           ng-click="removeChild($index)"
+                           ng-click="removeChild(child)"
                            style="background-image: none !important;"
                            class="btn btn-default col-sm-2 pull-right btn-xs">
                             <i class="glyphicon glyphicon-trash"></i> </a>
                     </span>
                 </a>
                 <!--<a href=""-->
-                   <!--ng-click="removeChild($index)"-->
-                   <!--class="btn btn-default col-sm-2">-->
-                    <!--<i class="glyphicon glyphicon-trash"></i> </a>-->
+                <!--ng-click="removeChild($index)"-->
+                <!--class="btn btn-default col-sm-2">-->
+                <!--<i class="glyphicon glyphicon-trash"></i> </a>-->
             </div>
 
             <div class="list-group-item-header">
                 <h4 class="text-center list-group-item-success"
-                    style="padding-bottom: 10px; margin-top: 10px; margin-bottom: 0;">Nuevo
-                    elemento</h4>
+                    style="padding-bottom: 10px; margin-top: 10px; margin-bottom: 0;">
+                    Nuevo elemento</h4>
                 <form class="form" novalidate name="newItemForm">
-                    <div class=""
-                         ng-show="selected && selected.domainClass !== 'Concepto' && selected.domainClass !== 'Propiedad'">
+                    <div class="" ng-show="!isRoot()">
                         <label>
                             <input type="radio" name="domainType" value="concepto"
-                                   checked
-                                   ng-required="selected && selected.domainClass !== 'Concepto' && selected.domainClass !== 'Propiedad'"
-                                   ng-model="$parent.domainType">Concepto
+                                   ng-checked="currentSelection.domainClass.toLowerCase() === 'conceptoespecial'"
+                                   ng-required="!isRoot()"
+                                   ng-model="newItem.domainType">Concepto
                         </label>
-                        <label>
+                        <label ng-show="currentSelection.domainClass.toLowerCase() !== 'conceptoespecial'">
                             <input type="radio" name="domainType"
                                    value="componente"
-                                   ng-required="selected && selected.domainClass !== 'Concepto' && selected.domainClass !== 'Propiedad'"
-                                   ng-model="$parent.domainType">Componente
+                                   ng-required="!isRoot()"
+                                   ng-model="newItem.domainType">Componente
                         </label>
                     </div>
                     <div class=""
@@ -135,7 +170,7 @@
                                name="nombre"
                                required
                                class="form-control"
-                               ng-model="$parent.customId">
+                               ng-model="newItem.customId">
                             <span ng-show="newItemForm.nombre.$dirty && newItemForm.nombre.$error.required"
                                   class="help-block text-danger">Requerido</span>
                     </div>
@@ -144,22 +179,22 @@
                         <input type="text"
                                placeholder="descripción"
                                name="descripcion"
-                               required
                                class="form-control"
-                               ng-model="$parent.descripcion">
+                               ng-model="newItem.descripcion">
                             <span ng-show="newItemForm.descripcion.$dirty && newItemForm.descripcion.$error.required"
                                   class="help-block text-danger">Requerido</span>
                     </div>
                     <button type="submit" class="btn btn-default form-control"
-                            ng-click="addItem()" ng-disabled="newItemForm.$invalid"><span
+                            ng-click="addItem(newItem)" ng-disabled="newItemForm.$invalid"><span
                             class="glyphicon glyphicon-plus"></span> Agregar
                     </button>
                 </form>
             </div>
         </div>
     </div>
-
-    <div class="col-md-8" ng-if="!selected">
+    
+    
+    <div class="col-md-8" ng-if="!currentSelection">
         <p>Elige un elemento para editar sus propiedades y administrar sus 'hijos'</p>
         <p>Los elementos forman una estructura de arbol. Existen 4 tipos de nodos:</p>
         <ol>
