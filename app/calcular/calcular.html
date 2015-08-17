@@ -307,7 +307,7 @@
                     <td>{{res.rq}}</td>
                     <td>{{res.acs}}</td>
                 </tr>
-                <tr class="warning">
+                <tr class="warning" ng-show="row.ticket.best.missing && row.ticket.best.missing.length > 0">
                     <td><strong>Faltantes</strong></td>
                     <td colspan="5">{{row.ticket.best.missing | joinArray | strip:'_':' ':true}}</td>
                 </tr>

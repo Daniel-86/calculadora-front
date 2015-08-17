@@ -295,7 +295,7 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
     $scope.basura = function(item) {
         var data =  $scope.getDeviceCounts(item.rValue);
         var stringResult = '';
-        var prefix = item.customId;
+        var prefix = $filter('strip')(item.customId, '_', ' ', true);
         for(var i=0; i<data.length; i++) {
             var arrSels = data[i].selection.map(function(s) {
                 return s.replace(prefix, '').replace(/_/g, ' ');
