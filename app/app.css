@@ -171,7 +171,12 @@ h2 {
 .min-width-x {
   min-width: 130px;
 }
-.up-space {
+.min-width-80 {
+  min-width: 80px;
+}
+.min-width-70 {
+  min-width: 70px;
+}.up-space {
   margin-top: 10px;
 }
 .accordion-toggle {

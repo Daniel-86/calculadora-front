@@ -35,7 +35,7 @@
                 </ul>
 
                 <div ng-show="category.customId === 'ingenieria_en_sitio'">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-12">
                         <select ng-options="component as component.descripcion for component in category.componentes"
                                 data-ng-model="category.tempSelected"
                                 title="Elige una opción"
@@ -44,12 +44,15 @@
                         </select>
                     </div>
                     <div class="col-md-12">
-                        <div class="form-group col-md-3" ng-show="category.tempSelected"
+                        <div class="form-group col-md-4"
+                             ng-show="category.tempSelected"
                              ng-repeat="property in category.tempSelected.propiedades">
+                            <label class="control-label"
+                                   ng-show="!isStringBoolean(property.tipo)">
+                                {{property.customId | strip:category.tempSelected.customId | strip:'_':true}}</label>
                             <input type="number"
                                    ng-show="isStringNumber(property.tipo)"
-                                   class="form-control input-sm small-input"
-                                   placeholder="{{ property.customId }}"
+                                   class="form-control input-sm small-inputs"
                                    ng-model="property.rValue"/>
                             <select class="form-control input-sm limit-size"
                                     title="{{ property.descripcion }}"
@@ -62,14 +65,14 @@
                             <label ng-show="isStringBoolean(property.tipo)">
                                 <input type="checkbox"
                                        ng-model="property.rValue">
-                                {{ property.customId }}
+                                {{ property.customId | strip:category.tempSelected.customId | strip:'_':true}}
                             </label>
                         </div>
                     </div>
                 </div>
 
                 <div ng-show="category.customId === 'tecnologia'">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-12">
                         <select ng-options="component as component.customId for component in category.componentes"
                                 data-ng-model="category.tempSelected"
                                 title="Elige una tecnología"
@@ -79,9 +82,12 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-4" ng-repeat="property in category.tempSelected.propiedades">
+                            <label class="control-label"
+                                   ng-show="!isStringBoolean(property.tipo)">
+                                {{property.customId | strip:category.tempSelected.customId | strip:'_':true}}</label>
                             <input type="number"
                                    ng-show="isStringNumber(property.tipo)"
-                                   class="form-control input-sm small-input"
+                                   class="form-control input-sm small-inputs"
                                    placeholder="{{ property.customId }}"
                                    ng-change="showChildren(category.tempSelected)"
                                    ng-model="property.rValue"/>
@@ -97,7 +103,7 @@
                             <label ng-show="isStringBoolean(property.tipo)">
                                 <input type="checkbox"
                                        ng-model="property.rValue">
-                                {{ property.customId }}
+                                {{ property.customId | strip:category.tempSelected.customId | strip:'_':true }}
                             </label>
                         </div>
                     </div>
@@ -149,7 +155,7 @@
                                        data-checklist-value="concepto"
                                        data-checklist-change="updateSelections(category.tempSelected)"
                                        name="{{ category.customId }}-concepto">
-                                {{ concepto.customId.replace(category.tempSelected.customId, '').replace('_', '') }}
+                                {{ concepto.customId | strip:category.tempSelected.customId | strip:'_':true }}
                             </label>
                         </div>
                         <div class="col-md-12 btn-group">
@@ -208,8 +214,9 @@
                         <div class="col-sm-3">{{ category.customId }}</div>
                         <div class="col-sm-9">
                             <div ng-repeat="componente in category.componentes" ng-show="anyValuedChild(componente)">
-                                {{ componente.customId }} <span ng-repeat="propiedad in componente.propiedades">
-                                {{ propiedad.rValue }}</span>
+                                {{ componente.customId }}
+                                <span ng-repeat="propiedad in componente.propiedades">
+                                    {{ propiedad.rValue }}</span>
                             </div>
                         </div>
                     </div>
@@ -269,7 +276,8 @@
             <p>
                 La última fila es el resultado total.
             </p>
-            <table class="table table-striped">
+            <div class="table-responsive">
+            <table class="table table-striped table-hover">
                 <thead>
                 <th>Nombre</th>
                 <th>Descripción</th>
@@ -297,9 +305,19 @@
                     <td>{{res.rq}}</td>
                     <td>{{res.acs}}</td>
                 </tr>
+                <tr class="warning">
+                    <td><strong>Faltantes</strong></td>
+                    <td colspan="5">{{row.ticket.best.missing | joinArray}}</td>
+                </tr>
+                <tr class="success">
+                    <td><strong>Extra</strong></td>
+                    <td colspan="5">{{row.ticket.best.extra | joinArray}}</td>
+                </tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                 <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                 </tbody>
             </table>
+            </div>
         </div>
         <div ng-show="noMatches()">
             Ninguna regla coincide para lo seleccionado

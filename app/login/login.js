@@ -2,7 +2,7 @@
 
 var loginModule = angular.module('login', []);
 
-loginModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
+loginModule.constant('baseRemoteURL', 'http://192.168.1.103:8080/calculadora/');
 loginModule.controller('LoginCtrl',
     function($rootScope, $scope, $http, authService, baseRemoteURL) {
         $scope.logIn = function() {

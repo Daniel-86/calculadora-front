@@ -196,7 +196,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
 }
 
 
-factorModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
+factorModule.constant('baseRemoteURL', 'http://192.168.1.103:8080/calculadora/');
 factorModule.controller('FactorCtrl', function($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {factorCtrl($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location)});
 factorModule.directive('dependsOn', function() {
     return {

@@ -188,6 +188,7 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
             item.deviceScope = 'all';
             item.deviceRange = {min:0, max:item.deviceCount};
         }
+        $scope.deviceScopeChanged(item);
         item.isPartialSelected = show;
         if(item.deviceScope === 'all') item.isFullSelected = show;
         //item.isFullSelected = item.deviceScope === 'all'? show: isQuantitySpecified(item);
@@ -211,6 +212,7 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
         if(!item.rValue) item.rValue = [];
         item.currentSelection = item.rValue[item.deviceRange.min];
         $scope.applyToChanged(item);
+        if(item.isFullSelected) $scope.updateSelections(item);
     };
 
     $scope.updateSelections = function(item) {
@@ -431,6 +433,7 @@ function formatData(item) {
     var objects = [];
     //return [{count: 1, selection: ['firewall_firewall_ha']}];
     for(var i=0; i<item.length; i++) {
+        if(!item[i]) continue;
         var selections = item[i].map(function(e) {return e.customId;});
         //var selections = ['firewall_firewall_ha'];
         var idx = findWithAttr(objects, 'selection', selections);
@@ -444,10 +447,24 @@ function formatData(item) {
     return objects;
 }
 
+function formatDependencies() {
+    return function(array) {return joinArray(array);};
+}
 
-calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
+function stripString() {
+    return function(text, phrase, all) {
+        if (!text) return text;
+        if (all) return text.replace(new RegExp(phrase, 'g'), '');
+        else return text.replace(new RegExp(phrase), '');
+    }
+}
+
+
+calculadoraControllers.constant('baseRemoteURL', 'http://192.168.1.103:8080/calculadora/');
 calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce);});
 calculadoraControllers.filter('prettyPrint', formatServices);
+calculadoraControllers.filter('joinArray', formatDependencies);
+calculadoraControllers.filter('strip', stripString);
 //calculadoraControllers.filter('trim');
 
 

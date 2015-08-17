@@ -322,5 +322,5 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
 }
 
 
-serviciosModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
+serviciosModule.constant('baseRemoteURL', 'http://192.168.1.103:8080/calculadora/');
 serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location);});

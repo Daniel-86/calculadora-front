@@ -196,7 +196,7 @@ function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
 }
 
 
-ticketModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
+ticketModule.constant('baseRemoteURL', 'http://192.168.1.103:8080/calculadora/');
 ticketModule.controller('TicketCtrl', function($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {ticketCtrl($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location)});
 ticketModule.directive('dependsOn', function() {
     return {
