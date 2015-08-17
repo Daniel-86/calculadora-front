@@ -75,7 +75,7 @@
                         <tbody>
                         <tr  ng-form="tempForm" ng-repeat="dependency in ticket.dependencies"
                              title="{{dependency.item.descripcion}}">
-                            <td>{{dependency.item.customId}}</td>
+                            <td>{{dependency.item.customId | strip:'_':' ':true}}</td>
                             <td class="min-width-70">
                                 <input class="form-control numbers" type="number"
                                        ng-model="dependency.lowerLimit" min="0"
@@ -141,7 +141,7 @@
                         <tr title="Agregar dependencia" class="addRow">
                             <td colspan="5">
                                 <select ng-model="lastAdded"
-                                        ng-options="ava as ava.customId for ava in available"
+                                        ng-options="ava as (ava.customId | strip:'_':' ':true) for ava in available"
                                         ng-change="addDepRow()"
                                         title="Selecciona para agregar"
                                         class="form-control">

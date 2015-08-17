@@ -452,15 +452,16 @@ function formatDependencies() {
 }
 
 function stripString() {
-    return function(text, phrase, all) {
+    return function(text, phrase, substitute, all) {
         if (!text) return text;
-        if (all) return text.replace(new RegExp(phrase, 'g'), '');
-        else return text.replace(new RegExp(phrase), '');
+        if(!substitute) substitute = '';
+        if (all) return text.replace(new RegExp(phrase, 'g'), substitute);
+        else return text.replace(new RegExp(phrase), substitute);
     }
 }
 
 
-calculadoraControllers.constant('baseRemoteURL', 'http://192.168.1.103:8080/calculadora/');
+calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce);});
 calculadoraControllers.filter('prettyPrint', formatServices);
 calculadoraControllers.filter('joinArray', formatDependencies);
