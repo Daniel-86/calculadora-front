@@ -63,6 +63,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading"><h4>Dependencias</h4></div>
                     <div class="panel-body">Usa el select para agregar más dependencias</div>
+                    <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                         <th>ID</th>
@@ -75,8 +76,8 @@
                         <tr  ng-form="tempForm" ng-repeat="dependency in factor.dependencies"
                              title="{{dependency.item.descripcion}}">
                             <td>{{dependency.item.customId | strip:'_':' ':true}}</td>
-                            <td>
-                                <input class="form-control number" type="number"
+                            <td class="min-width-70">
+                                <input class="form-control numbers" type="number"
                                        ng-model="dependency.lowerLimit" min="0"
                                        name="lowerLimit">
                                 <span style="color: #ff0000;"
@@ -91,10 +92,10 @@
                                     <span ng-repeat="errorMessage in createForm[dependency.item.customId+'.lowerLimit'].serverErrors">{{errorMessage}}</span>
                                 </span>
                             </td>
-                            <td>
+                            <td class="min-width-70">
                                 <input type="number"
                                        name="upperLimit"
-                                       class="form-control number"
+                                       class="form-control numbers"
                                        min="{{dependency.lowerLimit}}"
                                        ng-model="dependency.upperLimit"
                                        depends-on="{{dependency.lowerLimit}}"
@@ -116,8 +117,8 @@
                                     <span ng-repeat="errorMessage in tempForm.upperLimit.serverErrors">{{errorMessage}}</span>
                                 </span>
                             </td>
-                            <td>
-                                <input class="form-control number" type="number"
+                            <td class="min-width-70">
+                                <input class="form-control numbers" type="number"
                                        ng-model="dependency.step" name="step">
                                 <span style="color: #ff0000;"
                                       ng-show="tempForm.step.$dirty && tempForm.step.$invalid">
@@ -154,7 +155,7 @@
                         </tr>
                         </tbody>
                     </table>
-
+                    </div>
                 </div>
             </div>
 
