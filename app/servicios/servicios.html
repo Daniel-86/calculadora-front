@@ -5,10 +5,10 @@
                 <a href="#/servicios" ng-if="!isRoot()">Todos</a>
                 <span ng-if="isRoot()">Todos</span> </li>
             <li ng-repeat="item in currentParents" ng-class="{'active':$last}">
-                <a href="#/servicios/{{ item }}">{{item}}</a>
+                <a href="#/servicios/{{ item.customId }}">{{item.nombre}}</a>
             </li>
             <li ng-if="!isRoot()">
-                <span>{{ currentSelection.customId }}</span>
+                <span>{{ currentSelection.nombre }}</span>
             </li>
         </ol>
     </div>
@@ -19,13 +19,19 @@
     <div ng-class="currentSelection.nodeType == 'LEAF'? 'col-md-12': 'col-md-8'" ng-show="!isRoot()">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4>Datos de {{currentSelection.customId}}
-                    <small class="pull-right">{{currentSelection.domainClass}} ({{currentSelection.nodeType}})</small>
+                <h4>Datos de <small>{{currentSelection.nombre}}</small>
+                    <!--<small class="pull-right">{{currentSelection.domainClass}} ({{currentSelection.nodeType}})</small>-->
                 </h4></div>
             <div class="panel-body">
                 <!--<div ng-repeat="objProp in editableProperties" class="form-group">-->
                     <!--{{ currentSelection }}-->
                 <!--</div>-->
+                <label>
+                    <input type="checkbox"
+                           ng-model="currentSelection.visible"
+                           ng-change="updateVisibility(currentSelection)">
+                    Visible
+                </label>
                 <div ng-if="currentSelection.nodeType == 'ROOT'">
                     <div class="form-group">
                         <label for="descInpt" class="control-label">Descripción</label>
@@ -50,7 +56,7 @@
                 </div>
                 <div ng-if="currentSelection.nodeType == 'BRANCH'">
                     <div class="form-group" ng-repeat="prop in currentSelection.propiedades">
-                        Propiedad <strong>{{prop.customId}}</strong> es de tipo <em>{{prop.tipo}}</em>
+                        Propiedad <strong>{{prop.nombre}}</strong> es de tipo <em>{{prop.tipo}}</em>
                         <a href=""
                            ng-click="dropProperty(prop, currentSelection)"
                            class="btn btn-link pull-right">
@@ -118,7 +124,7 @@
             <div class="list-group-item">
                 <div class="list-group-item-heading">
                     <h4 class="text-center">
-                        {{currentSelection.length !== categories.length? 'Hijos de '+currentSelection.customId: 'Todas las categorías'}}
+                        {{currentSelection.length !== categories.length? 'Hijos de '+currentSelection.nombre: 'Todas las categorías'}}
                     </h4>
                 </div>
             </div>
@@ -127,11 +133,11 @@
                  ng-class="$last? 'spaced-bottom': ''">
                 <a href="#/servicios/{{ child.customId }}"
                    class="col-sm-10">
-                    {{child.customId}}
+                    {{child.nombre}}
                     <span class="pull-right">
-                        <small class="">
-                            &lt{{child.domainClass}}&gt
-                        </small>
+                        <!--<small class="">-->
+                            <!--&lt{{child.domainClass}}&gt-->
+                        <!--</small>-->
                         <a href=""
                            ng-click="removeChild(child)"
                            style="background-image: none !important;"
@@ -170,7 +176,7 @@
                                name="nombre"
                                required
                                class="form-control"
-                               ng-model="newItem.customId">
+                               ng-model="newItem.nombre">
                             <span ng-show="newItemForm.nombre.$dirty && newItemForm.nombre.$error.required"
                                   class="help-block text-danger">Requerido</span>
                     </div>

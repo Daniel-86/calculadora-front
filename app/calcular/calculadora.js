@@ -295,7 +295,8 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
     $scope.basura = function(item) {
         var data =  $scope.getDeviceCounts(item.rValue);
         var stringResult = '';
-        var prefix = $filter('strip')(item.customId, '_', ' ', true);
+        //var prefix = $filter('strip')(item.customId, '_', ' ', true);
+        var prefix = item.customId;
         for(var i=0; i<data.length; i++) {
             var arrSels = data[i].selection.map(function(s) {
                 return s.replace(prefix, '').replace(/_/g, ' ');
@@ -397,6 +398,16 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
     };
 
 
+    $scope.getChildrenList = function(item, typeName) {
+        if(!item[typeName]) return [];
+        var okArray = [];
+        for(var i=0; i<item[typeName].length; i++) {
+            if(item[typeName][i].visible) okArray.push(item[typeName][i]);
+        }
+        return okArray;
+    };
+
+
     /**
      * Para el acordeon
      */
@@ -457,7 +468,17 @@ function stripString() {
         if(!substitute) substitute = '';
         if (all) return text.replace(new RegExp(phrase, 'g'), substitute);
         else return text.replace(new RegExp(phrase), substitute);
-    }
+    };
+}
+
+function capitalize() {
+    return function(text, applyAll) {
+        if(!text) return text;
+        if(applyAll)
+            return (!!text) ? text.replace(/([^\W_]+[^\s-]*) */g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) : '';
+        else
+            return text.charAt(0).toUpperCase() + text.slice(1);
+    };
 }
 
 
@@ -466,6 +487,7 @@ calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http,
 calculadoraControllers.filter('prettyPrint', formatServices);
 calculadoraControllers.filter('joinArray', formatDependencies);
 calculadoraControllers.filter('strip', stripString);
+calculadoraControllers.filter('capitalize', capitalize);
 //calculadoraControllers.filter('trim');
 
 

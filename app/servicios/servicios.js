@@ -27,7 +27,7 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
                     var partialResult = findObjectByProperty(value, propertyName, propertyValue);
                     if(partialResult.result) {
                         result = partialResult.result;
-                        parents.push(value.customId);
+                        parents.push(value);
                         parents = parents.concat(partialResult.parents);
                         keepGoing = false;
                     }
@@ -45,7 +45,7 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
                                 var partialResult = findObjectByProperty(item, propertyName, propertyValue);
                                 if(partialResult.result) {
                                     result = partialResult.result;
-                                    parents.push(item.customId);
+                                    parents.push(item);
                                     parents = parents.concat(partialResult.parents);
                                     keepGoing = false;
                                 }
@@ -72,7 +72,7 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
                     var partialResult = findObjectByProperty(item, propertyName, propertyValue);
                     if(partialResult.result) {
                         result = partialResult.result;
-                        parents.push(item.customId);
+                        parents.push(item);
                         parents = parents.concat(partialResult.parents);
                         keepGoing = false;
                     }
@@ -138,7 +138,15 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
     };
 
     $scope.isRoot = function() {
-        return angular.equals($scope.currentSelection, $scope.allItems);
+        var basura = angular.equals($scope.currentSelection, $scope.allItems);
+        //var algo = true;
+        //var otro = true;
+        //for(var i=0; i<$scope.currentSelection.length; i++) {
+        //    algo = $scope.currentSelection[i] === $scope.allItems[i];
+        //    otro = angular.equals($scope.currentSelection[i], $scope.allItems[i]);
+        //    var asdf = 'asdf';
+        //}
+        return basura;
     };
 
     if(!muted) console.log('cms.controllers - children', $scope.categories);
@@ -317,6 +325,16 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                         }
                     }
                 }
+            });
+    };
+
+    $scope.updateVisibility = function(item) {
+        $http.put(baseRemoteURL+'item/update', item)
+            .success(function(data) {
+
+            })
+            .error(function(data) {
+
             });
     };
 }
