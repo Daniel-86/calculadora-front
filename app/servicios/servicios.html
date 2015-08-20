@@ -1,4 +1,4 @@
-<div>
+<div class="container-fluid">
     <div class="col-md-12">
         <ol class="breadcrumb">
             <li>
@@ -14,49 +14,109 @@
     </div>
 
 
+    <div class="col-md-12">
+        <div alert
+             ng-repeat="alert in alerts"
+             data-type="{{alert.type}}"
+             data-close="closeAlert($index)">
+            {{alert.msg}}</div>
+    </div>
 
 
     <div ng-class="currentSelection.nodeType == 'LEAF'? 'col-md-12': 'col-md-8'" ng-show="!isRoot()">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4>Datos de <small>{{currentSelection.nombre}}</small>
+                <h4>Datos de <span class="gray-higher">{{currentSelection.nombre | capitalize}}</span>
+                    <label class="pull-right" ng-show="rolesName.indexOf(currentSelection.customId) > -1">
+                        <input type="checkbox"
+                               ng-model="currentSelection.visible"
+                               ng-change="updateVisibility(currentSelection)">
+                        Visible
+                    </label>
                     <!--<small class="pull-right">{{currentSelection.domainClass}} ({{currentSelection.nodeType}})</small>-->
                 </h4></div>
             <div class="panel-body">
-                <!--<div ng-repeat="objProp in editableProperties" class="form-group">-->
-                    <!--{{ currentSelection }}-->
-                <!--</div>-->
-                <label>
-                    <input type="checkbox"
-                           ng-model="currentSelection.visible"
-                           ng-change="updateVisibility(currentSelection)">
-                    Visible
-                </label>
-                <div ng-if="currentSelection.nodeType == 'ROOT'">
-                    <div class="form-group">
-                        <label for="descInpt" class="control-label">Descripción</label>
+                <!--<label>-->
+                    <!--<input type="checkbox"-->
+                           <!--ng-model="currentSelection.visible"-->
+                           <!--ng-change="updateVisibility(currentSelection)">-->
+                    <!--Visible-->
+                <!--</label>-->
+                <div ng-if="!isRoot(currentSelection)">
+                    <form novalidate
+                          name="generalesForm"
+                          ng-submit="updateGenerals(currentSelection)">
+                    <div class="form-group"
+                         ng-class="{'has-error': generalesForm.nombre.$invalid && generalesForm.nombre.$dirty}">
+                        <label for="descName"
+                               class="control-label">
+                            Nombre
+                            <span ng-show="generalesForm.nombre.$dirty && generalesForm.nombre.$error.required"
+                                  class="text-danger"> *</span>
+                        </label>
                         <input type="text"
                                class="form-control"
-                               id="descInpt"
-                               ng-model="currentSelection.descripcion"/>
+                               id="descName"
+                               name="nombre"
+                               required
+                               ng-model="currentSelection.nombre">
                     </div>
+                    <div class="form-group"
+                         ng-class="{'has-error': generalesForm.descripcion.$invalid && generalesForm.descripcion.$dirty}">
+                        <label for="descInpt" class="control-label">
+                            Descripción
+                            <span ng-show="generalesForm.descripcion.$dirty && generalesForm.descripcion.$error.required"
+                                  class="text-danger"> *</span>
+                        </label>
+                        <textarea class="form-control"
+                                  id="descInpt"
+                                  required
+                                  name="descripcion"
+                                  rows="5" style="resize: none;"
+                                  data-ng-model="currentSelection.descripcion"></textarea>
+                    </div>
+                        <div class="col-md-12">
+                            <button type="submit"
+                                    data-ng-disabled="generalesForm.$invalid || !generalesForm.$dirty"
+                                    class="btn btn-primary pull-right">
+                                <span class="glyphicon glyphicon-edit"></span>
+                                Actualizar</button>
+                        </div>
+                    </form>
                 </div>
-                <div ng-if="currentSelection.nodeType == 'LEAF'">
-                    <div class="form-group">
-                        <label for="descInpt2" class="control-label">Descripción</label>
-                        <input type="text"
-                               class="form-control"
-                               id="descInpt2"
-                               ng-model="currentSelection.descripcion"/>
-                    </div>
+                <!--<div ng-if="currentSelection.nodeType == 'ROOT'">-->
                     <!--<div class="form-group">-->
-                        <!--<label for="costoInpt" class="control-label">Costo</label>-->
-                        <!--<input type="number" class="form-control" id="costoInpt" ng-model="currentSelection.costo"/>-->
+                        <!--<label for="descInpt" class="control-label">Descripción</label>-->
+                        <!--<input type="text"-->
+                               <!--class="form-control"-->
+                               <!--id="descInpt"-->
+                               <!--ng-model="currentSelection.descripcion"/>-->
                     <!--</div>-->
-                </div>
-                <div ng-if="currentSelection.nodeType == 'BRANCH'">
-                    <div class="form-group" ng-repeat="prop in currentSelection.propiedades">
-                        Propiedad <strong>{{prop.nombre}}</strong> es de tipo <em>{{prop.tipo}}</em>
+                <!--</div>-->
+                <!--<div ng-if="currentSelection.nodeType == 'LEAF'">-->
+                    <!--<div class="form-group">-->
+                        <!--<label for="descInpt2" class="control-label">Descripción</label>-->
+                        <!--<input type="text"-->
+                               <!--class="form-control"-->
+                               <!--id="descInpt2"-->
+                               <!--ng-model="currentSelection.descripcion"/>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div ng-if="currentSelection.nodeType == 'BRANCH'" class="col-md-12">
+                    <div class="page-header">
+                        <h3>Propiedades
+                            <small>
+                                <a href=""
+                                   ng-click="showPropForm()"
+                                   ng-hide="addingProperty"
+                                   class="btn btn-link pull-right">
+                                    <span class="glyphicon glyphicon-plus-sign"></span> Nueva
+                                </a>
+                            </small>
+                        </h3>
+                    </div>
+                    <div class="col-md-12 form-group" ng-repeat="prop in currentSelection.propiedades">
+                        <strong>{{prop.nombre | capitalize}}</strong> es de tipo <em>{{prop.tipo}}</em>
                         <a href=""
                            ng-click="dropProperty(prop, currentSelection)"
                            class="btn btn-link pull-right">
@@ -64,45 +124,91 @@
                     </div>
                 </div>
 
-                <div class="col-md-12" ng-if="currentSelection.nodeType == 'BRANCH'">
-                    <button class="btn btn-default btn-sm btn-add-prop"
-                            ng-click="showPropForm()"
-                            ng-hide="addingProperty">
-                        Nueva propiedad</button>
-                </div>
+                <!--<div class="col-md-12" ng-if="currentSelection.nodeType == 'BRANCH'">-->
+                    <!--<button class="btn btn-default btn-sm btn-add-prop"-->
+                            <!--ng-click="showPropForm()"-->
+                            <!--ng-hide="addingProperty">-->
+                        <!--Nueva propiedad</button>-->
+                <!--</div>-->
                 <div ng-show="addingProperty">
-                    <div class="form-group">
-                        <label for="propName" class="control-label">Nombre</label>
+                    <form novalidate
+                          name="newPropertyForm">
+                        <div class="col-md-12">
+                            <div alert
+                                 ng-repeat="alert in propertyAlerts"
+                                 data-type="{{alert.type}}"
+                                 data-close="closeAlert2($index)">
+                                {{alert.msg}}</div>
+                        </div>
+                    <div class="form-group"
+                         ng-class="{'has-error': newPropertyForm.nombre.$invalid && newPropertyForm.nombre.$dirty}">
+                        <label for="propName"
+                               class="control-label">
+                            Nombre
+                            <span ng-show="newPropertyForm.nombre.$dirty && newPropertyForm.nombre.$error.required"
+                                  class="text-danger"> *</span>
+                        </label>
                         <input type="text"
                                class="form-control"
                                id="propName"
-                               ng-model="newProperty.customId"/>
+                               name="nombre"
+                               required
+                               ng-model="newProperty.nombre"/>
+                        <span class="help-block text-danger"
+                              ng-show="newPropertyForm.nombre.serverErrors">
+                            <span ng-repeat="errorMessage in newPropertyForm.nombre.serverErrors">
+                                {{errorMessage}}</span>
+                        </span>
                     </div>
-                    <div class="form-group">
-                        <label for="propDesc" class="control-label">Descripción</label>
-                        <input type="text"
-                               class="form-control"
-                               id="propDesc"
-                               ng-model="newProperty.descripcion"/>
+                    <div class="form-group"
+                         ng-class="{'has-error': newPropertyForm.descripcion.$invalid && newPropertyForm.descripcion.$dirty}">
+                        <label for="propDesc"
+                               class="control-label">
+                            Descripción
+                            <span ng-show="newPropertyForm.descripcion.$dirty && newPropertyForm.descripcion.$error.required"
+                                  class="text-danger"> *</span>
+                        </label>
+                        <textarea name="descripcion"
+                                  id="propDesc"
+                                  required
+                                  class="form-control"
+                                  data-ng-model="newProperty.descripcion"
+                                  rows="5" style="resize: none;"></textarea>
+                        <span class="help-block text-danger"
+                              ng-show="newPropertyForm.descripcion.serverErrors">
+                            <span ng-repeat="errorMessage in newPropertyForm.descripcion.serverErrors">
+                                {{errorMessage}}</span>
+                        </span>
                     </div>
-                    <div class="form-group">
-                        <label for="propType" class="control-label">Tipo</label>
+                    <div class="form-group"
+                         ng-class="{'has-error': newPropertyForm.tipo.$invalid && newPropertyForm.tipo.$dirty}">
+                        <label for="propType"
+                               class="control-label">
+                            Tipo
+                            <span ng-show="newPropertyForm.tipo.$dirty && newPropertyForm.tipo.$error.required"
+                                  class="text-danger"> *</span>
+                        </label>
                         <select data-ng-model="newProperty.tipo"
                                 class="form-control"
+                                required
+                                name="tipo"
                                 id="propType">
-                            <option value=""> -- Elige -- </option>
+                            <option value=""
+                                    ng-class="{'text-danger': newPropertyForm.tipo.$dirty && newPropertyForm.tipo.$error.required}">
+                                -- Elige -- </option>
                             <option value="int">Entero</option>
                             <option value="string">String</option>
                             <option value="boolean">Boolean</option>
                             <option value="list">Lista</option>
                             <option value="multiple">Multiple</option>
                         </select>
-                        <!--<input type="text"-->
-                               <!--class="form-control"-->
-                               <!--id="propType"-->
-                               <!--ng-model="newProperty.tipo"/>-->
+                        <span class="help-block text-danger"
+                              ng-show="newPropertyForm.tipo.serverErrors">
+                            <span ng-repeat="errorMessage in newPropertyForm.tipo.serverErrors">
+                                {{errorMessage}}</span>
+                        </span>
                     </div>
-                    <div class="btn-group new-prop-btns">
+                    <div class="btn-group new-prop-btns pull-right">
                         <button class="btn btn-default btn-sm btn-add-prop"
                                 ng-click="addProp(currentSelection)">
                             Agregar</button>
@@ -110,6 +216,7 @@
                                 ng-click="cancelProp()">
                             Cancelar</button>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -172,7 +279,7 @@
                     </div>
                     <div class=""
                          ng-class="{'has-error': newItemForm.nombre.$invalid && newItemForm.nombre.$dirty}">
-                        <input placeholder="nombre (sin espacios)"
+                        <input placeholder="Nombre"
                                name="nombre"
                                required
                                class="form-control"
@@ -183,16 +290,18 @@
                     <div class=""
                          ng-class="{'has-error': newItemForm.descripcion.$invalid && newItemForm.descripcion.$dirty}">
                         <input type="text"
-                               placeholder="descripción"
+                               placeholder="Descripción"
                                name="descripcion"
                                class="form-control"
                                ng-model="newItem.descripcion">
                             <span ng-show="newItemForm.descripcion.$dirty && newItemForm.descripcion.$error.required"
                                   class="help-block text-danger">Requerido</span>
                     </div>
-                    <button type="submit" class="btn btn-default form-control"
-                            ng-click="addItem(newItem)" ng-disabled="newItemForm.$invalid"><span
-                            class="glyphicon glyphicon-plus"></span> Agregar
+                    <button type="submit"
+                            class="btn btn-default form-control"
+                            ng-click="addItem(newItem)"
+                            data-ng-disabled="newItemForm.$invalid">
+                        <span class="glyphicon glyphicon-plus"></span> Agregar
                     </button>
                 </form>
             </div>

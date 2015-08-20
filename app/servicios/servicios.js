@@ -116,6 +116,9 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                 if(!$scope.currentSelection) {
                     $location.path('/servicios');
                 }
+                var ingSitioItem = findObjectByProperty($scope.allItems, 'customId', 'ingenieria_en_sitio');
+                $scope.rolesName = ingSitioItem.result.componentes? ingSitioItem.result.componentes.map(function(item) {return item.customId;}): [];
+                var debug = 'debug';
         });
     };
     getAllData();
@@ -210,8 +213,44 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                 $scope.newProperty = undefined;
                 $scope.addingProperty = false;
             })
-            .error(function(data) {
-
+            .error(function(data, status) {
+                var muted = true;
+                angular.forEach($scope.newPropertyForm, function(itemForm) {
+                    if(itemForm && angular.isObject(itemForm))
+                        itemForm.serverErrors = [];
+                });
+                if(!muted) console.log('error (' + status + '): ', data);
+                var creaForma = $scope.newPropertyForm;
+                if(status === 402 || status === 422) {
+                    var serverErrors = data.errors;
+                    angular.forEach(serverErrors, function (error) {
+                        var field = error.field;
+                        var message = error.message; if(!muted) console.log('field, message ' + field + '   '+message);
+                        var rejectedVal = error['rejected-value'];
+                        if(!creaForma[field]) {
+                            //creaForma[field] = {};
+                            if(!$scope.propertyAlerts || !angular.isArray($scope.propertyAlerts))
+                                $scope.propertyAlerts = [];
+                            $scope.propertyAlerts.push({type: 'danger', msg: message});
+                        }
+                        else {
+                            if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
+                            creaForma[field].serverErrors.push(message);
+                            creaForma[field].$setValidity('server', false);
+                            creaForma[field].$setDirty(true);
+                        }
+                    });
+                }
+                else if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
+                    //creaForma.generalErrors = ['The specified HTTP method is not allowed for the requested' +
+                    //' resource.'];
+                    $scope.propertyAlerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +
+                    ' requested'}];
+                }
+                else {
+                    //creaForma.generalErrors = ["Se recibi? un error "+status];
+                    $scope.propertyAlerts = [{type: 'danger', msg: 'Se recibi? un error '+status}];
+                }
             });
     };
 
@@ -330,12 +369,62 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
 
     $scope.updateVisibility = function(item) {
         $http.put(baseRemoteURL+'item/update', item)
-            .success(function(data) {
-
+            .success(function(data, status) {
+                $scope.alerts = data;
+                if(status === 201 || status === 200) {
+                    $scope.alerts = [{type: 'success', msg: 'El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')}];
+                }
             })
             .error(function(data) {
 
             });
+    };
+
+    $scope.updateGenerals = function(item) {
+        $http.put(baseRemoteURL+'item/update', item)
+            .success(function(data, status) {
+                //$scope.alerts = data;
+                if(status === 201 || status === 200) {
+                    $scope.alerts = [{type: 'success', msg: 'El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')}];
+                }
+            })
+            .error(function(data) {
+                var muted = true;
+                $scope.generalesForm.generalInfo = [];
+                angular.forEach($scope.generalesForm, function(item) {
+                    item.serverErrors = [];
+                });
+                if(!muted) console.log('error (' + status + '): ', data);
+                var creaForma = $scope.generalesForm;
+                if(status === 402 || status === 422) {
+                    var serverErrors = data.errors;
+                    angular.forEach(serverErrors, function (error) {
+                        var field = error.field;
+                        var message = error.message; if(!muted) console.log('field, message ' + field + '   '+message);
+                        var rejectedVal = error['rejected-value'];
+                        if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
+                        creaForma[field].serverErrors.push(message);
+                    });
+                }
+                if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
+                    //creaForma.generalErrors = ['The specified HTTP method is not allowed for the requested' +
+                    //' resource.'];
+                    $scope.alerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +
+                    ' requested'}];
+                }
+                else {
+                    //creaForma.generalErrors = ["Se recibi? un error "+status];
+                    $scope.alerts = [{type: 'danger', msg: 'Se recibi? un error '+status}];
+                }
+            });
+    };
+
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+    };
+
+    $scope.closeAlert2 = function(index) {
+        $scope.propertyAlerts.splice(index, 1);
     };
 }
 

@@ -218,6 +218,13 @@ height: 32px;
 tr.addRow {
   background-color: #2A2A2A !important;
 }
+
+.gray-higher {
+  font-size: 125%;
+  font-weight: normal;
+  line-height: 1;
+  color: #777;
+}
 /**/
 /**/
 /*Termina estilos de la página principal*/
