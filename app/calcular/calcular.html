@@ -207,20 +207,22 @@
                 <div>
                     <h3>Resumen general</h3>
                 </div>
-                <div class="col-md-12" ng-repeat="category in categories">
+                <div class="col-xs-12 col-md-12" ng-repeat="category in categories">
                     <div ng-show="anyValuedChild(category) && category.customId === 'tipo_de_cliente'"
-                         class="col-md-12 descRow">
-                        <div class="col-sm-3">{{ category.nombre }}</div>
-                        <div class="col-sm-9"><strong>{{ category.rValue.nombre }}</strong></div>
+                         class="col-xs-12 col-md-12 descRow">
+                        <div class="col-xs-3">{{ category.nombre }}</div>
+                        <div class="col-xs-9"><strong>{{ category.rValue.nombre }}</strong></div>
                     </div>
 
                     <div ng-show="anyValuedChild(category) && category.customId === 'ingenieria_en_sitio'"
-                         class="col-md-12 descRow">
-                        <div class="col-sm-3">{{ category.nombre }}</div>
-                        <div class="col-sm-9">
-                            <div ng-repeat="componente in category.componentes" ng-show="anyValuedChild(componente)">
+                         class="col-xs-12 col-md-12 descRow">
+                        <div class="col-xs-3">{{ category.nombre }}</div>
+                        <div class="col-xs-9">
+                            <div ng-repeat="componente in category.componentes"
+                                 class=""
+                                 ng-show="anyValuedChild(componente)">
                                 {{ componente.nombre }}
-                                <span ng-repeat="propiedad in componente.propiedades">
+                                <span class="" ng-repeat="propiedad in componente.propiedades">
                                     {{ propiedad.rValue }}</span>
                             </div>
                         </div>
@@ -228,12 +230,12 @@
 
                     <div ng-show="anyValuedChild(category) && category.customId == 'tecnologia'"
                          class="col-md-12 descRow">
-                        <div class="col-sm-3">{{ category.nombre }}</div>
-                        <div class="col-sm-9"></div>
-                        <div class="col-sm-12" ng-repeat="componente in category.componentes"
+                        <div class="col-xs-3">{{ category.nombre }}</div>
+                        <div class="col-xs-9"></div>
+                        <div class="col-xs-12" ng-repeat="componente in category.componentes"
                              ng-show="anyValuedChild(componente)">
-                            <div class="col-sm-3">{{ componente.nombre }}</div>
-                            <div class="col-sm-9">
+                            <div class="col-xs-3">{{ componente.nombre }}</div>
+                            <div class="col-xs-9">
                                 <div ng-show="componente.propiedades[1].rValue">
                                     <span>volumetría <strong>{{ componente.propiedades[1].rValue }}</strong></span>
                                 </div>

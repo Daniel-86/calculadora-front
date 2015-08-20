@@ -459,7 +459,7 @@ function formatData(item) {
 }
 
 function formatDependencies() {
-    return function(array) {return joinArray(array);};
+    return function(array, propName) {return joinArray(array, propName);};
 }
 
 function stripString() {

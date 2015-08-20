@@ -119,7 +119,9 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                 var ingSitioItem = findObjectByProperty($scope.allItems, 'customId', 'ingenieria_en_sitio');
                 $scope.rolesName = ingSitioItem.result.componentes? ingSitioItem.result.componentes.map(function(item) {return item.customId;}): [];
                 var debug = 'debug';
-        });
+        }).error(function(data, status) {
+                $scope.alerts = [{type: 'danger', message: 'Algo pasó... y no debió pasar'}];
+            });
     };
     getAllData();
 
@@ -205,6 +207,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
         if(!newProp) return;
         newProp.parent = $scope.currentSelection;
         if(!muted) console.log('newProp '+ newProp);
+        $scope.propertyAlerts = [];
 
         $http.post(baseRemoteURL+"propiedad/save", newProp)
             .success(function(data) {
