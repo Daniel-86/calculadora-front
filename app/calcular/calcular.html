@@ -95,14 +95,12 @@
                                    placeholder="{{ property.customId }}"
                                    ng-change="showChildren(category.tempSelected)"
                                    ng-model="property.rValue"/>
-                            <select class="form-control input-sm limit-size"
+                            <select class="form-control input-sm"
                                     title="{{ property.descripcion }}"
                                     data-ng-model="property.rValue"
+                                    ng-options="Number(sizeKey) as sizeValue for (sizeKey, sizeValue) in getCompanySizeOptions()"
                                     ng-show="isStringVolumetria(property.customId)">
-                                <option value="">Elige una</option>
-                                <option>Small Bussiness hasta 500 usuarios</option>
-                                <option>Medium Bussiness hasta 5,000 usuarios</option>
-                                <option>Datacenters & Large Enterprise más de 5,000 usuarios</option>
+                                <option value=""> -- Elige alguna -- </option>
                             </select>
                             <label ng-show="isStringBoolean(property.tipo)">
                                 <input type="checkbox"

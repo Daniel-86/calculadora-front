@@ -79,7 +79,7 @@ function isQuantitySpecified(item) {
 }
 
 
-function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
+function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions) {
 
     var model = {
         chosen: [],
@@ -408,6 +408,9 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce) {
     };
 
 
+    $scope.getCompanySizeOptions = function() {return companySizeOptions};
+
+
     /**
      * Para el acordeon
      */
@@ -483,11 +486,16 @@ function capitalize() {
 
 
 calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce);});
+calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions);});
 calculadoraControllers.filter('prettyPrint', formatServices);
 calculadoraControllers.filter('joinArray', formatDependencies);
 calculadoraControllers.filter('strip', stripString);
 calculadoraControllers.filter('capitalize', capitalize);
+calculadoraControllers.value('companySizeOptions', {
+    0: 'Small Bussiness hasta 500 usuarios',
+    1: 'Medium Bussiness hasta 5,000 usuarios',
+    2: 'Datacenters & Large Enterprise más de 5,000 usuarios'
+});
 //calculadoraControllers.filter('trim');
 
 
