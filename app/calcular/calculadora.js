@@ -1,7 +1,7 @@
 //= require_self
 'use strict';
 
-var calculadoraControllers = angular.module('calculadora', ['checklist-model', 'toggle-switch', 'ui.bootstrap', 'ngRoute']);
+var calculadoraControllers = angular.module('calculadora', ['checklist-model', 'toggle-switch', 'ui.bootstrap', 'ngRoute', 'angularSpinner']);
 
 //var model = {
 //    chosen: [],
@@ -79,7 +79,7 @@ function isQuantitySpecified(item) {
 }
 
 
-function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions) {
+function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions, usSpinnerService) {
 
     var model = {
         chosen: [],
@@ -485,8 +485,13 @@ function capitalize() {
 }
 
 
+
+
+
 calculadoraControllers.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-calculadoraControllers.controller('CalculadoraMainCtrl', function($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions) {mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions);});
+calculadoraControllers.controller('CalculadoraMainCtrl',
+    function($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions, usSpinnerService) {
+        mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOptions, usSpinnerService);});
 calculadoraControllers.filter('prettyPrint', formatServices);
 calculadoraControllers.filter('joinArray', formatDependencies);
 calculadoraControllers.filter('strip', stripString);
@@ -496,6 +501,52 @@ calculadoraControllers.value('companySizeOptions', {
     1: 'Medium Bussiness hasta 5,000 usuarios',
     2: 'Datacenters & Large Enterprise más de 5,000 usuarios'
 });
+calculadoraControllers.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
+    usSpinnerConfigProvider.setDefaults({
+        lines: 13,
+        length: 40,
+        width: 14,
+        radius: 46,
+        scale: 1,
+        corners: 0,
+        opacity: 0.05,
+        rotate: 0,
+        direction: 1,
+        speed: 0.8,
+        trail: 91
+    });
+}]);
+calculadoraControllers.factory('spinnerInterceptor', function($q, $window, usSpinnerService) {
+    var interceptor = {
+        response: function(response) {
+            usSpinnerService.stop('all-data');
+            return response;
+        }
+    };
+
+    return interceptor;
+
+    //return function(promise) {
+    //    return promise.then(function(response) {console.log('deteniendo spinner');
+    //        usSpinnerService.stop('all-data');
+    //        return response;
+    //    }, function(response) {console.log('deteniendo spinner');
+    //        usSpinnerService.stop('all-data');
+    //        return $q.reject(response);
+    //    });
+    //};
+});
+calculadoraControllers.config(function($httpProvider, usSpinnerService) {
+    $httpProvider.interceptors.push('spinnerInterceptor');
+
+    var spinnerFunction = function spinnerFunction(data, headersGetter) {console.log('arrancando spinner');
+        usSpinnerService.spin('all-data');
+        return data;
+    };
+
+    $httpProvider.defaults.transformRequest.push(spinnerFunction);
+});
+
 //calculadoraControllers.filter('trim');
 
 
