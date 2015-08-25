@@ -8,7 +8,7 @@ angular.module('myApp', [
     'ticket',
     'servicios',
     'http-auth-interceptor',
-    'login'
+    'login', 'ngLoadingSpinner'
 ]).
 config(['$routeProvider', function($routeProvider) {
       $routeProvider.when('/calcular', {
