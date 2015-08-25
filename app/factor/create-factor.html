@@ -1,4 +1,5 @@
 <div>
+    <span us-spinner="{radius:30, width:8, length:16}"></span>
     <div class="col-md-12" id="dependencies-container">
         <div class="page-header">
             <h1>{{factor.id > 0? 'Editar': 'Crear'}} <small>Factor {{ factor.id > 0? factor.id: '' }}</small></h1>
@@ -38,6 +39,21 @@
                             <span ng-repeat="errorMessage in createForm.factor.serverErrors">{{errorMessage}}</span>
                         </span>
                     </div>
+                </div>
+
+                <div class="form-group col-md-8">
+                    <label for="target" class="control-label col-md-4">Aplicar a</label>
+                    <div class="col-md-8">
+                    <select multiple
+                            id="target"
+                            data-ng-model="factor.target"
+                            class="form-control">
+                        <option>CC</option>
+                        <option>ES</option>
+                        <option>ACS</option>
+                        <option>RQ</option>
+                    </select>
+                        </div>
                 </div>
 
                 <div class="form-group col-md-10">

@@ -376,10 +376,14 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
                             cardinality = (nitem - mod.lowerLimit)*mod.step;
                         }
                         if(!muted) console.log('calcularAjax cardinality', cardinality);
-                        partialResults.cc = Math.round(partialResults.cc + cardinality*mod.factor*partialResults.cc);
-                        partialResults.acs = Math.round(partialResults.acs + cardinality*mod.factor*partialResults.acs);
-                        partialResults.es = Math.round(partialResults.es + cardinality*mod.factor*partialResults.es);
-                        partialResults.rq = Math.round(partialResults.rq + cardinality*mod.factor*partialResults.rq);
+                        if(mod.target.indexOf('CC') > -1)
+                            partialResults.cc = Math.round(partialResults.cc + cardinality*mod.factor*partialResults.cc);
+                        if(mod.target.indexOf('ACS') > -1)
+                            partialResults.acs = Math.round(partialResults.acs + cardinality*mod.factor*partialResults.acs);
+                        if(mod.target.indexOf('ES') > -1)
+                            partialResults.es = Math.round(partialResults.es + cardinality*mod.factor*partialResults.es);
+                        if(mod.target.indexOf('RQ') > -1)
+                            partialResults.rq = Math.round(partialResults.rq + cardinality*mod.factor*partialResults.rq);
 
                         mod.cc = partialResults.cc;
                         mod.es = partialResults.es;

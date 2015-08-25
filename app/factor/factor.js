@@ -50,6 +50,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
         factorData['descripcion'] = $scope.factor.descripcion;
         factorData['nombre'] = $scope.factor.nombre;
         factorData['id'] = $scope.factor.id;
+        factorData['target'] = $scope.factor.target;
 
 
         var url = baseRemoteURL + ($scope.factor.id > 0? 'factor/update/'+$scope.factor.id: 'factor/save');
@@ -66,9 +67,9 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
         }
         function errorAjax(data, status, headers, config)  {
             $scope.createForm.generalInfo = [];
-            angular.forEach($scope.createForm, function(item) {
-                item.serverErrors = [];
-            });
+            //angular.forEach($scope.createForm, function(item) {
+            //    if(item) item.serverErrors = [];
+            //});
             if(!muted) console.log('error (' + status + '): ', data);
             var creaForma = $scope.createForm;
             if(status === 402 || status === 422) {
