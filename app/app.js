@@ -101,3 +101,20 @@ function getAuthenticateHttpConfig() {
         ignoreAuthModule: true
     };
 }
+
+
+angular.module('myApp').factory('authInterceptor', function($q) {
+    return {
+        request: function ($config) {
+            var token = getLocalToken();
+            if (token) {
+                $config.headers['X-Auth-Token'] = token;
+                $config.headers['Authorization'] = "Bearer " + token;
+            }
+            return $config;
+        }
+    };
+});
+angular.module('myApp').config(function($httpProvider) {
+    $httpProvider.interceptors.push('authInterceptor');
+});

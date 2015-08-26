@@ -7,7 +7,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My AngularJS App</title>
+  <title>Calculadora de Servicios Administrados</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="bower_components/angular-toggle-switch/angular-toggle-switch-bootstrap.css">
   <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
 </head>
-<body>
+<body class="show-login">
 
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -41,27 +41,34 @@
           <!--<asset:image src="logoScitum_MR_300x120px.png" style="display:inline" height="40" alt="Scitum"/>-->
           <img alt="Scitum" style="display:inline" height="40" src="images/logoScitum_MR_300x120px.png">
         </a>
+
+        <a href="/app" class="center-block navbar-brand">
+          <!--<g:link uri="/" class="center-block">-->
+                <span class="lead ">Calculadora de Servicios Administrados
+                </span>
+          <!--</g:link></li>-->
+        </a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li>
-            <a href="/app" class="center-block">
-              <!--<g:link uri="/" class="center-block">-->
-                <span class="lead ">Calculadora de Servicios Administrados
-                </span>
-              <!--</g:link></li>-->
-            </a>
-        </ul>
+        <!--<ul class="nav navbar-nav">-->
+          <!--<li>-->
+            <!--<a href="/app" class="center-block">-->
+              <!--&lt;!&ndash;<g:link uri="/" class="center-block">&ndash;&gt;-->
+                <!--<span class="lead ">Calculadora de Servicios Administrados-->
+                <!--</span>-->
+              <!--&lt;!&ndash;</g:link></li>&ndash;&gt;-->
+            <!--</a>-->
+        <!--</ul>-->
 
         <ul class="nav navbar-nav navbar-right">
           <!--<sec:ifAllGranted roles="ROLE_ADMIN">-->
-          <li class="dropdown">
+          <li class="dropdown" ng-controller="LoginCtrl">
             <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administración <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <!--<sec:ifAllGranted roles="ROLE_GOD">-->
-              <li>
+              <li ng-show="hasRole('ROLE_GOD')">
                 <!--<g:link controller="user">-->
                 <a href="#/usuarios">
                   Usuarios
@@ -69,16 +76,16 @@
                 <!--</g:link>-->
               </li>
               <!--</sec:ifAllGranted>-->
-              <li>
+              <li ng-show="hasRole('ROLE_ADMIN') || hasRole('ROLE_GOD')">
                 <a href="#/factores">Factores</a>
                 <!--<g:link uri="/factores">Factores</g:link>-->
               </li>
-              <li>
+              <li ng-show="hasRole('ROLE_ADMIN') || hasRole('ROLE_GOD')">
                 <a href="#/tickets">Tickets</a>
                 <!--<g:link uri="/tickets"-->
                 <!--params="[section: 'ticket']">Tabla de tickets</g:link>-->
               </li>
-              <li>
+              <li ng-show="hasRole('ROLE_ADMIN') || hasRole('ROLE_GOD')">
                 <a href="#/servicios/">Servicios</a>
                 <!--<g:link controller="calculadora" action="cms">Servicios</g:link>-->
               </li>
@@ -86,14 +93,15 @@
           </li>
           <!--</sec:ifAllGranted>-->
           <!--<sec:ifLoggedIn>-->
-          <li ng-controller="LogoutCtrl">
+          <li ng-controller="LogoutCtrl" ng-show="isLoggedIn()">
             <a href="" ng-click="logOut()">Logout</a>
             <!--<g:link controller="logout" action="index">Logout</g:link> -->
           </li>
           <!--</sec:ifLoggedIn>-->
           <!--<sec:ifNotLoggedIn>-->
-          <li>
-            <a href="#/login">Login</a>
+          <li ng-show="!isLoggedIn()" ng-controller="LoginCtrl">
+            <!--<a href="#/login">Login</a>-->
+            <a href="" ng-click="logIn()">Login</a>
             <!--<g:link controller="login" action="index">Login</g:link> -->
           </li>
           <!--</sec:ifNotLoggedIn>-->
@@ -102,30 +110,30 @@
     </div>
   </nav>
 
+  <span us-spinner="{radius:30, width:8, length:16}"></span>
 
-
-  <!--<div id="login-holder" class="container" style="width: 300px;">-->
-    <!--<div id="login-error" class="alert alert-error">-->
-      <!--<button type="button" class="close" onclick="$('#login-error').hide();">&times;</button>-->
-      <!--Username and/or password incorrect.-->
-    <!--</div>-->
-    <!--<div id="loginbox">-->
-      <!--<div id="login-inner" ng-controller="LoginCtrl">-->
-        <!--<form name="loginForm" role="form" ng-submit="logIn()" autocomplete="off">-->
-          <!--<div class="form-group">-->
-            <!--<label for="username">Username</label>-->
-            <!--<input id="username" class="form-control" type="text" ng-model="authData.username"/>-->
-          <!--</div>-->
-          <!--<div class="form-group">-->
-            <!--<label for="password">Password</label>-->
-            <!--<input id="password" class="form-control" type="password" ng-model="authData.password"/>-->
-          <!--</div>-->
-          <!--<input type="submit" class="btn btn-primary" value="Login"/>-->
-        <!--</form>-->
-      <!--</div>-->
-      <!--<div class="clear"></div>-->
-    <!--</div>-->
-  <!--</div>-->
+  <div id="login-holder" class="container" style="width: 300px;">
+    <div id="login-error" class="alert alert-error">
+      <button type="button" class="close" onclick="$('#login-error').hide();">&times;</button>
+      Username and/or password incorrect.
+    </div>
+    <div id="loginbox">
+      <div id="login-inner" ng-controller="LoginCtrl">
+        <form name="loginForm" role="form" ng-submit="logIn()" autocomplete="off">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" class="form-control" type="text" ng-model="authData.username"/>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" class="form-control" type="password" ng-model="authData.password"/>
+          </div>
+          <input type="submit" class="btn btn-primary" value="Login"/>
+        </form>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </div>
 
 
   <div id="content">
