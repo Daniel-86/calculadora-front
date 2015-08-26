@@ -11,7 +11,7 @@ loginModule.controller('LoginCtrl',
                     password: $scope.authData.password},
                 getAuthenticateHttpConfig)
                 .success(function(data) {
-                    localStorage["authToken"] = data.token;
+                    localStorage["authToken"] = data['access_token'];
                     authService.loginConfirmed({}, function(config) {
                         if(!config.headers['X-Auth-Token']) {
                             config.headers['X-Auth-Token'] = getLocalToken();

@@ -8,7 +8,8 @@ angular.module('myApp', [
     'ticket',
     'servicios',
     'http-auth-interceptor',
-    'login', 'ngLoadingSpinner'
+    'login',
+    'ngLoadingSpinner'
 ]).
 config(['$routeProvider', function($routeProvider) {
       $routeProvider.when('/calcular', {
@@ -34,6 +35,10 @@ config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/servicios/:selectedId?', {
             templateUrl: 'servicios/servicios.html',
             controller: 'ServiciosCtrl'
+        });
+        $routeProvider.when('/login', {
+            templateUrl: 'login/login.html',
+            controller: 'LoginCtrl'
         });
   $routeProvider.otherwise({redirectTo: '/calcular'});
 }]);
