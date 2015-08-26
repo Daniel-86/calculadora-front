@@ -44,7 +44,9 @@
 
         <a href="/app" class="center-block navbar-brand">
           <!--<g:link uri="/" class="center-block">-->
-                <span class="lead ">Calculadora de Servicios Administrados
+                <span class="lead ">
+                  <span class="glyphicon glyphicon-home"></span>
+                  <span class="hidden-sm">Calculadora de Servicios Administrados</span>
                 </span>
           <!--</g:link></li>-->
         </a>
@@ -65,7 +67,12 @@
         <ul class="nav navbar-nav navbar-right">
           <!--<sec:ifAllGranted roles="ROLE_ADMIN">-->
           <li class="dropdown" ng-controller="LoginCtrl">
-            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administración <span class="caret"></span></a>
+            <a href=""
+               class="dropdown-toggle"
+               data-toggle="dropdown"
+               role="button"
+               ng-show="hasRole('ROLE_ADMIN') || hasRole('ROLE_GOD')"
+               aria-expanded="false">Administración <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <!--<sec:ifAllGranted roles="ROLE_GOD">-->
               <li ng-show="hasRole('ROLE_GOD')">
