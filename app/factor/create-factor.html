@@ -114,6 +114,7 @@
                                        class="form-control numbers"
                                        min="{{dependency.lowerLimit}}"
                                        ng-model="dependency.upperLimit"
+                                       string-to-number
                                        depends-on="{{dependency.lowerLimit}}"
                                        ng-disabled="tempForm.lowerLimit.$invalid || !dependency.lowerLimit">
                                 <span style="color: #ff0000;"
@@ -123,9 +124,9 @@
                                         Requerido</span>
                                     <span ng-show="tempForm.upperLimit.$error.min">No puede ser menor a
                                     {{dependency.lowerLimit}}</span>
-                                    <span ng-show="tempForm.upperLimit.$error.number">Solo números</span>
+                                    <span ng-show="tempForm.upperLimit.$error.number && !tempForm.upperLimit.$error.range">Solo números</span>
                                     <span
-                                            ng-show="!tempForm.upperLimit.$error.number && tempForm.upperLimit.$error.range">No puede ser
+                                            ng-show="tempForm.upperLimit.$error.range">No puede ser
                                     menor a
                                     {{dependency.lowerLimit}}</span>
                                 </span>

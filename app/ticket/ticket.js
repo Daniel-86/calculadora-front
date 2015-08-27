@@ -44,7 +44,10 @@ function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
         //});
         if(!muted) console.log('createAjax - dependencies', ticketDependencies);
         ticketData['dependencias'] = $scope.ticket.dependencies;
-        ticketData['ticket'] = $scope.ticket.ticket;
+        ticketData['cc'] = $scope.ticket.cc;
+        ticketData['es'] = $scope.ticket.es;
+        ticketData['acs'] = $scope.ticket.acs;
+        ticketData['rq'] = $scope.ticket.rq;
         //ticketData['lowerLimit'] = $scope.ticket.lowerLimit;
         //ticketData['upperLimit'] = $scope.ticket.upperLimit;
         ticketData['descripcion'] = $scope.ticket.descripcion;
@@ -198,49 +201,35 @@ function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
 
 ticketModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 ticketModule.controller('TicketCtrl', function($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {ticketCtrl($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location)});
-ticketModule.directive('dependsOn', function() {
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, elem, attr, ctrl) {
-            //scope.$watch(scope.lowerLimit, function(newVal, oldVal) {
-            //    console.log('directive dependsOn attr: ', attr);
-            //    console.log('directive dependsOn element: ', elem);
-            //    console.log('directive dependsOn scope: ', scope);
-            //    console.log('directive dependsOn ctrl: ', ctrl);
-            //    if(newVal >= attr.dependsOn) {
-            //        console.log('ES VALIDO');
-            //    }else {
-            //        console.log('ES INVALIDO');
-            //    }
-            //});
-
-            ctrl.$parsers.unshift(function(value) {
-                var muted = true;
-                if(!muted) console.log('\n');
-                //console.log('directive PARSER dependsOn val: ', attr.dependsOn);
-                //console.log('directive PARSER dependsOn element: ', elem);
-                //console.log('directive PARSER dependsOn scope: ', scope);
-                //console.log('directive PARSER dependsOn ctrl: ', ctrl);
-                var valid = false;
-                if(!muted) console.log('es numero', angular.isNumber(value));
-                if(!muted) console.log('vacio', !value);
-                if(!muted) console.log('undefined', angular.isUndefined(value));
-                if(!muted) console.log('value', value);
-                if(!muted) console.log('es mayor', value >= attr.dependsOn);
-                if(!value || value >= attr.dependsOn) {
-                    valid = true;
-                }
-                ctrl.$setValidity('range', valid);
-                return valid? value: undefined;
-            });
-        }
-    }
-})
+//ticketModule.directive('dependsOn', function() {
+//    return {
+//        restrict: 'A',
+//        require: 'ngModel',
+//        link: function(scope, elem, attr, ctrl) {
+//
+//            ctrl.$parsers.unshift(function(value) {
+//                var muted = false;
+//                if(!muted) console.log('\n');
+//                if(!muted) console.log('Ticket dependsOn');
+//                var valid = false;
+//                if(!muted) console.log('es numero', angular.isNumber(value));
+//                if(!muted) console.log('vacio', !value);
+//                if(!muted) console.log('undefined', angular.isUndefined(value));
+//                if(!muted) console.log('value', value);
+//                if(!muted) console.log('es mayor', value >= attr.dependsOn);
+//                if(!value || value >= attr.dependsOn) {
+//                    valid = true;
+//                }
+//                ctrl.$setValidity('range', valid);
+//                return valid? value: undefined;
+//            });
+//        }
+//    }
+//});
 
 
 
-    .filter('startFrom', function() {
+    ticketModule.filter('startFrom', function() {
         return function(input, start) {
             if(input && input.length > 0) {
                 start = +start; //parse to int
@@ -248,11 +237,11 @@ ticketModule.directive('dependsOn', function() {
             }
             return [];
         }
-    })
+    });
 
 
 
-    .filter('customS', function() {
+    ticketModule.filter('customS', function() {
         return function(items, strin) {
             if(!strin) {
                 return items;

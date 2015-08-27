@@ -204,30 +204,19 @@ factorModule.directive('dependsOn', function() {
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elem, attr, ctrl) {
-            //scope.$watch(scope.lowerLimit, function(newVal, oldVal) {
-            //    console.log('directive dependsOn attr: ', attr);
-            //    console.log('directive dependsOn element: ', elem);
-            //    console.log('directive dependsOn scope: ', scope);
-            //    console.log('directive dependsOn ctrl: ', ctrl);
-            //    if(newVal >= attr.dependsOn) {
-            //        console.log('ES VALIDO');
-            //    }else {
-            //        console.log('ES INVALIDO');
-            //    }
-            //});
 
             ctrl.$parsers.unshift(function(value) {
-                var muted = true;
+                var muted = false;
                 if(!muted) console.log('\n');
-                //console.log('directive PARSER dependsOn val: ', attr.dependsOn);
-                //console.log('directive PARSER dependsOn element: ', elem);
-                //console.log('directive PARSER dependsOn scope: ', scope);
-                //console.log('directive PARSER dependsOn ctrl: ', ctrl);
+                if(!muted) console.log('Factor dependsOn');
                 var valid = false;
+                value = Number(value);
+                if(!muted) console.log('typeof value', typeof value);
                 if(!muted) console.log('es numero', angular.isNumber(value));
                 if(!muted) console.log('vacio', !value);
                 if(!muted) console.log('undefined', angular.isUndefined(value));
                 if(!muted) console.log('value', value);
+                if(!muted) console.log('dependsOn', attr.dependsOn);
                 if(!muted) console.log('es mayor', value >= attr.dependsOn);
                 if(!value || value >= attr.dependsOn) {
                     valid = true;

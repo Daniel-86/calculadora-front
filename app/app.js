@@ -36,6 +36,10 @@ config(['$routeProvider', function($routeProvider) {
             templateUrl: 'servicios/servicios.html',
             controller: 'ServiciosCtrl'
         });
+        //$routeProvider.when('/usuarios', {
+        //    templateUrl: 'usuario/buscar.html',
+        //    controller: 'UsuarioCtrl'
+        //});
         $routeProvider.when('/login', {
             templateUrl: 'login/login.html',
             controller: 'LoginCtrl'
@@ -117,4 +121,19 @@ angular.module('myApp').factory('authInterceptor', function($q) {
 });
 angular.module('myApp').config(function($httpProvider) {
     $httpProvider.interceptors.push('authInterceptor');
+});
+
+
+angular.module('myApp').directive('stringToNumber', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, ngModel) {
+            ngModel.$parsers.push(function(value) {
+                return '' + value;
+            });
+            ngModel.$formatters.push(function(value) {
+                return parseFloat(value, 10);
+            });
+        }
+    };
 });

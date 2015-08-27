@@ -24,18 +24,65 @@
                 </div>
 
                 <div class="form-group col-md-5">
-                    <label for="ticket" class="control-label col-md-4">Ticket</label>
-
+                    <label for="cc" class="control-label col-md-4">CC</label>
                     <div class="col-md-8">
-                        <input type="number" name="ticket" id="ticket" class="form-control" step="0.25" required
-                               ng-model="ticket.ticket">
-                        <span style="color: #ff0000;" ng-show="createForm.ticket.$dirty && createForm.ticket.$invalid">
-                            <span ng-show="!createForm.ticket.$error.number && createForm.ticket.$error.required">
+                        <input type="number" name="cc" id="cc" class="form-control" required
+                               ng-model="ticket.cc">
+                        <span style="color: #ff0000;" ng-show="createForm.cc.$dirty && createForm.cc.$invalid">
+                            <span ng-show="!createForm.cc.$error.number && createForm.cc.$error.required">
                                 Requerido</span>
-                            <span ng-show="createForm.ticket.$error.number">Solo números</span>
+                            <span ng-show="createForm.cc.$error.number">Solo números</span>
                         </span>
-                        <span style="color: #ff0000;" ng-show="createForm.ticket.serverErrors">
-                            <span ng-repeat="errorMessage in createForm.ticket.serverErrors">{{errorMessage}}</span>
+                        <span style="color: #ff0000;" ng-show="createForm.cc.serverErrors">
+                            <span ng-repeat="errorMessage in createForm.cc.serverErrors">{{errorMessage}}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    <label for="es" class="control-label col-md-4">ES</label>
+                    <div class="col-md-8">
+                        <input type="number" name="es" id="es" class="form-control" required
+                               ng-model="ticket.es">
+                        <span style="color: #ff0000;" ng-show="createForm.es.$dirty && createForm.es.$invalid">
+                            <span ng-show="!createForm.es.$error.number && createForm.es.$error.required">
+                                Requerido</span>
+                            <span ng-show="createForm.es.$error.number">Solo números</span>
+                        </span>
+                        <span style="color: #ff0000;" ng-show="createForm.es.serverErrors">
+                            <span ng-repeat="errorMessage in createForm.es.serverErrors">{{errorMessage}}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    <label for="acs" class="control-label col-md-4">AS</label>
+                    <div class="col-md-8">
+                        <input type="number" name="acs" id="acs" class="form-control" required
+                               ng-model="ticket.acs">
+                        <span style="color: #ff0000;" ng-show="createForm.acs.$dirty && createForm.acs.$invalid">
+                            <span ng-show="!createForm.acs.$error.number && createForm.acs.$error.required">
+                                Requerido</span>
+                            <span ng-show="createForm.acs.$error.number">Solo números</span>
+                        </span>
+                        <span style="color: #ff0000;" ng-show="createForm.acs.serverErrors">
+                            <span ng-repeat="errorMessage in createForm.acs.serverErrors">{{errorMessage}}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    <label for="rq" class="control-label col-md-4">RQ</label>
+                    <div class="col-md-8">
+                        <input type="number" name="rq" id="rq" class="form-control" required
+                               ng-model="ticket.rq">
+                        <span style="color: #ff0000;" ng-show="createForm.rq.$dirty && createForm.rq.$invalid">
+                            <span ng-show="!createForm.rq.$error.number && createForm.rq.$error.required">
+                                Requerido</span>
+                            <span ng-show="createForm.rq.$error.number">Solo números</span>
+                        </span>
+                        <span style="color: #ff0000;" ng-show="createForm.rq.serverErrors">
+                            <span ng-repeat="errorMessage in createForm.rq.serverErrors">{{errorMessage}}</span>
                         </span>
                     </div>
                 </div>
@@ -69,7 +116,6 @@
                         <th>ID</th>
                         <th>Inferior</th>
                         <th>Superior</th>
-                        <th>step</th>
                         <th></th>
                         </thead>
                         <tbody>
@@ -96,8 +142,8 @@
                                 <input type="number"
                                        name="upperLimit"
                                        class="form-control numbers"
-                                       min="{{dependency.lowerLimit}}"
                                        ng-model="dependency.upperLimit"
+                                       string-to-number
                                        depends-on="{{dependency.lowerLimit}}"
                                        ng-disabled="tempForm.lowerLimit.$invalid || !dependency.lowerLimit">
                                 <span style="color: #ff0000;"
@@ -107,29 +153,15 @@
                                         Requerido</span>
                                     <span ng-show="tempForm.upperLimit.$error.min">No puede ser menor a
                                     {{dependency.lowerLimit}}</span>
-                                    <span ng-show="tempForm.upperLimit.$error.number">Solo números</span>
+                                    <span ng-show="tempForm.upperLimit.$error.number && !tempForm.upperLimit.$error.range">
+                                        Solo números</span>
                                     <span
-                                            ng-show="!tempForm.upperLimit.$error.number && tempForm.upperLimit.$error.range">No puede ser
+                                            ng-show="tempForm.upperLimit.$error.range">No puede ser
                                     menor a
                                     {{dependency.lowerLimit}}</span>
                                 </span>
                                 <span style="color: #ff0000;" ng-show="tempForm.upperLimit.serverErrors">
                                     <span ng-repeat="errorMessage in tempForm.upperLimit.serverErrors">{{errorMessage}}</span>
-                                </span>
-                            </td>
-                            <td class="min-width-70">
-                                <input class="form-control" type="number"
-                                       ng-model="dependency.step" name="step">
-                                <span style="color: #ff0000;"
-                                      ng-show="tempForm.step.$dirty && tempForm.step.$invalid">
-                                    <span
-                                            ng-show="!tempForm.step.$error.number && tempForm.step.$error.required">Requerido</span>
-                                    <span ng-show="tempForm.step.$error.min">El
-                                    valor mínimo es 0</span>
-                                    <span ng-show="tempForm.step.$error.number">Solo números</span>
-                                </span>
-                                <span style="color: #ff0000;" ng-show="createForm[dependency.item.customId+'.step'].serverErrors">
-                                    <span ng-repeat="errorMessage in createForm[dependency.item.customId+'.step'].serverErrors">{{errorMessage}}</span>
                                 </span>
                             </td>
                             <td><a href="" ng-click="dropDep($index)"
@@ -140,9 +172,9 @@
                         </tr>
                         <tr title="Agregar dependencia" class="addRow">
                             <td colspan="5">
-                                <select ng-model="lastAdded"
+                                <select data-ng-model="lastAdded"
                                         ng-options="ava as (ava.customId | strip:'_':' ':true) for ava in available"
-                                        ng-change="addDepRow()"
+                                        data-ng-change="addDepRow()"
                                         title="Selecciona para agregar"
                                         class="form-control">
                                     <option>Elige alguna</option>

@@ -77,7 +77,8 @@
               <!--<sec:ifAllGranted roles="ROLE_GOD">-->
               <li ng-show="hasRole('ROLE_GOD')">
                 <!--<g:link controller="user">-->
-                <a href="#/usuarios">
+                <a href="http://localhost:8080/calculadora/user">
+                <!--<a href="#/usuarios">-->
                   Usuarios
                 </a>
                 <!--</g:link>-->
@@ -144,7 +145,7 @@
 
 
   <div id="content">
-    <div ng-view></div>
+    <div ng-view class="container-fluid"></div>
   </div>
 
   <footer class="footer">
@@ -178,6 +179,7 @@
   <script src="servicios/servicios.js"></script>
   <script src="login/login.js"></script>
   <script src="helpers/array-helpers.js"></script>
+  <script src="usuario/usuarios.js"></script>
   <!--<script src="bower_components/version/version.js"></script>-->
   <!--<script src="bower_components/version/version-directive.js"></script>-->
   <!--<script src="bower_components/version/interpolate-filter.js"></script>-->
