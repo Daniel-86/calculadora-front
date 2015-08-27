@@ -216,7 +216,8 @@ height: 32px;
 
 
 tr.addRow {
-  background-color: #2A2A2A !important;
+  /*background-color: #2A2A2A !important;*/
+  background-color: #dddddd !important;
 }
 
 .gray-higher {

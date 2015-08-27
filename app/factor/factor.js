@@ -42,7 +42,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
         //var factorDependencies = $scope.selected.map(function (obj) {
         //    return obj.customId;
         //});
-        if(!muted) console.log('createAjax - dependencies', factorDependencies);
+        //if(!muted) console.log('createAjax - dependencies', factorDependencies);
         factorData['dependencias'] = $scope.factor.dependencies;
         factorData['factor'] = $scope.factor.factor;
         //factorData['lowerLimit'] = $scope.factor.lowerLimit;

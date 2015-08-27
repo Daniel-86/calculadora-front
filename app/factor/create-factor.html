@@ -5,7 +5,8 @@
             <h1>{{factor.id > 0? 'Editar': 'Crear'}} <small>Factor {{ factor.id > 0? factor.id: '' }}</small></h1>
         </div>
 
-        <div alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</div>
+        <div alert ng-repeat="alert in alerts" data-type="{{alert.type}}" data-close="closeAlert($index)">
+            {{alert.msg}}</div>
 
         <form novalidate class="" name="createForm" ng-submit="createFactorAjax()">
             <div class="form-horizontal col-md-12">
@@ -41,11 +42,20 @@
                     </div>
                 </div>
 
-                <div class="form-group col-md-8">
-                    <label for="target" class="control-label col-md-4">Aplicar a</label>
-                    <div class="col-md-8">
+                <div class="form-group col-md-10"
+                     ng-class="{'has-error': createForm.target.$invalid && createForm.target.$dirty}">
+                    <label for="target" class="control-label col-md-2">
+                        Aplicar a
+                        <span ng-show="createForm.target.$dirty && createForm.target.$invalid">
+                            <span ng-show="createForm.target.$error.required">
+                                *</span>
+                        </span>
+                    </label>
+                    <div class="col-md-6">
                     <select multiple
                             id="target"
+                            name="target"
+                            required
                             data-ng-model="factor.target"
                             class="form-control">
                         <option>CC</option>
@@ -53,15 +63,27 @@
                         <option>ACS</option>
                         <option>RQ</option>
                     </select>
-                        </div>
+                    </div>
+                    <div class="col-md-4 help-block">
+                        Utiliza <kbd>ctrl + click</kbd> para elegir varias opciones
+                    </div>
                 </div>
 
-                <div class="form-group col-md-10">
-                    <label for="descripcion" class="control-label col-md-2">Descripción</label>
+                <div class="form-group col-md-10"
+                     ng-class="{'has-error': createForm.descripcion.$invalid && createForm.descripcion.$dirty}">
+                    <label for="descripcion" class="control-label col-md-2">
+                        Descripción
+                        <span class=""
+                             ng-show="createForm.descripcion.$dirty && createForm.descripcion.$invalid">
+                            <span ng-show="createForm.descripcion.$error.required">
+                                *</span>
+                        </span>
+                    </label>
                     <div class="col-md-10">
                         <textarea id="descripcion"
                                   rows="5" style="resize: none;"
                                   name="descripcion"
+                                  required
                                   class="form-control"
                                   data-ng-model="factor.descripcion"></textarea>
                     </div>
@@ -69,16 +91,28 @@
 
             </div>
 
-            <!--<div class="form-group col-md-12">-->
-                <!--<label for="descripcion" class="control-label">Descripción</label>-->
-                <!--<textarea id="descripcion" name="descripcion" class="form-control"-->
-                          <!--ng-model="factor.descripcion"></textarea>-->
-            <!--</div>-->
 
             <div class="col-md-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading"><h4>Dependencias</h4></div>
-                    <div class="panel-body">Usa el select para agregar más dependencias</div>
+                    <div class="panel-heading">
+                        <h4>Dependencias
+                            <!--<small class="text-danger pull-right">-->
+                                <!--<span class="glyphicon glyphicon-alert"></span>-->
+                                <!--El factor puede tener muchas dependencias pero SOLO se puede agregar UNA DEPENDENCIA -->
+                                <!--con valores INFERIOR, SUPERIOR o STEP. Falta programar dicha restricción, por favor -->
+                                <!--tenerlo en mente al momento de crear o editar los factores.-->
+                            <!--</small>-->
+                        </h4></div>
+                    <div class="panel-body">
+                        Usa el select para agregar más dependencias
+                        <small class="text-danger pull-right">
+                            <span class="glyphicon glyphicon-alert"></span>
+                            El factor puede tener muchas dependencias pero <strong>SOLO</strong> se puede agregar
+                            <strong>UNA DEPENDENCIA con valores INFERIOR, SUPERIOR y/o STEP</strong>.
+                            Falta programar dicha restricción, por favor tenerlo en mente al momento de crear o
+                            editar los factores.
+                        </small>
+                    </div>
                     <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -112,7 +146,6 @@
                                 <input type="number"
                                        name="upperLimit"
                                        class="form-control numbers"
-                                       min="{{dependency.lowerLimit}}"
                                        ng-model="dependency.upperLimit"
                                        string-to-number
                                        depends-on="{{dependency.lowerLimit}}"
@@ -156,17 +189,17 @@
                             </a> </td>
                         </tr>
                         <tr title="Agregar dependencia" class="addRow">
-                            <td>
-                                <select ng-model="lastAdded"
+                            <td colspan="3">
+                                <select data-ng-model="lastAdded"
                                         ng-options="ava as (ava.customId | strip:'_':' ':true) for ava in available"
-                                        ng-change="addDepRow()"
+                                        data-ng-change="addDepRow()"
                                         title="Selecciona para agregar"
                                         class="form-control">
-                                    <option>Elige alguna</option>
+                                    <option value="" class="text-center"> -- Agregar dependencia -- </option>
                                 </select>
                             </td>
-                            <td></td>
-                            <td></td>
+                            <!--<td></td>-->
+                            <!--<td></td>-->
                             <td></td>
                             <td></td>
                         </tr>
@@ -179,7 +212,7 @@
             <div class="col-md-12 form-group">
                 <button type="submit"
                         class="btn btn-primary"
-                        ng-disabled="createForm.$invalid || !createForm.$dirty">
+                        data-ng-disabled="createForm.$invalid || !createForm.$dirty">
                     {{factor.id > 0? 'Editar': 'Crear'}}</button>
                 <a href="#/factores" class="btn btn-default">
                     Cancelar

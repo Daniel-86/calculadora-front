@@ -8,9 +8,9 @@
 
         <form novalidate class="" name="createForm" ng-submit="createTicketAjax()">
             <div class="form-horizontal col-md-12">
-                <div class="form-group col-md-5">
-                    <label for="nombre" class="control-label col-md-4">Nombre</label>
-                    <div class="col-md-8">
+                <div class="form-group col-md-10">
+                    <label for="nombre" class="control-label col-md-2">Nombre</label>
+                    <div class="col-md-10">
                         <input type="text" name="nombre" id="nombre" class="form-control" required
                                ng-model="ticket.nombre">
                         <span style="color: #ff0000;" ng-show="createForm.nombre.$dirty && createForm.nombre.$invalid">
@@ -26,7 +26,12 @@
                 <div class="form-group col-md-5">
                     <label for="cc" class="control-label col-md-4">CC</label>
                     <div class="col-md-8">
-                        <input type="number" name="cc" id="cc" class="form-control" required
+                        <input type="number"
+                               name="cc"
+                               id="cc"
+                               class="form-control"
+                               required
+                               value="0"
                                ng-model="ticket.cc">
                         <span style="color: #ff0000;" ng-show="createForm.cc.$dirty && createForm.cc.$invalid">
                             <span ng-show="!createForm.cc.$error.number && createForm.cc.$error.required">
@@ -42,7 +47,11 @@
                 <div class="form-group col-md-5">
                     <label for="es" class="control-label col-md-4">ES</label>
                     <div class="col-md-8">
-                        <input type="number" name="es" id="es" class="form-control" required
+                        <input type="number"
+                               name="es" id="es"
+                               class="form-control"
+                               required
+                               value="0"
                                ng-model="ticket.es">
                         <span style="color: #ff0000;" ng-show="createForm.es.$dirty && createForm.es.$invalid">
                             <span ng-show="!createForm.es.$error.number && createForm.es.$error.required">
@@ -58,7 +67,12 @@
                 <div class="form-group col-md-5">
                     <label for="acs" class="control-label col-md-4">AS</label>
                     <div class="col-md-8">
-                        <input type="number" name="acs" id="acs" class="form-control" required
+                        <input type="number"
+                               name="acs"
+                               id="acs"
+                               class="form-control"
+                               required
+                               value="0"
                                ng-model="ticket.acs">
                         <span style="color: #ff0000;" ng-show="createForm.acs.$dirty && createForm.acs.$invalid">
                             <span ng-show="!createForm.acs.$error.number && createForm.acs.$error.required">
@@ -74,7 +88,11 @@
                 <div class="form-group col-md-5">
                     <label for="rq" class="control-label col-md-4">RQ</label>
                     <div class="col-md-8">
-                        <input type="number" name="rq" id="rq" class="form-control" required
+                        <input type="number"
+                               name="rq" id="rq"
+                               class="form-control"
+                               required
+                               ng-init="ticket.rq=0"
                                ng-model="ticket.rq">
                         <span style="color: #ff0000;" ng-show="createForm.rq.$dirty && createForm.rq.$invalid">
                             <span ng-show="!createForm.rq.$error.number && createForm.rq.$error.required">
@@ -87,24 +105,27 @@
                     </div>
                 </div>
 
-                <div class="form-group col-md-10">
-                    <label for="descripcion" class="control-label col-md-2">Descripción</label>
+                <div class="form-group col-md-10"
+                     ng-class="{'has-error': createForm.descripcion.$invalid && createForm.descripcion.$dirty}">
+                    <label for="descripcion" class="control-label col-md-2">
+                        Descripción
+                        <span class=""
+                              ng-show="createForm.descripcion.$dirty && createForm.descripcion.$invalid">
+                            <span ng-show="createForm.descripcion.$error.required">
+                                *</span>
+                        </span>
+                    </label>
                     <div class="col-md-10">
                         <textarea id="descripcion"
                                   rows="5" style="resize: none;"
                                   name="descripcion"
+                                  required
                                   class="form-control"
                                   data-ng-model="ticket.descripcion"></textarea>
                     </div>
                 </div>
 
             </div>
-
-            <!--<div class="form-group col-md-12">-->
-                <!--<label for="descripcion" class="control-label">Descripción</label>-->
-                <!--<textarea id="descripcion" name="descripcion" class="form-control"-->
-                          <!--ng-model="ticket.descripcion"></textarea>-->
-            <!--</div>-->
 
             <div class="col-md-12">
                 <div class="panel panel-default">
@@ -171,15 +192,19 @@
                             </a> </td>
                         </tr>
                         <tr title="Agregar dependencia" class="addRow">
-                            <td colspan="5">
+                            <td colspan="3">
                                 <select data-ng-model="lastAdded"
                                         ng-options="ava as (ava.customId | strip:'_':' ':true) for ava in available"
                                         data-ng-change="addDepRow()"
                                         title="Selecciona para agregar"
                                         class="form-control">
-                                    <option>Elige alguna</option>
+                                    <option value=""> -- Agregar dependencia --</option>
                                 </select>
                             </td>
+                            <!--<td></td>-->
+                            <!--<td></td>-->
+                            <td></td>
+                            <td></td>
                         </tr>
                         </tbody>
                     </table>
@@ -190,7 +215,7 @@
             <div class="col-md-12 form-group center-block">
                 <button type="submit"
                         class="btn btn-primary"
-                        ng-disabled="createForm.$invalid || !createForm.$dirty">
+                        data-ng-disabled="createForm.$invalid || !createForm.$dirty">
                     {{ticket.id > 0? 'Editar': 'Crear'}}</button>
                 <a href="#/tickets" class="btn btn-default">
                     Cancelar
