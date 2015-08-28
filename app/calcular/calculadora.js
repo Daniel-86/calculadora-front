@@ -163,6 +163,12 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         }
     };
 
+    $scope.isGenericCategory = function(item) {
+        if(!item || !item.customId) return false;
+        return !(isAny(item.customId.toLowerCase(),
+            ['tipo_de_cliente', 'ingenieria_en_sitio', 'tecnologia']));
+    };
+
     $scope.isStringNumber = function(item, possibilities) {
         if(!possibilities) possibilities = ['int', 'integer', 'number', 'float', 'double', 'decimal'];
         return isAny(item.toLowerCase(), possibilities);
@@ -170,6 +176,23 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
 
     $scope.isStringBoolean = function(item, possibilities) {
         if(!possibilities) possibilities = ['check', 'checkbox', 'boolean'];
+        return isAny(item.toLowerCase(), possibilities);
+    };
+
+    $scope.isStringList = function(item, possibilities) {
+        if(!possibilities) possibilities = ['list', 'select', 'combobox', 'combo', 'unique'];
+        return isAny(item.toLowerCase(), possibilities);
+    };
+
+    $scope.isStringMultiple = function (item, possibilities) {
+        if(!possibilities) possibilities = ['multiple', 'checkbox'];
+        return isAny(item.toLowerCase(), possibilities);
+    };
+
+    $scope.isStringText = function(item, possibilities) {
+        if(!possibilities) {
+            return !($scope.isStringNumber(item) || $scope.isStringBoolean(item) || $scope.isStringList(item) || $scope.isStringMultiple(item));
+        }
         return isAny(item.toLowerCase(), possibilities);
     };
 
@@ -520,108 +543,4 @@ calculadoraControllers.config(['usSpinnerConfigProvider', function (usSpinnerCon
         trail: 91
     });
 }]);
-//calculadoraControllers.factory('authInterceptor', function($q) {
-//    var interceptor = {
-//        request: function($config) {
-//            $config.headers['X-Auth-Token'] = getLocalToken();
-//            $config.headers['Authorization'] = "Bearer "+getLocalToken();
-//            return $config;
-//        }
-//    };
-//
-//    return interceptor;
-//});
-//calculadoraControllers.config(function($httpProvider) {
-//    $httpProvider.interceptors.push('authInterceptor');
-//});
-//calculadoraControllers.factory('spinnerInterceptor', function($q, $window, usSpinnerService) {
-//    var interceptor = {
-//        response: function(response) {
-//            usSpinnerService.stop('all-data');
-//            return response;
-//        }
-//    };
-//
-//    return interceptor;
-//
-//    //return function(promise) {
-//    //    return promise.then(function(response) {console.log('deteniendo spinner');
-//    //        usSpinnerService.stop('all-data');
-//    //        return response;
-//    //    }, function(response) {console.log('deteniendo spinner');
-//    //        usSpinnerService.stop('all-data');
-//    //        return $q.reject(response);
-//    //    });
-//    //};
-//});
-//calculadoraControllers.config(function($httpProvider, usSpinnerService) {
-//    $httpProvider.interceptors.push('spinnerInterceptor');
-//
-//    var spinnerFunction = function spinnerFunction(data, headersGetter) {console.log('arrancando spinner');
-//        usSpinnerService.spin('all-data');
-//        return data;
-//    };
-//
-//    $httpProvider.defaults.transformRequest.push(spinnerFunction);
-//});
 
-//calculadoraControllers.filter('trim');
-
-
-
-//calculadoraControllers.directive('showLogin', function() {
-//    return {
-//        restrict: 'C',
-//        link: function(scope, element, attrs) {
-//            var login = element.find('#login-holder');
-//            var loginError = element.find('#login-error');
-//            var main = element.find('#content');
-//            var username = element.find('#username');
-//            var password = element.find('#password');
-//
-//            login.hide();
-//            loginError.hide();
-//
-//            scope.$on('event:auth-loginRequired', function()    {
-//                console.log('showing login form');
-//                main.hide();
-//                username.val('');
-//                password.val('');
-//                login.show();
-//            });
-//            scope.$on('event:auth-loginFailed', function() {
-//                console.log('showing login error message');
-//                username.val('');
-//                password.val('');
-//                loginError.show();
-//            });
-//            scope.$on('event:auth-loginConfirmed', function() {
-//                console.log('hiding login form');
-//                main.show();
-//                login.hide();
-//                username.val('');
-//                password.val('');
-//            });
-//        }
-//    };
-//});
-//
-//
-//
-//function getLocalToken() {
-//    return localStorage["authToken"];
-//}
-//
-//function getHttpConfig() {
-//    return {
-//        headers: {
-//            'X-Auth-Token': getLocalToken()
-//        }
-//    };
-//}
-//
-//function getAuthenticateHttpConfig() {
-//    return {
-//        ignoreAuthModule: true
-//    };
-//}
