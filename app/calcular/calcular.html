@@ -90,11 +90,11 @@
                                    ng-show="!isStringBoolean(property.tipo)">
                                 {{property.nombre}}</label>
                             <input type="number"
-                                   ng-show="isStringNumber(property.tipo)"
+                                   ng-if="isStringNumber(property.tipo)"
                                    class="form-control input-sm small-inputs"
                                    placeholder="{{ property.customId }}"
                                    ng-change="showChildren(category.tempSelected)"
-                                   ng-model="property.rValueN"/>
+                                   ng-model="property.rValue"/>
                             <select class="form-control input-sm"
                                     title="{{ property.descripcion }}"
                                     data-ng-model="property.rValue"
@@ -212,9 +212,9 @@
                                 {{ property.nombre }}
                             </label>
                             <input type="number"
-                                   ng-show="isStringNumber(property.tipo)"
+                                   ng-if="isStringNumber(property.tipo)"
                                    class="form-control"
-                                   ng-model="property.rValueN"/>
+                                   ng-model="property.rValue"/>
                             <select class="form-control"
                                     data-ng-model="property.rValue"
                                     ng-show="isStringList(property.tipo)">
