@@ -117,32 +117,39 @@
                     <table class="table table-striped">
                         <thead>
                         <th>ID</th>
-                        <th>Inferior</th>
-                        <th>Superior</th>
-                        <th>step</th>
+                        <th ng-show="countableDeps(factor.dependencies) === 1">Inferior</th>
+                        <th ng-show="countableDeps(factor.dependencies) === 1">Superior</th>
+                        <th ng-show="countableDeps(factor.dependencies) === 1">step</th>
                         <th></th>
                         </thead>
                         <tbody>
                         <tr  ng-form="tempForm" ng-repeat="dependency in factor.dependencies"
                              title="{{dependency.item.descripcion}}">
                             <td>{{dependency.item.customId | strip:'_':' ':true}}</td>
-                            <td class="min-width-70">
+                            <td class="min-width-70"
+                                ng-show="countableDeps(factor.dependencies) === 1">
+                                <div ng-show="dependency.item.single">
                                 <input class="form-control numbers" type="number"
                                        ng-model="dependency.lowerLimit" min="0"
                                        name="lowerLimit">
                                 <span style="color: #ff0000;"
                                       ng-show="tempForm.lowerLimit.$dirty && tempForm.lowerLimit.$invalid">
                                     <span
-                                            ng-show="!tempForm.lowerLimit.$error.number && tempForm.lowerLimit.$error.required">Requerido</span>
-                                    <span ng-show="tempForm.lowerLimit.$error.min">El
-                                    valor mínimo es 0</span>
-                                    <span ng-show="tempForm.lowerLimit.$error.number">Solo números</span>
+                                            ng-show="!tempForm.lowerLimit.$error.number && tempForm.lowerLimit.$error.required">
+                                        Requerido</span>
+                                    <span ng-show="tempForm.lowerLimit.$error.min">
+                                        El valor mínimo es 0</span>
+                                    <span ng-show="tempForm.lowerLimit.$error.number">
+                                        Solo números</span>
                                 </span>
                                 <span style="color: #ff0000;" ng-show="createForm[dependency.item.customId+'.lowerLimit'].serverErrors">
                                     <span ng-repeat="errorMessage in createForm[dependency.item.customId+'.lowerLimit'].serverErrors">{{errorMessage}}</span>
                                 </span>
+                                </div>
                             </td>
-                            <td class="min-width-70">
+                            <td class="min-width-70"
+                                ng-show="countableDeps(factor.dependencies) === 1">
+                                <div ng-show="dependency.item.single">
                                 <input type="number"
                                        name="upperLimit"
                                        class="form-control numbers"
@@ -166,8 +173,11 @@
                                 <span style="color: #ff0000;" ng-show="tempForm.upperLimit.serverErrors">
                                     <span ng-repeat="errorMessage in tempForm.upperLimit.serverErrors">{{errorMessage}}</span>
                                 </span>
+                                </div>
                             </td>
-                            <td class="min-width-70">
+                            <td class="min-width-70"
+                                ng-show="countableDeps(factor.dependencies) === 1">
+                                <div ng-show="dependency.item.single">
                                 <input class="form-control numbers" type="number"
                                        ng-model="dependency.step" name="step">
                                 <span style="color: #ff0000;"
@@ -181,6 +191,7 @@
                                 <span style="color: #ff0000;" ng-show="createForm[dependency.item.customId+'.step'].serverErrors">
                                     <span ng-repeat="errorMessage in createForm[dependency.item.customId+'.step'].serverErrors">{{errorMessage}}</span>
                                 </span>
+                                </div>
                             </td>
                             <td><a href="" ng-click="dropDep($index)"
                                    class="btn btn-danger"

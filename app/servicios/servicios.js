@@ -120,7 +120,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                 $scope.rolesName = ingSitioItem.result.componentes? ingSitioItem.result.componentes.map(function(item) {return item.customId;}): [];
                 var debug = 'debug';
         }).error(function(data, status) {
-                $scope.alerts = [{type: 'danger', message: 'Algo pasó... y no debió pasar'}];
+                $scope.alerts = [{type: 'danger', message: 'Algo pasï¿½... y no debiï¿½ pasar'}];
             });
     };
     getAllData();
@@ -215,6 +215,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                 $scope.newProp = null;
                 $scope.newProperty = undefined;
                 $scope.addingProperty = false;
+                $scope.newPropertyForm.$setPristine();
             })
             .error(function(data, status) {
                 var muted = true;
