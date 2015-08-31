@@ -105,21 +105,25 @@
                         </h4></div>
                     <div class="panel-body">
                         Usa el select para agregar más dependencias
-                        <small class="text-danger pull-right">
-                            <span class="glyphicon glyphicon-alert"></span>
-                            El factor puede tener muchas dependencias pero <strong>SOLO</strong> se puede agregar
-                            <strong>UNA DEPENDENCIA con valores INFERIOR, SUPERIOR y/o STEP</strong>.
-                            Falta programar dicha restricción, por favor tenerlo en mente al momento de crear o
-                            editar los factores.
-                        </small>
+                        <!--<p class="text-danger">-->
+                            <!--<span class="glyphicon glyphicon-alert"></span>-->
+                            <!--El factor puede tener muchas dependencias pero <strong>SOLO</strong> se puede agregar-->
+                            <!--<strong>UNA DEPENDENCIA con valores INFERIOR, SUPERIOR y/o STEP</strong>.-->
+                            <!--Falta programar dicha restricción, por favor tenerlo en mente al momento de crear o-->
+                            <!--editar los factores.-->
+                        <!--</p>-->
+                        <div alert data-type="warning" ng-show="multipleError" data-close>
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                             * Solo puede haber una dependencia con valor inferior, superior y/o step
+                        </div>
                     </div>
                     <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                         <th>ID</th>
-                        <th ng-show="countableDeps(factor.dependencies) === 1">Inferior</th>
-                        <th ng-show="countableDeps(factor.dependencies) === 1">Superior</th>
-                        <th ng-show="countableDeps(factor.dependencies) === 1">step</th>
+                        <th ng-show="countableDeps(factor.dependencies) > 0">Inferior</th>
+                        <th ng-show="countableDeps(factor.dependencies) > 0">Superior</th>
+                        <th ng-show="countableDeps(factor.dependencies) > 0">step</th>
                         <th></th>
                         </thead>
                         <tbody>
@@ -127,10 +131,13 @@
                              title="{{dependency.item.descripcion}}">
                             <td>{{dependency.item.customId | strip:'_':' ':true}}</td>
                             <td class="min-width-70"
-                                ng-show="countableDeps(factor.dependencies) === 1">
-                                <div ng-show="dependency.item.single">
-                                <input class="form-control numbers" type="number"
-                                       ng-model="dependency.lowerLimit" min="0"
+                                ng-show="countableDeps(factor.dependencies) > 0">
+                                <div ng-show="!dependency.item.single">
+                                <input class="form-control numbers"
+                                       type="number"
+                                       ng-model="dependency.lowerLimit"
+                                       ng-change="watchDeps(factor.dependencies); watchEmpty(dependency)"
+                                       min="0"
                                        name="lowerLimit">
                                 <span style="color: #ff0000;"
                                       ng-show="tempForm.lowerLimit.$dirty && tempForm.lowerLimit.$invalid">
@@ -148,12 +155,13 @@
                                 </div>
                             </td>
                             <td class="min-width-70"
-                                ng-show="countableDeps(factor.dependencies) === 1">
-                                <div ng-show="dependency.item.single">
+                                ng-show="countableDeps(factor.dependencies) > 0">
+                                <div ng-show="!dependency.item.single">
                                 <input type="number"
                                        name="upperLimit"
                                        class="form-control numbers"
                                        ng-model="dependency.upperLimit"
+                                       ng-change="watchDeps(factor.dependencies)"
                                        string-to-number
                                        depends-on="{{dependency.lowerLimit}}"
                                        ng-disabled="tempForm.lowerLimit.$invalid || !dependency.lowerLimit">
@@ -176,10 +184,13 @@
                                 </div>
                             </td>
                             <td class="min-width-70"
-                                ng-show="countableDeps(factor.dependencies) === 1">
-                                <div ng-show="dependency.item.single">
-                                <input class="form-control numbers" type="number"
-                                       ng-model="dependency.step" name="step">
+                                ng-show="countableDeps(factor.dependencies) > 0">
+                                <div ng-show="!dependency.item.single">
+                                <input class="form-control numbers"
+                                       type="number"
+                                       ng-model="dependency.step"
+                                       ng-change="watchDeps(factor.dependencies)"
+                                       name="step">
                                 <span style="color: #ff0000;"
                                       ng-show="tempForm.step.$dirty && tempForm.step.$invalid">
                                     <span
@@ -195,9 +206,9 @@
                             </td>
                             <td><a href="" ng-click="dropDep($index)"
                                    class="btn btn-danger"
-                                   title="eliminar"><i
-                                    class="glyphicon glyphicon-trash"></i>
-                            </a> </td>
+                                   title="eliminar">
+                                <i class="glyphicon glyphicon-trash"></i>
+                            </a></td>
                         </tr>
                         <tr title="Agregar dependencia" class="addRow">
                             <td colspan="3">

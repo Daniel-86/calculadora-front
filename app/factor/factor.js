@@ -16,6 +16,9 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
         $http.get(url).success(function (data) {
             if(!muted) console.log('factorCtrl data', data);
             $scope.available = data.available;
+            $scope.available = data.available.filter(function (element) {
+                return element.eligible && element.visible;
+            });
             $scope.factor = data.factor;
             if($scope.factor && $scope.factor.id > 0) $scope.selected = data.factor.dependencies;
         });
@@ -78,11 +81,17 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
                     var field = error.field;
                     var message = error.message; if(!muted) console.log('field, message ' + field + '   '+message);
                     var rejectedVal = error['rejected-value'];
-                    if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
-                    creaForma[field].serverErrors.push(message);
+                    if(!creaForma[field]) {
+                        if(!$scope.alerts) $scope.alerts = [];
+                        $scope.alerts.push({type: 'danger', msg: 'Solo puede haber una depencencia con valores inferior y/o superior'});
+                    }
+                    else {
+                        if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
+                        creaForma[field].serverErrors.push(message);
+                    }
                 });
             }
-            if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
+            else if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
                 //creaForma.generalErrors = ['The specified HTTP method is not allowed for the requested' +
                 //' resource.'];
                 $scope.alerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +
@@ -90,7 +99,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
             }
             else {
                 //creaForma.generalErrors = ["Se recibi� un error "+status];
-                $scope.alerts = [{type: 'danger', msg: 'Se recibi� un error '+status}];
+                $scope.alerts.push({type: 'danger', msg: 'Se recibió un error '+status});
             }
         }
 
@@ -194,6 +203,34 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
     };
+
+
+    $scope.countableDeps = function(depsList) {
+        if(!angular.isArray(depsList)) return 0;
+        return depsList.reduce(function(count, dep, idx) {
+            if(!dep.item.single) count++;
+            return count;
+        }, 0);
+    };
+
+    $scope.watchDeps = function(depsList) {
+        if(!angular.isArray(depsList)) return false;
+        var multipleCount = depsList.reduce(function(acc, item, idx) {
+            if(item.lowerLimit) {
+                acc++;
+            }
+            return acc;
+        }, 0);
+        $scope.multipleError = multipleCount > 1;
+        //if(newVal != '' && $scope.multipleCount > 1) {
+        //    $scope.multipleError = true;
+        //}
+        var afwef = 0;
+    };
+
+    $scope.watchEmpty = function (item) {
+        if(!item.lowerLimit) item.upperLimit = null;
+    };
 }
 
 
@@ -225,7 +262,7 @@ factorModule.directive('dependsOn', function() {
                 return valid? value: undefined;
             });
         }
-    }
+    };
 })
 
 
@@ -260,3 +297,17 @@ factorModule.directive('dependsOn', function() {
             return filtered;
         };
     });
+
+
+factorModule.filter('garanteeOneMultiple', function() {
+    return function (list, count) {
+        var asdf = 0;
+        if(count > 0) {
+            return list.filter(function(element) {
+                return element.single;
+            });
+        }
+        else
+            return list;
+    }
+});
