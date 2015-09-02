@@ -121,6 +121,11 @@
                            ng-click="dropProperty(prop, currentSelection)"
                            class="btn btn-link pull-right">
                             <i class="glyphicon glyphicon-trash"></i> </a>
+                        <ul ng-show="prop.options">
+                            <li ng-repeat="opt in prop.options">
+                                {{ opt }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
@@ -192,15 +197,11 @@
                                 class="form-control"
                                 required
                                 name="tipo"
+                                ng-options="type for type in propertyTypes"
                                 id="propType">
                             <option value=""
                                     ng-class="{'text-danger': newPropertyForm.tipo.$dirty && newPropertyForm.tipo.$error.required}">
                                 -- Elige -- </option>
-                            <option value="int">Entero</option>
-                            <option value="string">String</option>
-                            <option value="boolean">Boolean</option>
-                            <option value="list">Lista</option>
-                            <option value="multiple">Multiple</option>
                         </select>
                         <span class="help-block text-danger"
                               ng-show="newPropertyForm.tipo.serverErrors">
@@ -208,6 +209,18 @@
                                 {{errorMessage}}</span>
                         </span>
                     </div>
+                        <div class="form-group" ng-show="isIn(newProperty.tipo, ['CHECK', 'RADIO'])">
+                            <div class="list-group">
+                                <span class="list-group-item" ng-repeat="opt in newProperty.options">
+                                    {{ opt }}
+                                </span>
+                                <input type="text"
+                                       placeholder="Agregar opción"
+                                       class="form-control"
+                                       data-no-submit
+                                       ng-model="newProperty.tempOpt">
+                            </div>
+                        </div>
                     <div class="btn-group new-prop-btns pull-right">
                         <button class="btn btn-default btn-sm btn-add-prop"
                                 ng-click="addProp(currentSelection)">

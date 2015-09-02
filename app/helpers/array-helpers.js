@@ -1,3 +1,5 @@
+'use strict';
+
 function findWithAttr(array, attr, value, deep) {
     var muted = true;
     if(!muted) console.log('\t\t\tfindWithAttr - array', array);

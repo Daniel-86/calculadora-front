@@ -120,10 +120,23 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                 $scope.rolesName = ingSitioItem.result.componentes? ingSitioItem.result.componentes.map(function(item) {return item.customId;}): [];
                 var debug = 'debug';
         }).error(function(data, status) {
-                $scope.alerts = [{type: 'danger', message: 'Algo pas�... y no debi� pasar'}];
+                $scope.alerts = [{type: 'danger', message: 'Algo pasó... y no debió pasar'}];
             });
     };
     getAllData();
+
+
+    var listPropertyTypes = function() {
+        $http.get(baseRemoteURL+'propiedad/listTypes')
+            .success(function(data) {
+                $scope.propertyTypes = data;
+            })
+            .error(function(data, status) {
+                $scope.alerts = [{type: 'danger', message: 'Algo pasó... y no debió pasar. Al obtener la lista de' +
+                ' tipos de propiedades'}];
+            });
+    };
+    listPropertyTypes();
 
     $scope.getChildren = function(item) {
         if(!item) return [];
@@ -392,7 +405,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                     $scope.alerts = [{type: 'success', msg: 'El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')}];
                 }
             })
-            .error(function(data) {
+            .error(function(data, status) {
                 var muted = true;
                 $scope.generalesForm.generalInfo = [];
                 angular.forEach($scope.generalesForm, function(item) {
@@ -430,8 +443,15 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
     $scope.closeAlert2 = function(index) {
         $scope.propertyAlerts.splice(index, 1);
     };
+
+    $scope.isIn = function(item, array) {
+        return isIn(item, array);
+    };
 }
 
 
 serviciosModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location);});
+serviciosModule.directive('noSubmit', function() {
+
+});
