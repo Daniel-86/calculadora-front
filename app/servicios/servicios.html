@@ -46,6 +46,11 @@
                     <form novalidate
                           name="generalesForm"
                           ng-submit="updateGenerals(currentSelection)">
+                    <!--<form novalidate-->
+                          <!--data-no-submit-form-->
+                          <!--data-prevent-if="generalesForm.forSubmit"-->
+                          <!--name="generalesForm"-->
+                          <!--ng-submit="updateGenerals(currentSelection)">-->
                     <div class="form-group"
                          ng-class="{'has-error': generalesForm.nombre.$invalid && generalesForm.nombre.$dirty}">
                         <label for="descName"
@@ -217,8 +222,13 @@
                                 <input type="text"
                                        placeholder="Agregar opción"
                                        class="form-control"
-                                       data-no-submit
                                        ng-model="newProperty.tempOpt">
+                                <!--<input type="text"-->
+                                       <!--placeholder="Agregar opción"-->
+                                       <!--class="form-control"-->
+                                       <!--data-no-submit-->
+                                       <!--data-notify-to="generalesForm.forSubmit"-->
+                                       <!--ng-model="newProperty.tempOpt">-->
                             </div>
                         </div>
                     <div class="btn-group new-prop-btns pull-right">

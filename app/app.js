@@ -9,7 +9,8 @@ angular.module('myApp', [
     'servicios',
     'http-auth-interceptor',
     'login',
-    'ngLoadingSpinner'
+    'ngLoadingSpinner',
+    'noSubmit'
 ]).
 config(['$routeProvider', function($routeProvider) {
       $routeProvider.when('/calcular', {
