@@ -10,7 +10,8 @@ angular.module('myApp', [
     'http-auth-interceptor',
     'login',
     'ngLoadingSpinner',
-    'noSubmit'
+    'noSubmit',
+    'tests'
 ]).
 config(['$routeProvider', function($routeProvider) {
       $routeProvider.when('/calcular', {
@@ -44,6 +45,10 @@ config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/login', {
             templateUrl: 'login/login.html',
             controller: 'LoginCtrl'
+        });
+        $routeProvider.when('/no-submit', {
+            templateUrl: 'tests/noSubmit.html',
+            controller: 'NoSubmitCtrl'
         });
   $routeProvider.otherwise({redirectTo: '/calcular'});
 }]);

@@ -214,7 +214,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
     };
 
     $scope.addProp = function(item) {
-        var muted = true;
+        var muted = false;
         if(!muted) console.log('\n');
         var newProp = $scope.newProperty;
         if(!newProp) return;
@@ -265,8 +265,8 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                     ' requested'}];
                 }
                 else {
-                    //creaForma.generalErrors = ["Se recibi? un error "+status];
-                    $scope.propertyAlerts = [{type: 'danger', msg: 'Se recibi? un error '+status}];
+                    //creaForma.generalErrors = ["Se recibió un error "+status];
+                    $scope.propertyAlerts = [{type: 'danger', msg: 'Se recibió un error '+status}];
                 }
             });
     };
@@ -430,8 +430,8 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                     ' requested'}];
                 }
                 else {
-                    //creaForma.generalErrors = ["Se recibi? un error "+status];
-                    $scope.alerts = [{type: 'danger', msg: 'Se recibi? un error '+status}];
+                    //creaForma.generalErrors = ["Se recibió un error "+status];
+                    $scope.alerts = [{type: 'danger', msg: 'Se recibió un error '+status}];
                 }
             });
     };

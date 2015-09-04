@@ -43,14 +43,12 @@
                     <!--Visible-->
                 <!--</label>-->
                 <div ng-if="!isRoot(currentSelection)">
+                    <!--<form novalidate-->
+                          <!--name="generalesForm"-->
+                          <!--ng-submit="updateGenerals(currentSelection)">-->
                     <form novalidate
                           name="generalesForm"
                           ng-submit="updateGenerals(currentSelection)">
-                    <!--<form novalidate-->
-                          <!--data-no-submit-form-->
-                          <!--data-prevent-if="generalesForm.forSubmit"-->
-                          <!--name="generalesForm"-->
-                          <!--ng-submit="updateGenerals(currentSelection)">-->
                     <div class="form-group"
                          ng-class="{'has-error': generalesForm.nombre.$invalid && generalesForm.nombre.$dirty}">
                         <label for="descName"
@@ -142,6 +140,9 @@
                 <!--</div>-->
                 <div ng-show="addingProperty">
                     <form novalidate
+                          no-submit-form
+                          data-prevent-if="newPropertyForm.forSubmit"
+                          data-callback="addProp(currentSelection)"
                           name="newPropertyForm">
                         <div class="col-md-12">
                             <div alert
@@ -192,6 +193,7 @@
                     </div>
                     <div class="form-group"
                          ng-class="{'has-error': newPropertyForm.tipo.$invalid && newPropertyForm.tipo.$dirty}">
+                        <span class="text-danger">{{ newPropertyForm.forSubmit }}</span>
                         <label for="propType"
                                class="control-label">
                             Tipo
@@ -219,23 +221,26 @@
                                 <span class="list-group-item" ng-repeat="opt in newProperty.options">
                                     {{ opt }}
                                 </span>
-                                <input type="text"
-                                       placeholder="Agregar opción"
-                                       class="form-control"
-                                       ng-model="newProperty.tempOpt">
                                 <!--<input type="text"-->
                                        <!--placeholder="Agregar opción"-->
                                        <!--class="form-control"-->
-                                       <!--data-no-submit-->
-                                       <!--data-notify-to="generalesForm.forSubmit"-->
                                        <!--ng-model="newProperty.tempOpt">-->
+                                <input type="text"
+                                       placeholder="Agregar opción"
+                                       class="form-control"
+                                       prevent-submit
+                                       data-notify-to="newPropertyForm.forSubmit"
+                                       ng-model="newProperty.tempOpt">
                             </div>
                         </div>
                     <div class="btn-group new-prop-btns pull-right">
+                        <!--<button type="button" class="btn btn-default btn-sm btn-add-prop"-->
+                                <!--ng-click="addProp(currentSelection)">-->
+                            <!--Agregar</button>-->
                         <button class="btn btn-default btn-sm btn-add-prop"
-                                ng-click="addProp(currentSelection)">
+                                type="submit">
                             Agregar</button>
-                        <button class="btn btn-default btn-sm btn-add-prop"
+                        <button type="button" class="btn btn-default btn-sm btn-add-prop"
                                 ng-click="cancelProp()">
                             Cancelar</button>
                     </div>

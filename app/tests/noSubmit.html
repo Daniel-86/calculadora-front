@@ -1,0 +1,79 @@
+
+<!--<form novalidate-->
+      <!--ng-submit="mySubmit()"-->
+      <!--ng-init="forSubmit=true"-->
+      <!--name="testForm">-->
+<!--<form novalidate-->
+      <!--no-submit-form-->
+      <!--data-prevent-if="forSubmit"-->
+      <!--ng-submit="mySubmit()"-->
+      <!--name="testForm">-->
+<form novalidate
+      no-submit-form
+      data-prevent-if="forSubmit"
+      data-callback="mySubmit()"
+      name="testForm">
+    <p class="text-danger">{{ forSubmit }}</p>
+    <input type="number"
+           ng-model="numero"
+           name="entero">
+    <!--<input type="text"-->
+           <!--ng-model="cadena"-->
+           <!--name="texto">-->
+    <input type="text"
+           ng-model="cadena"
+           prevent-submit
+           data-notify-to="forSubmit"
+           name="texto">
+
+    <!--<div unordered-list="products"-->
+            <!--data-list-property="price | currency"></div>-->
+    <!--<div unordered-list="products" data-list-property="price | currency"></div>-->
+    <!--<unordered-list data-list-source="products"-->
+                    <!--data-list-property="name"/>-->
+    <!--<div class="unordered-list: products" data-list-property="category"></div>-->
+    <!--<div>-->
+        <!--&lt;!&ndash; directive: unordered-list products &ndash;&gt;-->
+    <!--</div>-->
+
+    <!--<button>ALGO</button>-->
+    <button type="submit">Enviar</button>
+    <!--<button type="button"-->
+            <!--ng-click="console.log('action1')">Action1</button>-->
+</form>
+
+<div>{{ numero }}</div>
+<div>{{ cadena }}</div>
+<!--<form onsubmit="console.log('algo')" id="formu">-->
+    <!--<input type="text" id="uno">-->
+    <!--<input type="text" id="dos">-->
+    <!--<button type="submit">ASDF</button>-->
+<!--</form>-->
+
+<!--<script>-->
+    <!--$(document).ready(function () {-->
+
+                <!--var check;-->
+                <!--$('#dos').on('focus', function(check) {-->
+                    <!--check = true;-->
+                <!--}).on('blur', function(check) {-->
+                    <!--check = false;-->
+                <!--});-->
+
+                <!--$('#formu').on('submit', function (e) {-->
+                    <!--console.log('onsubmit');-->
+                    <!--if(check) {-->
+                        <!--e.preventDefault();-->
+                        <!--console.log('algo');-->
+                        <!--return false;-->
+                    <!--}-->
+                <!--});-->
+
+                <!--function alguna() {-->
+                    <!--return false;-->
+                <!--}-->
+
+            <!--}-->
+    <!--);-->
+
+<!--</script>-->
