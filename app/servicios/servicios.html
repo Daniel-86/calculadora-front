@@ -18,7 +18,7 @@
         <div alert
              ng-repeat="alert in alerts"
              data-type="{{alert.type}}"
-             data-close="closeAlert($index)">
+             data-close="closeAlert($index, alerts)">
             {{alert.msg}}</div>
     </div>
 
@@ -148,7 +148,7 @@
                             <div alert
                                  ng-repeat="alert in propertyAlerts"
                                  data-type="{{alert.type}}"
-                                 data-close="closeAlert2($index)">
+                                 data-close="closeAlert($index, propertyAlerts)">
                                 {{alert.msg}}</div>
                         </div>
                     <div class="form-group"
@@ -280,12 +280,22 @@
                 <!--<i class="glyphicon glyphicon-trash"></i> </a>-->
             </div>
 
-            <div class="list-group-item-header">
+            <div class="list-group-item-heading">
                 <h4 class="text-center list-group-item-success"
                     style="padding-bottom: 10px; margin-top: 10px; margin-bottom: 0;">
                     Nuevo elemento</h4>
+                <div alert
+                     ng-repeat="alert in itemAlerts"
+                     data-type="{{alert.type}}"
+                     data-close="closeAlert($index, itemAlerts)"
+                     class="small"
+                     style="margin-bottom: 0">
+                    {{alert.msg}}</div>
+                <!--<div growl></div>-->
                 <form class="form" novalidate name="newItemForm">
-                    <div class="" ng-show="!isRoot()">
+                    <div class=""
+                         ng-class="{'has-error': newItemForm.domainType.$invalid && newItemForm.domainType.$dirty}"
+                         ng-show="!isRoot()">
                         <label>
                             <input type="radio" name="domainType" value="concepto"
                                    ng-checked="currentSelection.domainClass.toLowerCase() === 'conceptoespecial'"
@@ -306,18 +316,19 @@
                                required
                                class="form-control"
                                ng-model="newItem.nombre">
-                            <span ng-show="newItemForm.nombre.$dirty && newItemForm.nombre.$error.required"
-                                  class="help-block text-danger">Requerido</span>
+                            <!--<span ng-show="newItemForm.nombre.$dirty && newItemForm.nombre.$error.required"-->
+                                  <!--class="help-block text-danger">Requerido</span>-->
                     </div>
                     <div class=""
                          ng-class="{'has-error': newItemForm.descripcion.$invalid && newItemForm.descripcion.$dirty}">
                         <input type="text"
                                placeholder="Descripción"
                                name="descripcion"
+                               required
                                class="form-control"
                                ng-model="newItem.descripcion">
-                            <span ng-show="newItemForm.descripcion.$dirty && newItemForm.descripcion.$error.required"
-                                  class="help-block text-danger">Requerido</span>
+                            <!--<span ng-show="newItemForm.descripcion.$dirty && newItemForm.descripcion.$error.required"-->
+                                  <!--class="help-block text-danger">Requerido</span>-->
                     </div>
                     <button type="submit"
                             class="btn btn-default form-control"
@@ -331,7 +342,7 @@
     </div>
     
     
-    <div class="col-md-8" ng-if="!currentSelection">
+    <div class="col-md-8" ng-if="isRoot()">
         <p>Elige un elemento para editar sus propiedades y administrar sus 'hijos'</p>
         <p>Los elementos forman una estructura de arbol. Existen 4 tipos de nodos:</p>
         <ol>

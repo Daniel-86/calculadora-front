@@ -1,7 +1,7 @@
 
 'use strict';
 
-var serviciosModule = angular.module('servicios', ['ui.bootstrap', 'ngRoute']);
+var serviciosModule = angular.module('servicios', ['ui.bootstrap', 'ngRoute', 'angular-growl']);
 
 
 function findObjectByProperty(tree, propertyName, propertyValue) {
@@ -87,7 +87,7 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
 }
 
 
-function serviciosController($scope, $http, baseRemoteURL, $routeParams, $location) {
+function serviciosController($scope, $http, baseRemoteURL, $routeParams, $location, growl) {
     var muted = true;
     if(!muted) console.log('\n');
 
@@ -338,7 +338,16 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                 else if(angular.isDefined($scope.newItemForm)) $scope.newItemForm.$setPristine();
                 else {if(!muted) console.log('addItem NO PUEDE RESETEAR FORM');}
 
-        });
+        })
+            .error(function(data, status) {
+                $scope.itemAlerts = [];
+                if(angular.isArray(data.errors)) {
+                    angular.forEach(data.errors, function (error) {
+                        $scope.itemAlerts.push({type: 'danger', msg: error.message});
+                        growl.error(error.message, {title: 'Maldita basura'});
+                    });
+                }
+            });
     };
 
     $scope.removeChild = function(item) {
@@ -393,7 +402,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                     else {
                         idx = findWithAttr($scope.allItems, 'customId', item.customId);
                         if(idx > 0) {
-                            //$scope.allItems.splice(idx-1, 1);
+                            $scope.allItems.splice(idx-1, 1);
                             $scope.currentSelection.splice(idx-1, 1);
                         }
                     }
@@ -453,12 +462,8 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
             });
     };
 
-    $scope.closeAlert = function(index) {
-        $scope.alerts.splice(index, 1);
-    };
-
-    $scope.closeAlert2 = function(index) {
-        $scope.propertyAlerts.splice(index, 1);
+    $scope.closeAlert = function(index, alertArray) {
+        alertArray.splice(index, 1);
     };
 
     $scope.isIn = function(item, array) {
@@ -477,7 +482,12 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
 
 
 serviciosModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location);});
+serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location, growl) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location, growl);});
 serviciosModule.directive('noSubmit', function() {
 
 });
+serviciosModule.config(['growlProvider', function(growlProvider) {
+    growlProvider.globalTimeToLive(2500)
+        .globalDisableCloseButton(true)
+        .globalPosition('top-right')
+}]);
