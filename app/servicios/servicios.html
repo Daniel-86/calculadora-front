@@ -193,7 +193,6 @@
                     </div>
                     <div class="form-group"
                          ng-class="{'has-error': newPropertyForm.tipo.$invalid && newPropertyForm.tipo.$dirty}">
-                        <span class="text-danger">{{ newPropertyForm.forSubmit }}</span>
                         <label for="propType"
                                class="control-label">
                             Tipo
@@ -221,23 +220,18 @@
                                 <span class="list-group-item" ng-repeat="opt in newProperty.options">
                                     {{ opt }}
                                 </span>
-                                <!--<input type="text"-->
-                                       <!--placeholder="Agregar opción"-->
-                                       <!--class="form-control"-->
-                                       <!--ng-model="newProperty.tempOpt">-->
                                 <input type="text"
                                        placeholder="Agregar opción"
                                        class="form-control"
                                        prevent-submit
                                        data-notify-to="newPropertyForm.forSubmit"
+                                       ng-keyup="$event.keyCode == 13 && addOption(newProperty)"
                                        ng-model="newProperty.tempOpt">
                             </div>
                         </div>
                     <div class="btn-group new-prop-btns pull-right">
-                        <!--<button type="button" class="btn btn-default btn-sm btn-add-prop"-->
-                                <!--ng-click="addProp(currentSelection)">-->
-                            <!--Agregar</button>-->
                         <button class="btn btn-default btn-sm btn-add-prop"
+                                data-ng-disabled="newPropertyForm.$invalid"
                                 type="submit">
                             Agregar</button>
                         <button type="button" class="btn btn-default btn-sm btn-add-prop"

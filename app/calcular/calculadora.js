@@ -174,24 +174,24 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         return isAny(item.toLowerCase(), possibilities);
     };
 
-    $scope.isStringBoolean = function(item, possibilities) {
-        if(!possibilities) possibilities = ['check', 'checkbox', 'boolean'];
-        return isAny(item.toLowerCase(), possibilities);
-    };
+    //$scope.isStringBoolean = function(item, possibilities) {
+    //    if(!possibilities) possibilities = ['check', 'checkbox', 'boolean'];
+    //    return isAny(item.toLowerCase(), possibilities);
+    //};
 
     $scope.isStringList = function(item, possibilities) {
-        if(!possibilities) possibilities = ['list', 'select', 'combobox', 'combo', 'unique'];
+        if(!possibilities) possibilities = ['list', 'select', 'combobox', 'combo', 'unique', 'radio'];
         return isAny(item.toLowerCase(), possibilities);
     };
 
     $scope.isStringMultiple = function (item, possibilities) {
-        if(!possibilities) possibilities = ['multiple', 'checkbox'];
+        if(!possibilities) possibilities = ['multiple', 'checkbox', 'check'];
         return isAny(item.toLowerCase(), possibilities);
     };
 
     $scope.isStringText = function(item, possibilities) {
         if(!possibilities) {
-            return !($scope.isStringNumber(item) || $scope.isStringBoolean(item) || $scope.isStringList(item) || $scope.isStringMultiple(item));
+            return !($scope.isStringNumber(item) || $scope.isStringList(item) || $scope.isStringMultiple(item));
         }
         return isAny(item.toLowerCase(), possibilities);
     };

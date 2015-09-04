@@ -138,6 +138,18 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
     };
     listPropertyTypes();
 
+    //var listPropsWithOptions = function() {
+    //    $http.get(baseRemoteURL+'propiedad/listTypesWithOptions')
+    //        .success(function(data) {
+    //            $scope.propsWithOptions = data;
+    //        })
+    //        .error(function(data, status) {
+    //            $scope.alerts = [{type: 'danger', message: 'Algo pasó... y no debió pasar. Al obtener la lista de' +
+    //            ' tipos de propiedades'}];
+    //        });
+    //};
+    //listPropsWithOptions();
+
     $scope.getChildren = function(item) {
         if(!item) return [];
         var children = [];
@@ -211,14 +223,19 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
     $scope.cancelProp = function() {
         $scope.addingProperty = false;
         $scope.newProp = null;
+        $scope.newProperty = null;
+        $scope.newPropertyForm.$setPristine();
     };
 
     $scope.addProp = function(item) {
-        var muted = false;
+        var muted = true;
         if(!muted) console.log('\n');
         var newProp = $scope.newProperty;
         if(!newProp) return;
         newProp.parent = $scope.currentSelection;
+        //if($scope.propsWithOptions.indexOf(newProp.tipo) > -1) {
+        //
+        //}
         if(!muted) console.log('newProp '+ newProp);
         $scope.propertyAlerts = [];
 
@@ -446,6 +463,15 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
 
     $scope.isIn = function(item, array) {
         return isIn(item, array);
+    };
+
+    $scope.addOption = function(item) {
+        if(!item) return;
+        if(!angular.isArray(item.options)) item.options = [];
+        if(item.tempOpt && !(item.options.indexOf(item.tempOpt) > -1)) {
+            item.options.push(item.tempOpt);
+            item.tempOpt = null;
+        }
     };
 }
 

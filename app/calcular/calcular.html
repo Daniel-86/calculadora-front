@@ -205,10 +205,11 @@
                     </div>
                     <div class="col-md-12"
                          ng-show="category.tempSelected.visible">
-                        <div class="form-group col-md-4"
+                        <div class="form-group col-md-6"
                              ng-repeat="property in category.tempSelected.propiedades">
-                            <label class="control-label"
-                                   ng-show="!isStringBoolean(property.tipo)">
+
+
+                            <label class="control-label">
                                 {{ property.nombre }}
                             </label>
                             <input type="number"
@@ -217,20 +218,17 @@
                                    ng-model="property.rValue"/>
                             <select class="form-control"
                                     data-ng-model="property.rValue"
+                                    ng-options="opt for opt in property.options"
                                     ng-show="isStringList(property.tipo)">
-                                <option value=""> -- Elige -- </option>
+                                <option value=""> -- Elige una -- </option>
                             </select>
                             <select class="form-control"
                                     multiple
                                     data-ng-model="property.rValue"
+                                    ng-options="opt for opt in property.options"
                                     ng-show="isStringMultiple(property.tipo)">
-                                <option value=""> -- Elige -- </option>
+                                <option value=""> -- Elige una o varias -- </option>
                             </select>
-                            <label ng-show="isStringBoolean(property.tipo)">
-                                <input type="checkbox"
-                                       ng-model="property.rValue">
-                                {{ property.nombre }}
-                            </label>
                             <input type="text"
                                    ng-show="isStringText(property.tipo)"
                                    class="form-control"
