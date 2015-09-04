@@ -126,6 +126,18 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
     getAllData();
 
 
+    /**
+     * Esta es una manera horrible de establecer $dirty al asignar un valor default a un checkbox o radiobutton
+     */
+    $scope.checkForDefault = function(modelItem, formItem) {
+        if(modelItem && modelItem.domainClass && modelItem.domainClass.toLowerCase() === 'conceptoespecial') {
+            $scope.newItemForm.domainType.$setViewValue('concepto');
+            return true;
+        }
+        return false;
+    };
+
+
     var listPropertyTypes = function() {
         $http.get(baseRemoteURL+'propiedad/listTypes')
             .success(function(data) {

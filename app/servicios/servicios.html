@@ -297,8 +297,12 @@
                          ng-class="{'has-error': newItemForm.domainType.$invalid && newItemForm.domainType.$dirty}"
                          ng-show="!isRoot()">
                         <label>
+                            <!--<input type="radio" name="domainType" value="concepto"-->
+                                   <!--ng-checked="currentSelection.domainClass.toLowerCase() === 'conceptoespecial'"-->
+                                   <!--ng-required="!isRoot()"-->
+                                   <!--ng-model="newItem.domainType">Concepto-->
                             <input type="radio" name="domainType" value="concepto"
-                                   ng-checked="currentSelection.domainClass.toLowerCase() === 'conceptoespecial'"
+                                   ng-checked="checkForDefault(currentSelection, newItemform.domainType)"
                                    ng-required="!isRoot()"
                                    ng-model="newItem.domainType">Concepto
                         </label>
