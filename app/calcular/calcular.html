@@ -1,4 +1,4 @@
-<div class="container-fluid" ng-controller="CalculadoraMainCtrl">
+<div class="" ng-controller="CalculadoraMainCtrl">
     <div class="col-md-6">
         <form novalidate name="calcularForm" ng-submit="">
         <div accordion data-close-others="oneAtATime">
@@ -25,9 +25,11 @@
                                    type="checkbox"
                                    name="{{category.customId}}-concepto"
                                    checklist-model="category.rValue"
+                                   required
                                    data-checklist-value="item"/>
                             <input ng-if="!category.multiple"
                                    type="radio"
+                                   required
                                    name="{{category.customId}}-concepto"
                                    ng-model="category.rValue"
                                    ng-value="item"/>
@@ -41,6 +43,7 @@
                         <select
                                 ng-options="component as (component.nombre) for component in getChildrenList(category, 'componentes')"
                                 data-ng-model="category.tempSelected"
+                                name="{{ category.customId }}"
                                 title="Elige una opción"
                                 class="form-control input-sm">
                             <option value="">Elige una opción</option>
@@ -57,14 +60,6 @@
                                    ng-show="isStringNumber(property.tipo)"
                                    class="form-control input-sm small-inputs"
                                    ng-model="property.rValueN"/>
-                            <select class="form-control input-sm limit-size"
-                                    title="{{ property.descripcion }}"
-                                    data-ng-model="property.rValue"
-                                    ng-show="isStringVolumetria(property.customId)">
-                                <option value="1">Small Bussiness hasta 500 usuarios</option>
-                                <option value="2">Medium Bussiness hasta 5,000 usuarios</option>
-                                <option value="3">Datacenters & Large Enterprise más de 5,000 usuarios</option>
-                            </select>
                             <label ng-show="isStringBoolean(property.tipo)">
                                 <input type="checkbox"
                                        ng-model="property.rValue">
@@ -95,12 +90,19 @@
                                    placeholder="{{ property.customId }}"
                                    ng-change="showChildren(category.tempSelected)"
                                    ng-model="property.rValueN"/>
+                            <!--<select class="form-control input-sm"-->
+                                    <!--title="{{ property.descripcion }}"-->
+                                    <!--data-ng-model="property.rValueV"-->
+                                    <!--ng-options="sizeValue for (sizeKey, sizeValue) in getCompanySizeOptions()"-->
+                                    <!--ng-show="isStringVolumetria(property.customId)">-->
+                                <!--<option value=""> &#45;&#45; Elige alguna &#45;&#45; </option>-->
+                            <!--</select>-->
                             <select class="form-control input-sm"
-                                    title="{{ property.descripcion }}"
                                     data-ng-model="property.rValue"
-                                    ng-options="sizeKey*1 as sizeValue for (sizeKey, sizeValue) in getCompanySizeOptions()"
-                                    ng-show="isStringVolumetria(property.customId)">
-                                <option value=""> -- Elige alguna -- </option>
+                                    ng-options="opt for opt in property.options"
+                                    name="{{ category.customId }}"
+                                    ng-show="isStringList(property.tipo)">
+                                <option value=""> -- Elige una -- </option>
                             </select>
                             <label ng-show="isStringBoolean(property.tipo)">
                                 <input type="checkbox"
@@ -110,7 +112,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 form-group" ng-show="category.tempSelected.isPartialSelected">
-                        <div class="col-sm-5">
+                        <div class="col-sm-7">
                             <div class="btn-group">
                                 <label class="btn btn-default"
                                        data-ng-model="category.tempSelected.deviceScope"
@@ -132,7 +134,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-7">
+                        <div class="col-sm-5">
                             <select ng-show="category.tempSelected.deviceScope === 'single'"
                                     ng-options="idx as category.tempSelected.nombre+' '+idx for idx in category.tempSelected.deviceCountArray"
                                     data-ng-model="category.tempSelected.currentScope"
@@ -237,7 +239,7 @@
                             </select>
                             <select class="form-control"
                                     multiple
-                                    data-ng-model="property.rValue"
+                                    data-ng-model="property.rValueM"
                                     ng-options="opt for opt in property.options"
                                     ng-show="isStringMultiple(property.tipo)">
                                 <option value=""> -- Elige una o varias -- </option>
@@ -276,14 +278,14 @@
                 <div class="col-xs-12 col-md-12" ng-repeat="category in categories">
                     <div ng-show="anyValuedChild(category) && category.customId === 'tipo_de_cliente'"
                          class="col-xs-12 col-md-12 descRow">
-                        <div class="col-xs-3">{{ category.nombre }}</div>
-                        <div class="col-xs-9"><strong>{{ category.rValue.nombre }}</strong></div>
+                        <div class="col-xs-4">{{ category.nombre }}</div>
+                        <div class="col-xs-8"><strong>{{ category.rValue.nombre }}</strong></div>
                     </div>
 
                     <div ng-show="anyValuedChild(category) && category.customId === 'ingenieria_en_sitio'"
                          class="col-xs-12 col-md-12 descRow">
-                        <div class="col-xs-3">{{ category.nombre }}</div>
-                        <div class="col-xs-9">
+                        <div class="col-xs-4">{{ category.nombre }}</div>
+                        <div class="col-xs-8">
                             <div ng-repeat="componente in category.componentes"
                                  class=""
                                  ng-show="anyValuedChild(componente)">
@@ -297,12 +299,12 @@
 
                     <div ng-show="anyValuedChild(category) && category.customId == 'tecnologia'"
                          class="col-md-12 descRow">
-                        <div class="col-xs-3">{{ category.nombre }}</div>
-                        <div class="col-xs-9"></div>
+                        <div class="col-xs-4">{{ category.nombre }}</div>
+                        <div class="col-xs-8"></div>
                         <div class="col-xs-12" ng-repeat="componente in category.componentes"
                              ng-show="anyValuedChild(componente)">
-                            <div class="col-xs-3">{{ componente.nombre }}</div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-4">{{ componente.nombre }}</div>
+                            <div class="col-xs-8">
                                 <div ng-show="componente.propiedades[1].rValue">
                                     <span>volumetría <strong>{{ componente.propiedades[1].rValue }}</strong></span>
                                 </div>
@@ -328,7 +330,7 @@
                     <button type="button"
                             class="btn btn-primary"
                             ng-click="getResults()"
-                            data-ng-disabled="calcularForm.$invalid || !calcularForm.$dirty">
+                            data-ng-disabled="!isFormOk()">
                         Calcular
                     </button>
                 </div>

@@ -495,9 +495,6 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
 
 serviciosModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location, growl) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location, growl);});
-serviciosModule.directive('noSubmit', function() {
-
-});
 serviciosModule.config(['growlProvider', function(growlProvider) {
     growlProvider.globalTimeToLive(2500)
         .globalDisableCloseButton(true)

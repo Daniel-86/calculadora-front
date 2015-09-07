@@ -66,7 +66,7 @@ function evalConstraint(item, constraint) {
     var propIdx = findWithAttr(item.propiedades, 'customId', propName);
     if(!propName || !(propIdx>0)) return false;
     var biggerThan = constraint.biggerThan? constraint.biggerThan: 0;
-    var value = item.propiedades[propIdx-1].rValue;
+    var value = item.propiedades[propIdx-1].tipo === 'NUMBER'? item.propiedades[propIdx-1].rValueN: item.propiedades[propIdx-1].rValue;
     item.deviceCount = value;
     return value > biggerThan;
 }
@@ -211,6 +211,9 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
             item.deviceScope = 'all';
             item.deviceRange = {min:0, max:item.deviceCount};
         }
+        if(angular.isArray(item.rValue)) {
+            item.rValue.splice(item.deviceCount);
+        }
         $scope.deviceScopeChanged(item);
         item.isPartialSelected = show;
         if(item.deviceScope === 'all') item.isFullSelected = show;
@@ -286,17 +289,17 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
             return item.componentes.some(function(e) {
                 if(e.rValue) return true;
                 return e.propiedades.some(function(p) {
-                    return p.rValue;
+                    return p.tipo === 'NUMBER'? p.rValueN: p.rValue;
                 });
             });
         }
         else if(item.domainClass.toLowerCase() === 'conceptoespecial') {
             return item.propiedades.some(function(p) {
-                return p.rValue;
+                return p.tipo === 'NUMBER'? p.rValueN: p.rValue;
             });
         }
         else if(item.domainClass.toLowerCase() === 'propiedad') {
-            return item.rValue;
+            return item.tipo === 'NUMBER'? item.rValueN: item.rValue;
         }
     };
 
@@ -348,9 +351,10 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
                     if($scope.anyValuedChild(componente)) {
                         for(var k=0; k<componente.propiedades.length; k++) {
                             var prop = componente.propiedades[k];
-                            if(prop.rValue) {
+                            var propVal = prop.tipo === 'NUMBER'? prop.rValueN: prop.rValue;
+                            if(propVal) {
                                 hasvalue = true;
-                                tempObj[prop.customId] = prop.rValue;
+                                tempObj[prop.customId] = propVal;
                             }
                         }
                         tempObj[componente.customId] = true;
@@ -442,6 +446,25 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
      * Para el acordeon
      */
     $scope.oneAtATime = true;
+
+
+    $scope.isFormOk = function() {
+        //$scope.calcularForm.$invalid || !$scope.calcularForm.$dirty
+        if(!$scope.categories) return false;
+        var isOk = $scope.categories.every(function(c) {
+            if(c.customId !== 'tecnologia') return anyValuedChild(c);
+            if(c.customId === 'tecnologia' && anyValuedChild(c)) {
+                var areServicesSelected = c.componentes.some(function(comp) {
+                    if(comp.deviceCount > 0) {
+                        return (angular.isArray(comp.rValue) && comp.rValue.length > 0 && comp.rValue.every(function(rv) {return rv}) && comp.propiedades[1].rValue);
+                    }
+                });
+                return areServicesSelected;
+            }
+            return false;
+        });
+        return isOk;
+    };
 }
 
 
@@ -511,6 +534,27 @@ function capitalize() {
     };
 }
 
+function anyValuedChild(item) {
+    if(!item) return false;
+    if(item.domainClass.toLowerCase() === 'categoria') {
+        if(item.rValue) return item.rValue;
+        return item.componentes.some(function(e) {
+            if(e.rValue) return true;
+            return e.propiedades.some(function(p) {
+                return p.tipo === 'NUMBER'? p.rValueN: p.rValue;
+            });
+        });
+    }
+    else if(item.domainClass.toLowerCase() === 'conceptoespecial') {
+        return item.propiedades.some(function(p) {
+            return p.tipo === 'NUMBER'? p.rValueN: p.rValue;
+        });
+    }
+    else if(item.domainClass.toLowerCase() === 'propiedad') {
+        return item.tipo === 'NUMBER'? item.rValueN: item.rValue;
+    }
+}
+
 
 
 
@@ -543,4 +587,17 @@ calculadoraControllers.config(['usSpinnerConfigProvider', function (usSpinnerCon
         trail: 91
     });
 }]);
+calculadoraControllers.directive('isAnySelected', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, element, attrs, ctrl) {
+            ctrl.$validators.isAnySelected = function(modelValue, viewValue) {
+                //var root = scope[attrs['isAnySelected']];
+                var root = anyValuedChild(modelValue);
+                return root;
+            };
+        }
+    }
+});
 
