@@ -456,7 +456,7 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
             if(c.customId === 'tecnologia' && anyValuedChild(c)) {
                 var areServicesSelected = c.componentes.some(function(comp) {
                     if(comp.deviceCount > 0) {
-                        return (angular.isArray(comp.rValue) && comp.rValue.length > 0 && comp.rValue.every(function(rv) {return rv}) && comp.propiedades[1].rValue);
+                        return (angular.isArray(comp.rValue) && comp.rValue.length > 0 && comp.rValue.every(function(rv) {return angular.isArray(rv) && rv.length > 0;}) && comp.propiedades[1].rValue);
                     }
                 });
                 return areServicesSelected;
