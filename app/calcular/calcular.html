@@ -82,7 +82,7 @@
                     <div class="col-md-12">
                         <div class="form-group col-md-4" ng-repeat="property in category.tempSelected.propiedades">
                             <label class="control-label"
-                                   ng-show="!isStringBoolean(property.tipo)">
+                                   ng-show="!isStringBoolean(property.tipo) && ((preperty.nombre!=='cantidad' && category.tempSelected.isPartialSelected) || property.nombre==='cantidad')">
                                 {{property.nombre}}</label>
                             <input type="number"
                                    ng-show="isStringNumber(property.tipo)"
@@ -101,7 +101,7 @@
                                     data-ng-model="property.rValue"
                                     ng-options="opt for opt in property.options"
                                     name="{{ category.customId }}"
-                                    ng-show="isStringList(property.tipo)">
+                                    ng-show="isStringList(property.tipo) && category.tempSelected.isPartialSelected">
                                 <option value=""> -- Elige una -- </option>
                             </select>
                             <label ng-show="isStringBoolean(property.tipo)">

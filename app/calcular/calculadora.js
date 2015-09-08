@@ -218,6 +218,9 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         item.isPartialSelected = show;
         if(item.deviceScope === 'all') item.isFullSelected = show;
         //item.isFullSelected = item.deviceScope === 'all'? show: isQuantitySpecified(item);
+        if(!angular.isArray(item.rValue) || item.rValue.length < 1) {
+            item.propiedades[1].rValue = null;
+        }
         return show;
     };
 
@@ -454,12 +457,16 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         return $scope.categories.every(function (c) {
             if (c.customId !== 'tecnologia') return anyValuedChild(c);
             if (c.customId === 'tecnologia' && anyValuedChild(c)) {
-                return c.componentes.some(function (comp) {
-                    if (comp.deviceCount > 0) {
+                var componentes = c.componentes.filter(function(com) {
+                    return com.deviceCount > 0;
+                });
+                if(!angular.isArray(componentes) || componentes.length < 1) return false;
+                return componentes.every(function (comp) {
+                    //if (comp.deviceCount > 0) {
                         return (angular.isArray(comp.rValue) && comp.rValue.length > 0 && comp.rValue.every(function (rv) {
                             return angular.isArray(rv) && rv.length > 0;
                         }) && comp.propiedades[1].rValue);
-                    }
+                    //}
                 });
             }
             return false;
