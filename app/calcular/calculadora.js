@@ -451,19 +451,19 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
     $scope.isFormOk = function() {
         //$scope.calcularForm.$invalid || !$scope.calcularForm.$dirty
         if(!$scope.categories) return false;
-        var isOk = $scope.categories.every(function(c) {
-            if(c.customId !== 'tecnologia') return anyValuedChild(c);
-            if(c.customId === 'tecnologia' && anyValuedChild(c)) {
-                var areServicesSelected = c.componentes.some(function(comp) {
-                    if(comp.deviceCount > 0) {
-                        return (angular.isArray(comp.rValue) && comp.rValue.length > 0 && comp.rValue.every(function(rv) {return angular.isArray(rv) && rv.length > 0;}) && comp.propiedades[1].rValue);
+        return $scope.categories.every(function (c) {
+            if (c.customId !== 'tecnologia') return anyValuedChild(c);
+            if (c.customId === 'tecnologia' && anyValuedChild(c)) {
+                return c.componentes.some(function (comp) {
+                    if (comp.deviceCount > 0) {
+                        return (angular.isArray(comp.rValue) && comp.rValue.length > 0 && comp.rValue.every(function (rv) {
+                            return angular.isArray(rv) && rv.length > 0;
+                        }) && comp.propiedades[1].rValue);
                     }
                 });
-                return areServicesSelected;
             }
             return false;
         });
-        return isOk;
     };
 }
 
@@ -594,10 +594,9 @@ calculadoraControllers.directive('isAnySelected', function() {
         link: function(scope, element, attrs, ctrl) {
             ctrl.$validators.isAnySelected = function(modelValue, viewValue) {
                 //var root = scope[attrs['isAnySelected']];
-                var root = anyValuedChild(modelValue);
-                return root;
+                return anyValuedChild(modelValue);
             };
         }
-    }
+    };
 });
 

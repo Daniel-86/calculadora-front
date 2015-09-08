@@ -430,8 +430,29 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                     $scope.alerts = [{type: 'success', msg: 'El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')}];
                 }
             })
-            .error(function(data) {
-
+            .error(function(data, status) {
+                var creaForma = $scope.generalesForm;
+                if(status === 402 || status === 422) {
+                    var serverErrors = data.errors;
+                    angular.forEach(serverErrors, function (error) {
+                        var field = error.field;
+                        var message = error.message; if(!muted) console.log('field, message ' + field + '   '+message);
+                        var rejectedVal = error['rejected-value'];
+                        if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
+                        creaForma[field].serverErrors.push(message);
+                    });
+                }
+                else if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
+                    //creaForma.generalErrors = ['The specified HTTP method is not allowed for the requested' +
+                    //' resource.'];
+                    $scope.alerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +
+                    ' requested'}];
+                }
+                else {
+                    //creaForma.generalErrors = ["Se recibió un error "+status];
+                    $scope.alerts = [{type: 'danger', msg: 'Se recibió un error '+status}];
+                }
+                item.visible = !item.visible;
             });
     };
 
@@ -461,7 +482,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                         creaForma[field].serverErrors.push(message);
                     });
                 }
-                if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
+                else if(status === 405) {if(!muted) console.log('createFactorAjax es 405');
                     //creaForma.generalErrors = ['The specified HTTP method is not allowed for the requested' +
                     //' resource.'];
                     $scope.alerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +

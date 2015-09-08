@@ -12,6 +12,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
 
     function getAvailableDependencies() {
         var url = baseRemoteURL+'factor/dependenciesData' + ($scope.factor.id > 0? '/'+$scope.factor.id: '');
+        var requestedId = $scope.factor.id;
         if(!muted) console.log('factorCtrl url', url);
         $http.get(url).success(function (data) {
             if(!muted) console.log('factorCtrl data', data);
@@ -21,6 +22,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
             });
             $scope.factor = data.factor;
             if($scope.factor && $scope.factor.id > 0) $scope.selected = data.factor.dependencies;
+            else if(requestedId) {$location.path('/factor');}
         });
     }
 
@@ -83,7 +85,7 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
                     var rejectedVal = error['rejected-value'];
                     if(!creaForma[field]) {
                         if(!$scope.alerts) $scope.alerts = [];
-                        $scope.alerts.push({type: 'danger', msg: 'Solo puede haber una depencencia con valores inferior y/o superior'});
+                        $scope.alerts.push({type: 'danger', msg: error.message});
                     }
                     else {
                         if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
@@ -97,8 +99,11 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
                 $scope.alerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +
                 ' requested'}];
             }
+            else if(status === 404) {
+                $location.path('/factores');
+            }
             else {
-                //creaForma.generalErrors = ["Se recibi� un error "+status];
+                if(!angular.isArray($scope.alerts)) $scope.alerts = [];
                 $scope.alerts.push({type: 'danger', msg: 'Se recibió un error '+status});
             }
         }
