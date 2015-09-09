@@ -231,3 +231,24 @@ tr.addRow {
 /*Termina estilos de la página principal*/
 
 
+
+
+.no-margin {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.no-margin-left {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+.no-margin-right {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+
+
