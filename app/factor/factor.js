@@ -236,6 +236,13 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
     $scope.watchEmpty = function (item) {
         if(!item.lowerLimit) item.upperLimit = null;
     };
+
+    $scope.isFormOk = function(form, item) {
+        if(!item) return false;
+        if(!angular.isArray(item.dependencies)) return false;
+        if(item.dependencies.length < 1) return false;
+        return form.$valid && form.$dirty;
+    };
 }
 
 

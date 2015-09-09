@@ -3,7 +3,7 @@
         <h1>Factores <small class="label label-default">{{ factorList.length }}</small></h1>
     </div>
     <div class="col-xs-12 col-md-12 form-group">
-        <div class="col-xs-12 col-md-1"><labael class="control-label">Filtrar por</labael> </div>
+        <div class="col-xs-12 col-md-2"><labael class="control-label">Filtrar por</labael> </div>
         <div class="col-xs-12 col-md-3">
             <input type="text"
                    id="searchbox"
@@ -32,12 +32,18 @@
                     <td><a href="#/factor/{{data.id}}"> {{data.nombre}}</a></td>
                     <td>{{data.descripcion}}</td>
                     <td class="text-center">
-                        <a href=""
-                           ng-click="deleteFactor($index)"
-                           class="btn btn-link"
-                           title="Eliminar">
+                        <!--<a href=""-->
+                           <!--ng-click="deleteFactor($index)"-->
+                           <!--class="btn btn-link"-->
+                           <!--title="Eliminar">-->
+                            <!--<span class="glyphicon glyphicon-trash"></span>-->
+                        <!--</a>-->
+                        <button type="button"
+                                class="btn btn-link"
+                                ng-click="deleteFactor($index)"
+                                title="Eliminar">
                             <span class="glyphicon glyphicon-trash"></span>
-                        </a>
+                        </button>
                     </td>
                 </tr>
                 </tbody>
