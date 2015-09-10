@@ -119,7 +119,7 @@ angular.module('myApp').factory('authInterceptor', function($q) {
         request: function ($config) {
             var token = getLocalToken();
             if (token) {
-                $config.headers['X-Auth-Token'] = token;
+                //$config.headers['X-Auth-Token'] = token;
                 $config.headers['Authorization'] = "Bearer " + token;
             }
             return $config;

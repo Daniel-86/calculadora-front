@@ -122,11 +122,15 @@
   <span us-spinner="{radius:30, width:8, length:16}"></span>
 
   <div id="login-holder" class="container" style="width: 300px;">
-    <div id="login-error" class="alert alert-error">
-      <button type="button" class="close" onclick="$('#login-error').hide();">&times;</button>
-      Username and/or password incorrect.
-    </div>
-    <div id="loginbox">
+    <div class="panel panel-default">
+      <div class="">
+        <h4 class="text-center">Identifícate</h4>
+        <div id="login-error" class="alert alert-error">
+          <button type="button" class="close" onclick="$('#login-error').hide();">&times;</button>
+          Username and/or password incorrect.
+        </div>
+      </div>
+    <div id="loginbox" class="panel-body">
       <div id="login-inner" ng-controller="LoginCtrl">
         <form name="loginForm" role="form" ng-submit="logIn()" autocomplete="off">
           <div class="form-group">
@@ -137,10 +141,11 @@
             <label for="password">Password</label>
             <input id="password" class="form-control" type="password" ng-model="authData.password"/>
           </div>
-          <input type="submit" class="btn btn-primary" value="Login"/>
+          <input type="submit" class="btn btn-primary btn-block" value="Login"/>
         </form>
       </div>
       <div class="clear"></div>
+    </div>
     </div>
   </div>
 

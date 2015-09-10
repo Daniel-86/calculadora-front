@@ -25,6 +25,7 @@ loginModule.controller('LoginCtrl',
                     });
                 })
                 .error(function(data) {
+                    console.log('about to broadcast auth-loginFailed');
                     $rootScope.$broadcast('event:auth-loginFailed', data);
                 });
         };
@@ -56,7 +57,7 @@ loginModule.controller('LogoutCtrl',
 
         $scope.isLoggedIn = function() {
             return loginService.isLoggedIn();
-        }
+        };
     });
 
 loginModule.service('loginService', function() {
@@ -65,7 +66,7 @@ loginModule.service('loginService', function() {
     };
 
     this.getRoles = function() {
-        return localStorage["roles"]
+        return localStorage["roles"];
     };
 
     this.hasRole = function(role) {
@@ -73,5 +74,5 @@ loginModule.service('loginService', function() {
             var roles = this.getRoles();
             return roles.indexOf(role) > -1;
         }
-    }
+    };
 });
