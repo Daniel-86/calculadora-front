@@ -134,6 +134,9 @@
                                        btn-radio="'range'">
                                     Varios
                                 </label>
+                                <span class="btn btn-link glyphicon glyphicon-question-sign"
+                                      popover="¿A cuantos elementos se aplicarán las opciones seleccionadas?">
+                                </span>
                             </div>
                         </div>
                         <div class="col-sm-5 no-margin">
@@ -143,14 +146,31 @@
                                     data-ng-change="deviceScopeChanged(category.tempSelected)"
                                     class="form-control input-sm min-width-x"
                                     title="elige uno para modificar sus opciones">
-                                <option value="">Elige uno para modificar sus opciones</option>
+                                <option value="">Elige y modifica sus opciones</option>
                             </select>
-                            <input type="number"
-                                   placeholder="#"
-                                   class="form-control input-sm"
-                                   data-ng-model="category.tempSelected.currentScope"
-                                   data-ng-change="deviceScopeChanged(category.tempSelected)"
-                                   ng-show="category.tempSelected.deviceScope === 'range'">
+                            <div class="input-group no-margin">
+                                <input type="number"
+                                       placeholder="#"
+                                       class="form-control input-sm"
+                                       data-ng-model="category.tempSelected.currentScope"
+                                       data-ng-change="deviceScopeChanged(category.tempSelected)"
+                                       ng-show="category.tempSelected.deviceScope === 'range'">
+                                <span class="btn btn-link glyphicon glyphicon-question-sign input-group-addon"
+                                      style="border: none; background-color: inherit; color: inherit;"
+                                      ng-show="category.tempSelected.deviceScope === 'range'"
+                                      popover="El rango es de 0 al valor que especifiques.">
+                                </span>
+                            </div>
+                            <!--<input type="number"-->
+                                   <!--placeholder="#"-->
+                                   <!--class="form-control input-sm"-->
+                                   <!--data-ng-model="category.tempSelected.currentScope"-->
+                                   <!--data-ng-change="deviceScopeChanged(category.tempSelected)"-->
+                                   <!--ng-show="category.tempSelected.deviceScope === 'range'">-->
+                            <!--<span class="btn btn-link glyphicon glyphicon-question-sign"-->
+                                  <!--ng-show="category.tempSelected.deviceScope === 'range'"-->
+                                  <!--popover="El rango va de 0 al valor que especifiques.">-->
+                            <!--</span>-->
                         </div>
                     </div>
                     <div class="col-md-12 form-group no-margin" ng-show="category.tempSelected.isFullSelected">
