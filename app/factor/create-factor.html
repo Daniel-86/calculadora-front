@@ -1,14 +1,33 @@
-<div>
-    <span us-spinner="{radius:30, width:8, length:16}"></span>
-    <div class="col-md-12" id="dependencies-container">
+<div class="row"
+     help-overlay="showHelp"
+        >
+    <!--<span us-spinner="{radius:30, width:8, length:16}"></span>-->
+    <div class="col-md-12"
+         id="dependencies-container">
         <div class="page-header">
-            <h1>{{factor.id > 0? 'Editar': 'Crear'}} <small>Factor {{ factor.id > 0? factor.id: '' }}</small></h1>
+            <h1>{{factor.id > 0? 'Editar': 'Crear'}}
+                <small>Factor {{ factor.id > 0? factor.id: '' }}</small>
+                <button class="btn btn-link"
+                        type="button"
+                        ng-click="toggleHelp()">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </button>
+            </h1>
+            <!--<button class="btn btn-link"-->
+                    <!--type="button"-->
+                    <!--ng-click="toggleHelp()">-->
+                <!--<span class="glyphicon glyphicon-question-sign"></span>-->
+            <!--</button>-->
+            <!--{{ showHelp }}-->
         </div>
 
         <div alert ng-repeat="alert in alerts" data-type="{{alert.type}}" data-close="closeAlert($index)">
             {{alert.msg}}</div>
 
-        <form novalidate class="" name="createForm" ng-submit="createFactorAjax()">
+        <form novalidate
+              class=""
+              name="createForm"
+              ng-submit="createFactorAjax()">
             <div class="form-horizontal col-md-12">
                 <div class="form-group col-md-5">
                     <label for="nombre" class="control-label col-md-4">Nombre</label>
@@ -29,7 +48,14 @@
                     <label for="factor" class="control-label col-md-4">Factor</label>
 
                     <div class="col-md-8">
-                        <input type="number" name="factor" id="factor" class="form-control" step="0.25" required
+                        <input type="number"
+                               name="factor"
+                               id="factor"
+                               class="form-control"
+                               step="0.25"
+                               required
+                               data-position="top"
+                               data-intro="1=100%, 0.5=50%, ..."
                                ng-model="factor.factor">
                         <span style="color: #ff0000;" ng-show="createForm.factor.$dirty && createForm.factor.$invalid">
                             <span ng-show="!createForm.factor.$error.number && createForm.factor.$error.required">
@@ -56,6 +82,8 @@
                             id="target"
                             name="target"
                             required
+                            data-intro="¿A que tipo de tickets se aplicará el factor?"
+                            data-position="right"
                             data-ng-model="factor.target"
                             class="form-control">
                         <option>CC</option>
@@ -126,7 +154,12 @@
                         <th ng-show="countableDeps(factor.dependencies) > 0">step</th>
                         <th></th>
                         </thead>
-                        <tbody>
+                        <tbody data-position="top"
+                               data-intro="Algunas dependencias pueden aplicarse a un rango y  cada cierto número de coincidencias. <br/><br/>ej. firewall-ha factor=0.05 inferior=5 superior=15 step=3; aplica el factor cada 3 'elementos' despues de 5 y hasta 15, es decir:
+                               5 firewall-ha = factor 0.05
+                               8 firewall-ha = factor 0.05*3
+                               11 firewall-ha = factor 0.05*6
+                               14 firewall-ha = factor 0.05*9<br/>*MAXIMO UNA DEPENDENCIA CON VALORES">
                         <tr  ng-form="tempForm" ng-repeat="dependency in factor.dependencies"
                              title="{{dependency.item.descripcion}}">
                             <td>{{dependency.item.customId | strip:'_':' ':true}}</td>

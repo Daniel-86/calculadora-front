@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "angular": "~1.4.0",
+    "angular": "1.4.5",
     "angular-route": "~1.4.0",
     "angular-loader": "~1.4.0",
     "angular-mocks": "~1.4.0",
@@ -22,6 +22,8 @@
     "spinjs": "~2.3.2",
     "angular-spinner": "~0.6.2",
     "angular-loading-spinner": "~0.0.3",
-    "angular-growl-3": "~0.7.5"
+    "angular-growl-3": "~0.7.5",
+    "angular-animate": "~1.4.5",
+    "angular-help-overlay": "~0.1.2"
   }
 }

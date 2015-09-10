@@ -1,7 +1,7 @@
 
 'use strict';
 
-var factorModule = angular.module('factor', ['as.sortable', 'ui.bootstrap', 'ngRoute']);
+var factorModule = angular.module('factor', ['as.sortable', 'ui.bootstrap', 'ngRoute', 'angularHelpOverlay']);
 
 function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {
     var muted = false;
@@ -242,6 +242,10 @@ function factorCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
         if(!angular.isArray(item.dependencies)) return false;
         if(item.dependencies.length < 1) return false;
         return form.$valid && form.$dirty;
+    };
+
+    $scope.toggleHelp = function() {
+        $scope.showHelp = !$scope.showHelp;
     };
 }
 

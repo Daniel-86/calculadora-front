@@ -30,7 +30,10 @@
 }
 
 
-
+.chardinjs-tooltip {
+  white-space: pre-wrap !important;
+  max-width: 310px !important;
+}
 
 
 
