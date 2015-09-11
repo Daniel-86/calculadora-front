@@ -1,10 +1,21 @@
-<div>
+<div class="row" help-overlay="showHelp">
     <div class="col-md-12" id="dependencies-container">
         <div class="page-header">
-            <h1>{{ticket.id > 0? 'Editar': 'Crear'}} <small>Ticket {{ ticket.id > 0? ticket.id: '' }}</small></h1>
+            <h1>{{ticket.id > 0? 'Editar': 'Crear'}}
+                <small>Ticket {{ ticket.id > 0? ticket.id: '' }}</small>
+                <button class="btn"
+                        ng-class="showHelp? 'btn-info': 'btn-link'"
+                        type="button"
+                        data-position="left"
+                        data-intro="Ocultar"
+                        ng-click="toggleHelp()">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </button>
+            </h1>
         </div>
 
-        <div alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</div>
+        <div alert ng-repeat="alert in alerts" data-type="{{alert.type}}" data-close="closeAlert($index)">
+            {{alert.msg}}</div>
 
         <form novalidate class="" name="createForm" ng-submit="createTicketAjax()">
             <div class="form-horizontal col-md-12">
@@ -23,6 +34,9 @@
                     </div>
                 </div>
 
+                <div class="row"
+                     data-intro="Esos valores son la cantidad de tickets asignados al conjunto de reglas definidas como dependencias."
+                     data-position="top">
                 <div class="form-group col-md-5">
                     <label for="cc" class="control-label col-md-4">CC</label>
                     <div class="col-md-8">
@@ -92,6 +106,7 @@
                                name="rq" id="rq"
                                class="form-control"
                                required
+                               value="0"
                                ng-init="ticket.rq=0"
                                ng-model="ticket.rq">
                         <span style="color: #ff0000;" ng-show="createForm.rq.$dirty && createForm.rq.$invalid">
@@ -103,6 +118,7 @@
                             <span ng-repeat="errorMessage in createForm.rq.serverErrors">{{errorMessage}}</span>
                         </span>
                     </div>
+                </div>
                 </div>
 
                 <div class="form-group col-md-10"
@@ -135,17 +151,23 @@
                     <table class="table table-striped">
                         <thead>
                         <th>ID</th>
-                        <th>Inferior</th>
-                        <th>Superior</th>
+                        <th ng-show="countableDeps(ticket.dependencies)>0">Inferior</th>
+                        <th ng-show="countableDeps(ticket.dependencies)>0">Superior</th>
                         <th></th>
                         </thead>
-                        <tbody>
+                        <tbody data-position="top"
+                               data-intro="Aqui, a diferencia de los Factores, puede haber varias dependencias con restricciones de rango: valores inferior y superior.">
                         <tr  ng-form="tempForm" ng-repeat="dependency in ticket.dependencies"
                              title="{{dependency.item.descripcion}}">
                             <td>{{dependency.item.customId | strip:'_':' ':true}}</td>
-                            <td class="min-width-70">
-                                <input class="form-control numbers" type="number"
-                                       ng-model="dependency.lowerLimit" min="0"
+                            <td class="min-width-70"
+                                ng-show="countableDeps(ticket.dependencies)>0">
+                                <div ng-show="!dependency.item.single">
+                                <input class="form-control numbers"
+                                       type="number"
+                                       ng-model="dependency.lowerLimit"
+                                       ng-change="watchEmpty(dependency)"
+                                       min="0"
                                        name="lowerLimit">
                                 <span style="color: #ff0000;"
                                       ng-show="tempForm.lowerLimit.$dirty && tempForm.lowerLimit.$invalid">
@@ -158,8 +180,11 @@
                                 <span style="color: #ff0000;" ng-show="createForm[dependency.item.customId+'.lowerLimit'].serverErrors">
                                     <span ng-repeat="errorMessage in createForm[dependency.item.customId+'.lowerLimit'].serverErrors">{{errorMessage}}</span>
                                 </span>
+                                </div>
                             </td>
-                            <td class="min-width-70">
+                            <td class="min-width-70"
+                                ng-show="countableDeps(ticket.dependencies)>0">
+                                <div ng-show="!dependency.item.single">
                                 <input type="number"
                                        name="upperLimit"
                                        class="form-control numbers"
@@ -184,6 +209,7 @@
                                 <span style="color: #ff0000;" ng-show="tempForm.upperLimit.serverErrors">
                                     <span ng-repeat="errorMessage in tempForm.upperLimit.serverErrors">{{errorMessage}}</span>
                                 </span>
+                                </div>
                             </td>
                             <td><a href="" ng-click="dropDep($index)"
                                    class="btn btn-danger"
@@ -198,12 +224,12 @@
                                         data-ng-change="addDepRow()"
                                         title="Selecciona para agregar"
                                         class="form-control">
-                                    <option value=""> -- Agregar dependencia --</option>
+                                    <option value="" class="text-center"> -- Agregar dependencia --</option>
                                 </select>
                             </td>
                             <!--<td></td>-->
                             <!--<td></td>-->
-                            <td></td>
+                            <!--<td></td>-->
                             <td></td>
                         </tr>
                         </tbody>
@@ -215,9 +241,12 @@
             <div class="col-md-12 form-group center-block">
                 <button type="submit"
                         class="btn btn-primary"
-                        data-ng-disabled="createForm.$invalid || !createForm.$dirty">
+                        data-ng-disabled="!isFormOk(createForm, ticket)">
+                    <span class="glyphicon"
+                          ng-class="ticket.id>0? 'glyphicon-edit': 'glyphicon-plus-sign'"></span>
                     {{ticket.id > 0? 'Editar': 'Crear'}}</button>
                 <a href="#/tickets" class="btn btn-default">
+                    <span class="glyphicon glyphicon-remove-sign"></span>
                     Cancelar
                 </a>
             </div>

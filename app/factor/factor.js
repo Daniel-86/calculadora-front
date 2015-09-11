@@ -325,5 +325,5 @@ factorModule.filter('garanteeOneMultiple', function() {
         }
         else
             return list;
-    }
+    };
 });

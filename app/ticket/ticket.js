@@ -1,10 +1,10 @@
 
 'use strict';
 
-var ticketModule = angular.module('ticket', ['as.sortable', 'ui.bootstrap', 'ngRoute']);
+var ticketModule = angular.module('ticket', ['as.sortable', 'ui.bootstrap', 'ngRoute', 'angularHelpOverlay']);
 
 function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {
-    var muted = false;
+    var muted = true;
     if(!muted) console.log('\n');
     $scope.ticket = {};
     $scope.ticket.id = angular.isDefined($routeParams.ticketId)? $routeParams.ticketId: null;
@@ -12,12 +12,17 @@ function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
 
     function getAvailableDependencies() {
         var url = baseRemoteURL+'ticket/dependenciesData' + ($scope.ticket.id > 0? '/'+$scope.ticket.id: '');
+        var requestedId = $scope.ticket.id;
         if(!muted) console.log('ticketCtrl url', url);
         $http.get(url).success(function (data) {
             if(!muted) console.log('ticketCtrl data', data);
             $scope.available = data.available;
+            $scope.available = data.available.filter(function(element) {
+                return element.eligible && element.visible;
+            });
             $scope.ticket = data.ticket;
             if($scope.ticket && $scope.ticket.id > 0) $scope.selected = data.ticket.dependencies;
+            else if(requestedId) {$location.path('/ticket');}
         });
     }
 
@@ -80,18 +85,25 @@ function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
                     var field = error.field;
                     var message = error.message; if(!muted) console.log('field, message ' + field + '   '+message);
                     var rejectedVal = error['rejected-value'];
-                    if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
-                    creaForma[field].serverErrors.push(message);
+                    if(!creaForma[field]) {
+                        if(!$scope.alerts) $scope.alerts = [];
+                    } else {
+                        if (!angular.isArray(creaForma[field].serverErrors)) creaForma[field].serverErrors = [];
+                        creaForma[field].serverErrors.push(message);
+                    }
                 });
             }
-            if(status === 405) {if(!muted) console.log('createTicketAjax es 405');
+            else if(status === 405) {if(!muted) console.log('createTicketAjax es 405');
                 //creaForma.generalErrors = ['The specified HTTP method is not allowed for the requested' +
                 //' resource.'];
                 $scope.alerts = [{type: 'warning', msg: 'The specified HTTP method is not allowed for the' +
                 ' requested'}];
             }
+            else if(status === 404) {
+                $location.path('/tickets');
+            }
             else {
-                //creaForma.generalErrors = ["Se recibi� un error "+status];
+                if(!angular.isArray($scope.alerts)) $scope.alerts = [];
                 $scope.alerts = [{type: 'danger', msg: 'Se recibi� un error '+status}];
             }
         }
@@ -196,36 +208,76 @@ function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
     };
+
+
+    $scope.countableDeps = function(depsList) {
+        if(!angular.isArray(depsList)) return 0;
+        return depsList.reduce(function(count, dep, idx) {
+            if(!dep.item.single) count++;
+            return count;
+        }, 0);
+    };
+    //
+    //$scope.watchDeps = function(depsList) {
+    //    if(!angular.isArray(depsList)) return false;
+    //    var multipleCount = depsList.reduce(function(acc, item, idx) {
+    //        if(item.lowerLimit) {
+    //            acc++;
+    //        }
+    //        return acc;
+    //    }, 0);
+    //    $scope.multipleError = multipleCount > 1;
+    //    //if(newVal != '' && $scope.multipleCount > 1) {
+    //    //    $scope.multipleError = true;
+    //    //}
+    //    var afwef = 0;
+    //};
+    //
+    $scope.watchEmpty = function (item) {
+        if(!item.lowerLimit) item.upperLimit = null;
+    };
+
+    $scope.isFormOk = function(form, item) {
+        if(!item) return false;
+        if(!angular.isArray(item.dependencies)) return false;
+        if(item.dependencies.length < 1) return false;
+        return form.$valid && form.$dirty;
+    };
+
+    $scope.toggleHelp = function() {
+        $scope.showHelp = !$scope.showHelp;
+    };
 }
 
 
 ticketModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
 ticketModule.controller('TicketCtrl', function($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location) {ticketCtrl($scope, $http, $timeout, $filter, baseRemoteURL, $routeParams, $location)});
-//ticketModule.directive('dependsOn', function() {
-//    return {
-//        restrict: 'A',
-//        require: 'ngModel',
-//        link: function(scope, elem, attr, ctrl) {
-//
-//            ctrl.$parsers.unshift(function(value) {
-//                var muted = false;
-//                if(!muted) console.log('\n');
-//                if(!muted) console.log('Ticket dependsOn');
-//                var valid = false;
-//                if(!muted) console.log('es numero', angular.isNumber(value));
-//                if(!muted) console.log('vacio', !value);
-//                if(!muted) console.log('undefined', angular.isUndefined(value));
-//                if(!muted) console.log('value', value);
-//                if(!muted) console.log('es mayor', value >= attr.dependsOn);
-//                if(!value || value >= attr.dependsOn) {
-//                    valid = true;
-//                }
-//                ctrl.$setValidity('range', valid);
-//                return valid? value: undefined;
-//            });
-//        }
-//    }
-//});
+ticketModule.directive('dependsOn', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elem, attr, ctrl) {
+
+            ctrl.$parsers.unshift(function(value) {
+                var muted = false;
+                if(!muted) console.log('\n');
+                if(!muted) console.log('Ticket dependsOn');
+                var valid = false;
+                value = Number(value);
+                if(!muted) console.log('es numero', angular.isNumber(value));
+                if(!muted) console.log('vacio', !value);
+                if(!muted) console.log('undefined', angular.isUndefined(value));
+                if(!muted) console.log('value', value);
+                if(!muted) console.log('es mayor', value >= attr.dependsOn);
+                if(!value || value >= attr.dependsOn) {
+                    valid = true;
+                }
+                ctrl.$setValidity('range', valid);
+                return valid? value: undefined;
+            });
+        }
+    };
+});
 
 
 
