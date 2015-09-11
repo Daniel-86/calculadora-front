@@ -43,9 +43,6 @@
                     <!--Visible-->
                 <!--</label>-->
                 <div ng-if="!isRoot(currentSelection)">
-                    <!--<form novalidate-->
-                          <!--name="generalesForm"-->
-                          <!--ng-submit="updateGenerals(currentSelection)">-->
                     <form novalidate
                           name="generalesForm"
                           ng-submit="updateGenerals(currentSelection)">
@@ -87,24 +84,6 @@
                         </div>
                     </form>
                 </div>
-                <!--<div ng-if="currentSelection.nodeType == 'ROOT'">-->
-                    <!--<div class="form-group">-->
-                        <!--<label for="descInpt" class="control-label">Descripción</label>-->
-                        <!--<input type="text"-->
-                               <!--class="form-control"-->
-                               <!--id="descInpt"-->
-                               <!--ng-model="currentSelection.descripcion"/>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div ng-if="currentSelection.nodeType == 'LEAF'">-->
-                    <!--<div class="form-group">-->
-                        <!--<label for="descInpt2" class="control-label">Descripción</label>-->
-                        <!--<input type="text"-->
-                               <!--class="form-control"-->
-                               <!--id="descInpt2"-->
-                               <!--ng-model="currentSelection.descripcion"/>-->
-                    <!--</div>-->
-                <!--</div>-->
                 <div ng-if="currentSelection.nodeType == 'BRANCH'" class="col-md-12">
                     <div class="page-header">
                         <h3>Propiedades
@@ -132,12 +111,6 @@
                     </div>
                 </div>
 
-                <!--<div class="col-md-12" ng-if="currentSelection.nodeType == 'BRANCH'">-->
-                    <!--<button class="btn btn-default btn-sm btn-add-prop"-->
-                            <!--ng-click="showPropForm()"-->
-                            <!--ng-hide="addingProperty">-->
-                        <!--Nueva propiedad</button>-->
-                <!--</div>-->
                 <div ng-show="addingProperty">
                     <form novalidate
                           no-submit-form
@@ -217,6 +190,11 @@
                     </div>
                         <div class="form-group" ng-show="isIn(newProperty.tipo, ['CHECK', 'RADIO'])">
                             <div class="list-group">
+                                <span class="list-group-item">
+                                <span class="list-group-item-heading">
+                                    <strong>Opciones</strong>
+                                </span>
+                                    </span>
                                 <span class="list-group-item" ng-repeat="opt in newProperty.options">
                                     {{ opt }}
                                 </span>
@@ -227,6 +205,9 @@
                                        data-notify-to="newPropertyForm.forSubmit"
                                        ng-keyup="$event.keyCode == 13 && addOption(newProperty)"
                                        ng-model="newProperty.tempOpt">
+                                <p class="help-block" ng-show="newPropertyForm.forSubmit">
+                                    <span class="text-info"> Presiona ENTER para agregar la nueva opción</span>
+                                </p>
                             </div>
                         </div>
                     <div class="btn-group new-prop-btns pull-right">
@@ -248,8 +229,9 @@
 
 
 
+    <!--<div class="row">-->
     <div class="col-md-4" ng-show="currentSelection.nodeType != 'LEAF'">
-        <div class="list-group">
+        <div class="container list-group no-margin" style="margin-bottom: 0;">
             <div class="list-group-item">
                 <div class="list-group-item-heading">
                     <h4 class="text-center">
@@ -264,9 +246,6 @@
                    class="col-sm-10">
                     {{child.nombre}}
                     <span class="pull-right">
-                        <!--<small class="">-->
-                            <!--&lt{{child.domainClass}}&gt-->
-                        <!--</small>-->
                         <a href=""
                            ng-click="removeChild(child)"
                            style="background-image: none !important;"
@@ -274,15 +253,13 @@
                             <i class="glyphicon glyphicon-trash"></i> </a>
                     </span>
                 </a>
-                <!--<a href=""-->
-                <!--ng-click="removeChild($index)"-->
-                <!--class="btn btn-default col-sm-2">-->
-                <!--<i class="glyphicon glyphicon-trash"></i> </a>-->
             </div>
+        </div>
 
+        <div class="container list-group no-margin">
             <div class="list-group-item-heading">
-                <h4 class="text-center list-group-item-success"
-                    style="padding-bottom: 10px; margin-top: 10px; margin-bottom: 0;">
+                <h4 class="text-center"
+                    style="padding-bottom:10px; margin-top:5px; margin-bottom:0; padding-top:10px; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; background-color: #ddd; color: #777;">
                     Nuevo elemento</h4>
                 <div alert
                      ng-repeat="alert in itemAlerts"
@@ -294,23 +271,31 @@
                 <!--<div growl></div>-->
                 <form class="form" novalidate name="newItemForm">
                     <div class=""
+                         style="border: 1px solid #dddddd; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; padding: 8px;"
                          ng-class="{'has-error': newItemForm.domainType.$invalid && newItemForm.domainType.$dirty}"
                          ng-show="!isRoot()">
                         <label>
-                            <!--<input type="radio" name="domainType" value="concepto"-->
-                                   <!--ng-checked="currentSelection.domainClass.toLowerCase() === 'conceptoespecial'"-->
-                                   <!--ng-required="!isRoot()"-->
-                                   <!--ng-model="newItem.domainType">Concepto-->
                             <input type="radio" name="domainType" value="concepto"
                                    ng-checked="checkForDefault(currentSelection, newItemform.domainType)"
                                    ng-required="!isRoot()"
                                    ng-model="newItem.domainType">Concepto
+                            <span class="btn btn-link glyphicon glyphicon-question-sign input-group-addon"
+                                  ng-click="$event.stopPropagation(); $event.preventDefault();"
+                                  style="border:none; background-color: inherit; color: inherit; display: inline-block;"
+                                  popover="Concepto es un nodo simple, es renderizado como un checkbox">
+                        </span>
                         </label>
+
                         <label ng-show="currentSelection.domainClass.toLowerCase() !== 'conceptoespecial'">
                             <input type="radio" name="domainType"
                                    value="componente"
                                    ng-required="!isRoot()"
                                    ng-model="newItem.domainType">Componente
+                            <span class="btn btn-link glyphicon glyphicon-question-sign input-group-addon"
+                                  ng-click="$event.stopPropagation(); $event.preventDefault();"
+                                  style="border:none; background-color: inherit; color: inherit; display: inline-block;"
+                                  popover="Componente es un nodo contenedor de propiedades y conceptos, ej. componente Firewall contiene propiedades cantidad y marca, además contiene los conceptos NAT, HA, ...">
+                        </span>
                         </label>
                     </div>
                     <div class=""
@@ -320,8 +305,6 @@
                                required
                                class="form-control"
                                ng-model="newItem.nombre">
-                            <!--<span ng-show="newItemForm.nombre.$dirty && newItemForm.nombre.$error.required"-->
-                                  <!--class="help-block text-danger">Requerido</span>-->
                     </div>
                     <div class=""
                          ng-class="{'has-error': newItemForm.descripcion.$invalid && newItemForm.descripcion.$dirty}">
@@ -331,8 +314,6 @@
                                required
                                class="form-control"
                                ng-model="newItem.descripcion">
-                            <!--<span ng-show="newItemForm.descripcion.$dirty && newItemForm.descripcion.$error.required"-->
-                                  <!--class="help-block text-danger">Requerido</span>-->
                     </div>
                     <button type="submit"
                             class="btn btn-default form-control"
@@ -344,21 +325,24 @@
             </div>
         </div>
     </div>
+    <!--</div>-->
     
     
     <div class="col-md-8" ng-if="isRoot()">
-        <p>Elige un elemento para editar sus propiedades y administrar sus 'hijos'</p>
-        <p>Los elementos forman una estructura de arbol. Existen 4 tipos de nodos:</p>
+        <h3>Overview</h3>
+        <p>Los servicios elegibles forman una estructura de árbol. Existen 4 tipos de nodos:</p>
         <ol>
-            <li><strong>Categoria</strong> Es el nodo raiz de un 'grupo' de elementos con alguna relación estrecha
-                . Puede tener hijos ConceptoEspecial y Concepto</li>
-            <li><strong>ConceptoEspecial</strong> Estos nodos son intermedios y sirven como contenedores de otros
-                nodos que son los que definen propiedades y demás, no pueden ser nodos raíz ni hoja.
-                Se les puede asignar propiedades 'especiales', por ejemplo la cantidad de dispositivos, que afectan a
-                todos sus nodos hijos. Puede tener hijos: Concepto y Propiedad.</li>
-            <li><strong>Propiedad</strong> Solo pueden ser hijos de ConceptoEspecial. Cada uno de estos nodos
-                representa alguna característica, por ejemplo la cantidad de dispositivos.</li>
-            <li><strong>Concepto</strong> Son nodos hoja, por ejemplo los servicios de un firewall</li>
+            <li><strong>Categoria</strong> Es el nodo raíz de un 'grupo' de elementos con alguna relación estrecha. Puede tener hijos <em>Componente</em> y <em>Concepto</em>. Ej. tipo de cliente es una <em>Categoría</em> que contiene los
+                <em>Conceptos</em> privado, gobierno y financiero.</li>
+            <li><strong>Componente</strong> Estos nodos son intermedios y sirven como contenedores de <em>Conceptos</em> y <em>Propiedades</em>, no pueden ser nodos raíz ni hoja.<br/>
+                Las <em>Propiedades</em> que definidas dentro de él, afectan a todos los <em>Conceptos</em>
+                contenidos en dicho <em>Componente</em>.</li>
+            <li><strong>Propiedad</strong> Solo pueden ser hijos de <em>Componente</em>. Cada uno de estos nodos
+                representa alguna característica muy específica y su valor puede ser de varios tipos(numérico, un
+                único texto de una lista predefinida, múltiples valores de una lista predefinida, un texto
+                cualquiera). Ej. la cantidad de IPS; IPS es el <em>Componente</em> y la cantidad una <em>Propiedad</em>.</li>
+            <li><strong>Concepto</strong> Son nodos hoja que representan un valor booleano, es renderizado como un
+                checkbox. Ej. Firewall con HA; Firewall es el <em>Componente</em> y HA es un <em>concepto</em>.</li>
         </ol>
     </div>
 

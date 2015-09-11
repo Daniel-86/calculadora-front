@@ -1,7 +1,7 @@
 
 'use strict';
 
-var serviciosModule = angular.module('servicios', ['ui.bootstrap', 'ngRoute', 'angular-growl']);
+var serviciosModule = angular.module('servicios', ['ui.bootstrap', 'ngRoute', 'angular-growl', 'cgPrompt']);
 
 
 function findObjectByProperty(tree, propertyName, propertyValue) {
@@ -87,7 +87,7 @@ function findObjectByProperty(tree, propertyName, propertyValue) {
 }
 
 
-function serviciosController($scope, $http, baseRemoteURL, $routeParams, $location, growl) {
+function serviciosController($scope, $http, baseRemoteURL, $routeParams, $location, growl, prompt) {
     var muted = true;
     if(!muted) console.log('\n');
 
@@ -303,6 +303,12 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
     $scope.dropProperty = function(item, parent) {
         var muted = true;
         if(!muted) console.log('\n');
+
+        prompt({
+            title: '¿Deseas continuar?',
+            message: 'La propiedad también se elminará de las dependencias de factores y tickets',
+            buttons: [{ label:'Si', primary: true }, { label:'No', cancel: true }]
+        }).then(function() {
         $http.delete(baseRemoteURL+"propiedad/delete", {data: item})
             .success(function(data) {
                 if(!muted) console.log('dropProperty data', data);
@@ -314,6 +320,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
             .error(function(data, status) {
                 if(!muted) console.log('dropProperty (ERROR) status ' + status + '  data ', data);
             });
+        });
     };
 
     $scope.addItem = function(newItem) {
@@ -369,57 +376,63 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
         var delData = {item: item, parent: $scope.isRoot()? undefined: $scope.currentSelection};
         if(!muted) console.log('removeChild delData', delData);
 
-        $http.delete(baseRemoteURL+"calculadora/deleteItem", {data: delData})
-            .success(function(data) {
-                if(!muted) console.log('removeChild data', data);
-                if(item) {
-                    var idx;
-                    if(!$scope.isRoot()) {
-                        if (!muted) console.log('removeChild selected', $scope.currentSelection);
-                        var foundObject = findObjectByProperty($scope.allItems, 'customId', $scope.currentSelection.customId);
-                        var parent = foundObject? foundObject.result: undefined;
-                        if(!parent) {
-                            console.log('*********** Padre no encontrado');
-                            return;
-                        }
-                        if(parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'concepto') {
-                            idx = findWithAttr(parent.conceptos, 'customId', item.customId);
-                            if(idx > 0) {
-                                parent.conceptos.splice(idx-1, 1);
-                                $scope.currentSelection.conceptos.splice(idx-1, 1);
+        prompt({
+            title: '¿Deseas continuar?',
+            message: 'El elemento y todos sus hijos también serán eliminados de las dependencias de factores y tickets',
+            buttons: [{ label:'Si', primary: true }, { label:'No', cancel: true }]
+        }).then(function() {
+            $http.delete(baseRemoteURL + "calculadora/deleteItem", {data: delData})
+                .success(function (data) {
+                    if (!muted) console.log('removeChild data', data);
+                    if (item) {
+                        var idx;
+                        if (!$scope.isRoot()) {
+                            if (!muted) console.log('removeChild selected', $scope.currentSelection);
+                            var foundObject = findObjectByProperty($scope.allItems, 'customId', $scope.currentSelection.customId);
+                            var parent = foundObject ? foundObject.result : undefined;
+                            if (!parent) {
+                                console.log('*********** Padre no encontrado');
+                                return;
+                            }
+                            if (parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'concepto') {
+                                idx = findWithAttr(parent.conceptos, 'customId', item.customId);
+                                if (idx > 0) {
+                                    parent.conceptos.splice(idx - 1, 1);
+                                    $scope.currentSelection.conceptos.splice(idx - 1, 1);
+                                }
+                            }
+                            else if (parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'conceptoespecial') {
+                                idx = findWithAttr(parent.componentes, 'customId', item.customId);
+                                if (idx > 0) {
+                                    parent.componentes.splice(idx - 1, 1);
+                                    $scope.currentSelection.componentes.splice(idx - 1, 1);
+                                }
+                            }
+                            else if (parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'concepto') {
+                                idx = findWithAttr(parent.conceptos, 'customId', item.customId);
+                                if (idx > 0) {
+                                    parent.conceptos.splice(idx - 1, 1);
+                                    $scope.currentSelection.conceptos.splice(idx - 1, 1);
+                                }
+                            }
+                            else if (parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'propiedad') {
+                                idx = findWithAttr(parent.propiedades, 'customId', item.customId);
+                                if (idx > 0) {
+                                    parent.propiedades.splice(idx - 1, 1);
+                                    $scope.currentSelection.propiedades.splice(idx - 1, 1);
+                                }
                             }
                         }
-                        else if(parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'conceptoespecial') {
-                            idx = findWithAttr(parent.componentes, 'customId', item.customId);
-                            if(idx > 0) {
-                                parent.componentes.splice(idx-1, 1);
-                                $scope.currentSelection.componentes.splice(idx-1, 1);
-                            }
-                        }
-                        else if(parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'concepto') {
-                            idx = findWithAttr(parent.conceptos, 'customId', item.customId);
-                            if(idx > 0) {
-                                parent.conceptos.splice(idx-1, 1);
-                                $scope.currentSelection.conceptos.splice(idx-1, 1);
-                            }
-                        }
-                        else if(parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'propiedad') {
-                            idx = findWithAttr(parent.propiedades, 'customId', item.customId);
-                            if(idx > 0) {
-                                parent.propiedades.splice(idx-1, 1);
-                                $scope.currentSelection.propiedades.splice(idx-1, 1);
+                        else {
+                            idx = findWithAttr($scope.allItems, 'customId', item.customId);
+                            if (idx > 0) {
+                                $scope.allItems.splice(idx - 1, 1);
+                                $scope.currentSelection.splice(idx - 1, 1);
                             }
                         }
                     }
-                    else {
-                        idx = findWithAttr($scope.allItems, 'customId', item.customId);
-                        if(idx > 0) {
-                            $scope.allItems.splice(idx-1, 1);
-                            $scope.currentSelection.splice(idx-1, 1);
-                        }
-                    }
-                }
-            });
+                });
+        });
     };
 
     $scope.updateVisibility = function(item) {
@@ -515,7 +528,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
 
 
 serviciosModule.constant('baseRemoteURL', 'http://localhost:8080/calculadora/');
-serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location, growl) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location, growl);});
+serviciosModule.controller('ServiciosCtrl', function($scope, $http, baseRemoteURL, $routeParams, $location, growl, prompt) {serviciosController($scope, $http, baseRemoteURL, $routeParams, $location, growl, prompt);});
 serviciosModule.config(['growlProvider', function(growlProvider) {
     growlProvider.globalTimeToLive(2500)
         .globalDisableCloseButton(true)
