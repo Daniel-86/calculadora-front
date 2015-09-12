@@ -472,6 +472,12 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
             return false;
         });
     };
+
+    $scope.isThereFactors = function(result) {
+        return (angular.isArray(result.factores) && result.factores.length>0)? '': 'info';
+    };
+
+    $scope.showHelperResults = false;
 }
 
 

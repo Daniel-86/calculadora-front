@@ -366,18 +366,59 @@
             <h4>Número de tickets</h4>
             <p>
                 Acontinuación se muestran los resultados de manera desglosada.
+                <a href="" ng-click="showHelperResults = !showHelperResults">
+                    explícame los resultados
+                    <span class="glyphicon glyphicon-question-sign"
+                      style="border:none; background-color: inherit; color: inherit; display: inline-block;"
+                    </span>
+                </a>
+            </p>
+
+            <div ng-show="showHelperResults">
+            Para cada 'conjunto' de selecciones se muestra el resultado correspondiente. Un conjunto esta
+                determinado por los servicios seleccionados por tecnología, específicamente por el número de
+                combinaciones de dichos conjuntos. Ej.
+                Se tienen las selecciones:
+                <br/><br/>
+                <span class="col-sm-offset-2 col-sm-5">
+                    Firewall 1: NAT, IPSEC
+                </span>
+                <span class="col-sm-5">
+                    IPS 1, 2 y 3: Antivirus, HA
+                </span>
+                <span class="col-sm-offset-2 col-sm-5">
+                    Firewall 2, 3, 4, y 5: URL Filtering
+                </span>
+                <span class="col-sm-5">
+                    IPS 4 y 5: HA, IPSEC
+                </span>
+                <br/><br/><br/>
+                Por lo tanto hay 4 combinaciones y se mostrarán 4 resultados, uno por cada combinación. Las
+                combinaciones son:
+                <br/>
+                <ul>
+                    <li>Firewall 1 -- IPS 1, 2 y 3</li>
+                    <li>Firewall 1 -- IPS 4 y 5</li>
+                    <li>Firewall 2, 3, 4 y 5 -- IPS 1, 2 y 3</li>
+                    <li>Firewall 2, 3, 4 y 5 -- IPS 4 y 5</li>
+                </ul>
+                <h4>Para cada resultado</h4>
+            <p>
+                La primera fila tiene la información 'base' de número de tickets. El registro (en BD) que
+                coincide con todas o el mayor numero de dependencias seleccionadas por el usuario.
             </p>
             <p>
-                La primera fila tiene la información 'base' de número de tickets. El registro (en BD) seleccionado
-                coincide con todas o el mayor numero de 'dependencias' seleccionadas por el usuario.
-            </p>
-            <p>
-                Las filas restantes mustran el resultado parcial obtenido al aplicar los factores coincidentes, de
+                Las filas restantes muestran el resultado parcial obtenido al aplicar los factores coincidentes, de
                 acuerdo a lo seleccionado por el usuario.
             </p>
             <p>
-                La última fila es el resultado total.
+                Las celdas en azul son el resultado final.
             </p>
+            <p>
+                La fila Faltantes indica las dependencias que no fueron seleccionadas y que son requeridas por el
+                valor base (la primera fila) de tickets.
+            </p>
+            </div>
             <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
@@ -392,31 +433,27 @@
                 <tr title="">
                     <td>{{row.ticket.nombre}}</td>
                     <td>{{row.ticket.descripcion}}</td>
-                    <td>{{row.ticket.cc}}</td>
-                    <td>{{row.ticket.es}}</td>
-                    <td>{{row.ticket.rq}}</td>
-                    <td>{{row.ticket.acs}}</td>
+                    <td ng-class="isThereFactors(row)">{{row.ticket.cc}}</td>
+                    <td ng-class="isThereFactors(row)">{{row.ticket.es}}</td>
+                    <td ng-class="isThereFactors(row)">{{row.ticket.rq}}</td>
+                    <td ng-class="isThereFactors(row)">{{row.ticket.acs}}</td>
                 </tr>
                 <tr ng-repeat="res in row.factores"
-                    ng-class="$last? 'success': ''"
                     title="{{res.factor}}">
                     <td>{{res.nombre | strip:'_':' ':true}}</td>
                     <td>{{res.descripcion}}</td>
-                    <td>{{res.cc}}</td>
-                    <td>{{res.es}}</td>
-                    <td>{{res.rq}}</td>
-                    <td>{{res.acs}}</td>
+                    <td ng-class="$last? 'info': ''">{{res.cc}}</td>
+                    <td ng-class="$last? 'info': ''">{{res.es}}</td>
+                    <td ng-class="$last? 'info': ''">{{res.rq}}</td>
+                    <td ng-class="$last? 'info': ''">{{res.acs}}</td>
                 </tr>
                 <tr class="warning" ng-show="row.ticket.best.missing && row.ticket.best.missing.length > 0">
                     <td><strong>Faltantes</strong></td>
                     <td colspan="5">{{row.ticket.best.missing | joinArray}}</td>
                 </tr>
-                <!--<tr class="success">-->
-                    <!--<td><strong>Extra</strong></td>-->
-                    <!--<td colspan="5">{{row.ticket.best.extra | joinArray}}</td>-->
-                <!--</tr>-->
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr
+                        style="background-color: #888 !important;"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <!--<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>-->
                 </tbody>
             </table>
             </div>

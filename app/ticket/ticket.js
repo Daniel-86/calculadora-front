@@ -288,7 +288,7 @@ ticketModule.directive('dependsOn', function() {
                 return input.slice(start);
             }
             return [];
-        }
+        };
     });
 
 
