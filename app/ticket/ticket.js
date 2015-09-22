@@ -69,7 +69,8 @@ function ticketCtrl ($scope, $http, $timeout, $filter, baseRemoteURL, $routePara
             if(status === 201 || status === 200) {
                 //creaForma.generalInfo = ['El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')];
                 $scope.alerts = [{type: 'success', msg: 'El elemento con id '+data.id+' fue '+(status === 201? 'creado': 'actualizado')}];
-                $location.path('/ticket/'+data.id);
+                //$location.path('/ticket/'+data.id);
+                $location.path('/tickets');
             }
         }
         function errorAjax(data, status, headers, config)  {
