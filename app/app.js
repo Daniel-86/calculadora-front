@@ -12,7 +12,7 @@ angular.module('myApp', [
     'ngLoadingSpinner',
     'noSubmit',
     'tests',
-    'angular-growl',
+    'angular-growl'
 ]).
 config(['$routeProvider', function($routeProvider) {
       $routeProvider.when('/calcular', {

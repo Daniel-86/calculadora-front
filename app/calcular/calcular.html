@@ -12,8 +12,8 @@
                          class="pull-right"
                          data-on-label="Sí"
                          data-off-label="No"
-                         ng-click="toggleSelected(category, isSelected)"
-                         data-ng-model="isSelected"
+                         ng-click="toggleSelected(category, basura.isSelected)"
+                         data-ng-model="basura.isSelected"
                          ng-if="category.customId === 'ingenieria_en_sitio'"></div>
                 </div>
 
@@ -352,12 +352,23 @@
                         <!--data-ng-disabled="isReady()">Calcular-->
                 <!--</button>-->
                 <div class="col-md-12" style="margin-top: 20px;">
-                    <button type="button"
-                            class="btn btn-primary btn-block"
-                            ng-click="getResults()"
-                            data-ng-disabled="!isFormOk()">
-                        Calcular
-                    </button>
+                    <div class="col-md-6">
+                        <button type="button"
+                                class="btn btn-primary btn-block"
+                                ng-click="getResults()"
+                                data-ng-disabled="!isFormOk()">
+                            Calcular
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button"
+                                class="btn btn-default btn-block"
+                                ng-click="reset()"
+                                data-ng-disabled="!calcularForm.$dirty">
+                            <span class="glyphicon glyphicon-repeat"></span>
+                            Reset
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

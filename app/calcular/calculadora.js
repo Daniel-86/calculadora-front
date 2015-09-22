@@ -1,7 +1,12 @@
 //= require_self
 'use strict';
 
-var calculadoraControllers = angular.module('calculadora', ['checklist-model', 'toggle-switch', 'ui.bootstrap', 'ngRoute', 'angularSpinner']);
+var calculadoraControllers = angular.module('calculadora', [
+    'checklist-model',
+    'toggle-switch',
+    'ui.bootstrap',
+    'ngRoute',
+    'angularSpinner']);
 
 //var model = {
 //    chosen: [],
@@ -87,6 +92,9 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         openedCategory: {},
         chosenObj: {}
     };
+    $scope.basura = {};
+    $scope.basura.isSelected = false;
+
     function getCategoryList() {
         var muted = true; if(!muted) console.log('\n');
         $http.get(baseRemoteURL+'calculadora/list').success(function(data) { if(!muted) console.log('getCategoryList' +
@@ -429,6 +437,43 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
             .error(function(data) {
 
             });
+    };
+
+    $scope.reset = function() {
+        $scope.basura.isSelected = false;
+
+        angular.forEach($scope.categories, function(e) {
+            if(e.rValue) e.rValue = null;
+            if(e.rValueN) e.rValueN = null;
+            e.techSelected = undefined;
+            e.tempSelected = undefined;
+            var categoId = e.customId;
+            if(e.componentes) {
+                angular.forEach(e.componentes, function(e) {
+                    if(e.rValue) e.rValue = null;
+                    if(e.rValueN) e.rValueN = null;
+                    e.techSelected = undefined;
+                    e.tempSelected = undefined;
+                    if(categoId === 'tecnologia') {
+                        e.deviceCount = null;
+                        e.deviceCountArray = null;
+                        e.deviceRange = null;
+                        e.isFullSelected = undefined;
+                        e.isPartialSelected = undefined;
+                    }
+                    if(e.propiedades) {
+                        angular.forEach(e.propiedades, function(e) {
+                            if(e.rValue) e.rValue = null;
+                            if(e.rValueN) e.rValueN = null;
+                        });
+                    }
+                });
+            }
+
+        });
+
+        $scope.calcularForm.$setPristine(true);
+        $scope.resultados = undefined;
     };
 
 
