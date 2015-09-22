@@ -455,7 +455,8 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         //$scope.calcularForm.$invalid || !$scope.calcularForm.$dirty
         if(!$scope.categories) return false;
         return $scope.categories.every(function (c) {
-            if (c.customId !== 'tecnologia') return anyValuedChild(c);
+            if(c.customId === 'ingenieria_en_sitio') return true;
+            else if (c.customId !== 'tecnologia') return anyValuedChild(c);
             if (c.customId === 'tecnologia' && anyValuedChild(c)) {
                 var componentes = c.componentes.filter(function(com) {
                     return com.deviceCount > 0;
