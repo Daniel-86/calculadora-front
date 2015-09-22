@@ -222,6 +222,22 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         if(angular.isArray(item.rValue)) {
             item.rValue.splice(item.deviceCount);
         }
+        if(item.customId === 'firewall') {
+            if(!angular.isArray(item.rValue)) {
+                item.rValue = [];
+            }
+            for(var asdf=item.deviceRange.min; asdf<item.deviceRange.max; asdf++) {
+                if(!angular.isArray(item.rValue[asdf])) item.rValue[asdf] = [];
+                if(angular.isArray(item.rValue[asdf]) && item.rValue[asdf].length === 0) {
+                    item.rValue[asdf].push(angular.copy(item.conceptos[0]));
+                }
+            }
+            //angular.forEach(item.rValue, function (a) {
+            //    if(angular.isArray(a) && a.length === 0) {
+            //        a.push(angular.copy(item.conceptos[0]));
+            //    }
+            //});
+        }
         $scope.deviceScopeChanged(item);
         item.isPartialSelected = show;
         if(item.deviceScope === 'all') item.isFullSelected = show;
@@ -330,18 +346,21 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
 
 
     $scope.basura = function(item) {
-        var data =  $scope.getDeviceCounts(item.rValue);
-        var stringResult = '';
-        //var prefix = $filter('strip')(item.customId, '_', ' ', true);
-        var prefix = item.customId;
-        for(var i=0; i<data.length; i++) {
-            var arrSels = data[i].selection.map(function(s) {
-                return s.replace(prefix, '').replace(/_/g, ' ');
-            });
-            //stringResult += data[i].count +' '+prefix+'(s): '+arrSels.join(', ')+'\n';
-            stringResult += '<strong>' +data[i].count +' '+prefix+'(s)</strong>: '+arrSels.join(', ')+'<br/>';
+        var forProcessing = $scope.categories[2].componentes.map(function(a) {return a.customId});
+        if($scope.calcularForm.$dirty && forProcessing.indexOf(item.customId) > -1 && angular.isArray(item.rValue) && item.rValue.length > 0) {
+            var data = $scope.getDeviceCounts(item.rValue);
+            var stringResult = '';
+            //var prefix = $filter('strip')(item.customId, '_', ' ', true);
+            var prefix = item.customId;
+            for (var i = 0; i < data.length; i++) {
+                var arrSels = data[i].selection.map(function (s) {
+                    return s.replace(prefix, '').replace(/_/g, ' ');
+                });
+                //stringResult += data[i].count +' '+prefix+'(s): '+arrSels.join(', ')+'\n';
+                stringResult += '<strong>' + data[i].count + ' ' + prefix + '(s)</strong>: ' + arrSels.join(', ') + '<br/>';
+            }
+            return $sce.trustAsHtml(stringResult);
         }
-        return $sce.trustAsHtml(stringResult);
         //return data;
     };
 
@@ -524,6 +543,25 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
     };
 
     $scope.showHelperResults = false;
+
+    $scope.defaultFirewallNat = function(compo, conc) {
+        if(compo.customId === 'firewall'
+            && conc.customId === 'firewall_firewall-nat'
+            && compo.isFullSelected) {
+            //$scope.$apply();
+            if(!angular.isArray(compo.currentSelection)) compo.currentSelection = [];
+            compo.currentSelection = conc;
+            $scope.updateSelections(compo);
+
+            //if(!angular.isArray(compo.rValue)) compo.rValue = [];
+            //for(var i=item.deviceRange.min; i<item.deviceRange.max; i++) {
+            //    //item.rValue[i] = item.currentSelection;
+            //    item.rValue[i] = angular.copy(item.currentSelection);
+            //    var alguna = 'asdf';
+            //}
+            return true;
+        }
+    };
 }
 
 
