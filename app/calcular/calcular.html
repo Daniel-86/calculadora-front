@@ -375,7 +375,7 @@
     </div>
 
     <div class="col-md-12">
-        <div ng-show="resultados">
+        <div ng-show="thereAreResults()">
             <h4>Número de tickets</h4>
             <p>
                 Acontinuación se muestran los resultados de manera desglosada.
@@ -471,8 +471,8 @@
             </table>
             </div>
         </div>
-        <div ng-show="noMatches()">
-            Ninguna regla coincide para lo seleccionado
+        <div ng-show="hasBeenSubmitted && !thereAreResults()">
+            <strong>Ninguna regla coincide para lo seleccionado</strong>
         </div>
     </div>
 

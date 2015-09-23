@@ -153,8 +153,9 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         return item.customId === 'ingenieria_en_sitio' && !$scope.$parent.chosen[key];
     };
 
-    $scope.noMatches = function() {
-        return $scope.resutlados;
+    $scope.thereAreResults = function() {
+        var asdfas = (angular.isArray($scope.resultados) && $scope.resultados.length>0);
+        return (angular.isArray($scope.resultados) && $scope.resultados.length>0);
     };
 
     $scope.showImmediateChild = function(item, parent) {
@@ -418,6 +419,7 @@ function mainCtrl($scope, $http, baseRemoteURL, $filter, $sce, companySizeOption
         var cantidades = {};
         $http.post(baseRemoteURL+'calculadora/calcular', {"postData": postData})
             .success(function(data) {
+                $scope.hasBeenSubmitted = true;
                 $scope.resultados = data.results;
                 //cantidades = data.counts;
 
