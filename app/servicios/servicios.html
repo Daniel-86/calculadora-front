@@ -274,7 +274,8 @@
                          style="border: 1px solid #dddddd; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; padding: 8px;"
                          ng-class="{'has-error': newItemForm.domainType.$invalid && newItemForm.domainType.$dirty}"
                          ng-show="!isRoot()">
-                        <label>
+                        <label
+                                ng-show="currentSelection.customId !== 'ingenieria_en_sitio' && currentSelection.customId !== 'tecnologia'">
                             <input type="radio" name="domainType" value="concepto"
                                    ng-checked="checkForDefault(currentSelection, newItemform.domainType)"
                                    ng-required="!isRoot()"
@@ -287,9 +288,11 @@
                         </span>
                         </label>
 
-                        <label ng-show="currentSelection.domainClass.toLowerCase() !== 'conceptoespecial'">
+                        <label
+                                ng-show="currentSelection.domainClass.toLowerCase() !== 'conceptoespecial' && currentSelection.customId !== 'tipo_de_cliente'">
                             <input type="radio" name="domainType"
                                    value="componente"
+                                   ng-checked="checkForDefault(currentSelection, newItemform.domainType)"
                                    ng-required="!isRoot()"
                                    ng-model="newItem.domainType">Componente
                             <span class="btn btn-link glyphicon glyphicon-question-sign input-group-addon"
