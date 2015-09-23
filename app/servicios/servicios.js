@@ -397,28 +397,28 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                             if (parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'concepto') {
                                 idx = findWithAttr(parent.conceptos, 'customId', item.customId);
                                 if (idx > 0) {
-                                    parent.conceptos.splice(idx - 1, 1);
+                                    //parent.conceptos.splice(idx - 1, 1);
                                     $scope.currentSelection.conceptos.splice(idx - 1, 1);
                                 }
                             }
                             else if (parent.domainClass.toLowerCase() === 'categoria' && item.domainClass.toLowerCase() === 'conceptoespecial') {
                                 idx = findWithAttr(parent.componentes, 'customId', item.customId);
                                 if (idx > 0) {
-                                    parent.componentes.splice(idx - 1, 1);
+                                    //parent.componentes.splice(idx - 1, 1);
                                     $scope.currentSelection.componentes.splice(idx - 1, 1);
                                 }
                             }
                             else if (parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'concepto') {
                                 idx = findWithAttr(parent.conceptos, 'customId', item.customId);
                                 if (idx > 0) {
-                                    parent.conceptos.splice(idx - 1, 1);
+                                    //parent.conceptos.splice(idx - 1, 1);
                                     $scope.currentSelection.conceptos.splice(idx - 1, 1);
                                 }
                             }
                             else if (parent.domainClass.toLowerCase() === 'conceptoespecial' && item.domainClass.toLowerCase() === 'propiedad') {
                                 idx = findWithAttr(parent.propiedades, 'customId', item.customId);
                                 if (idx > 0) {
-                                    parent.propiedades.splice(idx - 1, 1);
+                                    //parent.propiedades.splice(idx - 1, 1);
                                     $scope.currentSelection.propiedades.splice(idx - 1, 1);
                                 }
                             }
@@ -426,7 +426,7 @@ function serviciosController($scope, $http, baseRemoteURL, $routeParams, $locati
                         else {
                             idx = findWithAttr($scope.allItems, 'customId', item.customId);
                             if (idx > 0) {
-                                $scope.allItems.splice(idx - 1, 1);
+                                //$scope.allItems.splice(idx - 1, 1);
                                 $scope.currentSelection.splice(idx - 1, 1);
                             }
                         }
